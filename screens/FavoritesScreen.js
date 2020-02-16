@@ -1,13 +1,22 @@
 import React from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, StyleSheet } from 'react-native'
 
 const FavoritesScreen = () => {
-    const colorLightBlack = '#131313';
     return (
-        <View style={{flex: 1, backgroundColor: colorLightBlack}}>
-             <Text>this is Favorites</Text>
+        <View style={styles.container}>
+        
         </View>
-    )
-}
+      );
+    };
+    
+    
+const colorLightBlack = '#131313';
+    
+    const styles = StyleSheet.create({
+      container: {
+        flex: 1,
+        backgroundColor: 'transparent'
+      },
+    });
 
 export default FavoritesScreen
