@@ -30,15 +30,14 @@ const createFolders = async array => {
 
   const folderArray = convertToArray.map((album, index) => {
     return {
-      id: index,
+      id: index.toString(),
       name: album[0],
       data: album[1],
-      trackAmount: album[1].length
+      trackAmount: album[1].length,
     };
   });
   setAsyncStorage('folders', folderArray);
-  console.log('folders loaded')
-
+  console.log('folders loaded');
 };
 
 const createAlbums = async array => {
@@ -57,10 +56,10 @@ const createAlbums = async array => {
 
   const albumArray = convertToArray.map((album, index) => {
     return {
-      id: index,
+      id: index.toString(),
       name: album[0],
       data: album[1],
-      image: album[1][0].cover,
+      image: album[1][0].artwork,
     };
   });
 
@@ -86,9 +85,28 @@ export const getPermissions = async () => {
   }
 };
 
+const durationConverter = millis => {
+  var minutes = Math.floor(millis / 60000);
+  var seconds = ((millis % 60000) / 1000).toFixed(0);
+  return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+};
+
 const firstTimeloadTracks = async () => {
   getTrackData()
     .then(tracks => {
+      tracks = tracks.map((track, index) => ({
+        flatlistId: index.toString(),
+        album: track.album,
+        artist: track.author ? track.author : 'Unknown',
+        artwork: track.cover,
+        duration: durationConverter(track.duration),
+        fileName: track.fileName,
+        folder: track.folder,
+        id: track.id,
+        url: track.cover,
+        title: track.title ? track.title : track.fileName.replace(/.mp3/, ''),
+      }));
+
       createFolders(tracks);
       createAlbums(tracks);
       setAsyncStorage('tracks', tracks);

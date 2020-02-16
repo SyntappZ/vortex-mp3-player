@@ -15,7 +15,7 @@ import AlbumsScreen from './screens/AlbumsScreen';
 import {getPermissions} from './data/MusicDataProvider.js';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import 'react-native-gesture-handler'
+
 import {
   SafeAreaView,
   StyleSheet,
