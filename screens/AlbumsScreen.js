@@ -19,7 +19,7 @@ export default class AlbumsScreen extends Component {
   }
 
   renderItem = ({item}) => (
-    <Album albumName={item.name} artwork={item.artwork} data={item.data} />
+    <Album albumName={item.name} artwork={item.artwork} tracksAmount={item.tracksAmount} data={item.data} />
   );
   render() {
     const { albums } = this.state

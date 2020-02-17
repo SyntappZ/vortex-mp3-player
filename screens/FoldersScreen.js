@@ -3,6 +3,7 @@ import {View, StyleSheet, FlatList} from 'react-native';
 import Folder from '../components/Folder';
 import {getAsyncStorage} from '../data/AsyncStorage.js';
 
+
 export default class FoldersScreen extends Component {
   constructor(props) {
     super(props);
@@ -20,7 +21,7 @@ export default class FoldersScreen extends Component {
   renderItem = ({item}) => (
     <Folder
       folderName={item.name}
-      trackAmount={item.trackAmount}
+      tracksAmount={item.tracksAmount}
       id={item.id}
     />
   );
@@ -28,13 +29,13 @@ export default class FoldersScreen extends Component {
     const {folders} = this.state;
     return (
       <View style={styles.container}>
-        <FlatList
+        {/* <FlatList
           data={folders}
           contentContainerStyle={{paddingBottom: 80}}
           removeClippedSubviews={true}
           renderItem={this.renderItem}
           keyExtractor={item => item.id}
-        />
+        /> */}
       </View>
     );
   }

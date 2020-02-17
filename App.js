@@ -96,9 +96,10 @@ const Bottom = () => (
 const SwipeNavigator = () => (
   <NavigationContainer theme={MyTheme}>
     <Tab.Navigator tabBarOptions={options}>
+    <Tab.Screen name="Songs" component={TracksScreen} />
       <Tab.Screen  name="Albums" component={AlbumsScreen} />
       <Tab.Screen name="Folders" component={FoldersScreen} />
-      <Tab.Screen name="Songs" component={TracksScreen} />
+     
       <Tab.Screen name="Favorites" component={FavoritesScreen} />
     </Tab.Navigator>
 
