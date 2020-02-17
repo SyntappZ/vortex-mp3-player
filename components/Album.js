@@ -4,6 +4,7 @@ import {
   StyleSheet,
   TouchableNativeFeedback,
   Image,
+  TouchableOpacity,
   Text,
 } from 'react-native';
 
@@ -16,62 +17,32 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 class Album extends PureComponent {
   constructor(props) {
     super(props);
-    // const {getAlbum} = this.props;
     this.state = {};
   }
+  modalHandler = () => {
+    const {albumId, openModal} = this.props;
+    openModal(albumId)
+  }
 
-  // convertImage = async file => {
-  //   await ImgToBase64.getBase64String(file)
-  //     .then(base64String => {
-  //       if (this._isMounted) {
-  //         this.setState({
-  //           albumImage: `data:image/jpg;base64, ${base64String} `,
-  //         });
-  //       }
-  //     })
-  //     .catch(err => console.log(err));
-  // };
-
-  // componentDidMount() {
-  //   this._isMounted = true;
-  //   const {album} = this.props;
-  //   const image = album[0].cover;
-  //   if (image) {
-  //     this.convertImage(image);
-  //   }
-  // }
-
-  // componentWillUnmount() {
-  //   this._isMounted = false;
-  // }
-
-  // getAlbum = () => {
-  //   const {albumName, image, modalHandler} = this.props;
-  //   modalHandler({
-  //     albumImage: image,
-
-  //     albumName: albumName,
-  //   });
-  // };
 
   render() {
-    const {albumName, artwork} = this.props;
+    const {albumName, artwork, tracksAmount} = this.props;
 
     
-     const songsInAlbum = 3
+  
     const myIcon = <Icon name="rocket" size={30} color="#900" />;
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
     const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
 
     return (
-      <View style={{width: '50%'}}>
+      
         <View style={styles.album}>
           <View style={styles.imageWrap}>
-            <TouchableNativeFeedback
+            <TouchableOpacity
               style={styles.touchable}
-              onPress={this.getAlbum}>
+              onPress={this.modalHandler}>
               {artwork ? albumArt : defaultImage}
-            </TouchableNativeFeedback>
+            </TouchableOpacity>
           </View>
           <View style={styles.albumInfo}>
             <View style={{flex: 3, justifyContent: 'center'}}>
@@ -79,7 +50,7 @@ class Album extends PureComponent {
                 {albumName}
               </Text>
               <Text style={{color: '#D3D3D3'}} numberOfLines={1}>
-                songs: {songsInAlbum}
+                songs: {tracksAmount}
               </Text>
             </View>
 
@@ -88,7 +59,7 @@ class Album extends PureComponent {
             </View>
           </View>
         </View>
-      </View>
+    
     );
   }
 }
@@ -98,7 +69,7 @@ const colorBlue = '#2A56B9';
 
 const styles = StyleSheet.create({
   album: {
-    margin: 7,
+    width: '100%',
     height: 200,
   },
   imageWrap: {
@@ -112,6 +83,7 @@ const styles = StyleSheet.create({
   touchable: {
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%'
   },
   image: {
     borderTopLeftRadius: 10,

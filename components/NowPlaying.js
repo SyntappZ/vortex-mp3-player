@@ -11,13 +11,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import ProgressBar from './ProgressBar';
-import NowPlayingBig from './NowPlayingBig';
+import NowPlayingBig from '../popupScreens/NowPlayingBig';
 import ModalController from './ModalController';
 
 import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
 
-import ImgToBase64 from 'react-native-image-base64';
+
 
 const NowPlaying = ({playlist, trackToPlay}) => {
   const playerState = TrackPlayer.usePlaybackState();
@@ -157,13 +157,13 @@ const NowPlaying = ({playlist, trackToPlay}) => {
     }
   };
 
-  const convertImage = async file => {
-    await ImgToBase64.getBase64String(file)
-      .then(base64String => {
-        setTrackArt(`data:image/jpg;base64, ${base64String} `);
-      })
-      .catch(err => console.log(err));
-  };
+  // const convertImage = async file => {
+  //   await ImgToBase64.getBase64String(file)
+  //     .then(base64String => {
+  //       setTrackArt(`data:image/jpg;base64, ${base64String} `);
+  //     })
+  //     .catch(err => console.log(err));
+  // };
 
   const image = <Image style={styles.image} source={{uri: trackArt}} />;
   const colorBlue = '#2A56B9';

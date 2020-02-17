@@ -11,8 +11,8 @@ import {
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
-import ProgressBar from './ProgressBar';
-import Gradient from './Gradient';
+import ProgressBar from '../components/ProgressBar';
+import Gradient from '../components/Gradient';
 import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
 

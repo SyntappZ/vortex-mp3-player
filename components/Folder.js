@@ -13,13 +13,14 @@ class Folder extends PureComponent {
     this.state = {};
   }
 
-  // openModal = () => {
-  //   const {folderName, tracks, getFolder} = this.props;
-  //   getFolder({folderName: folderName, tracks: tracks});
-  // };
+  modalHandler = () => {
+    const {folderId, openModal} = this.props;
+    console.log(folderId)
+    openModal(folderId)
+  }
 
   render() {
-    const {folderName, trackAmount, id} = this.props;
+    const {folderName, tracksAmount} = this.props;
 
     const folderIcon = (
       <EntypoIcon name={'folder-music'} size={35} color="#074DD9" />
@@ -34,7 +35,7 @@ class Folder extends PureComponent {
       <View style={styles.container}>
         <View style={styles.iconWrap}>{folderIcon}</View>
         <View style={styles.textWrap}>
-          <TouchableOpacity style={styles.touchable} onPress={this.openModal}>
+          <TouchableOpacity style={styles.touchable} onPress={this.modalHandler}>
             <Text numberOfLines={1} style={styles.title}>
               {folderName}
             </Text>
@@ -46,7 +47,7 @@ class Folder extends PureComponent {
         <View style={styles.moreWrap}>
           <TouchableOpacity style={styles.moreTouchable} onPress={() => test()}>
             <Text numberOfLines={1} style={styles.songs}>
-              songs: {trackAmount}
+              songs: {tracksAmount}
             </Text>
             <IonIcon name="md-more" size={30} color="white" />
           </TouchableOpacity>

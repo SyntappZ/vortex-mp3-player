@@ -15,6 +15,12 @@ const checkIfStorage = async () => {
   }
 };
 
+const durationConverter = millis => {
+  var minutes = Math.floor(millis / 60000);
+  var seconds = ((millis % 60000) / 1000).toFixed(0);
+  return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+};
+
 const createFolders = async array => {
   const prop = 'folder';
 
@@ -30,10 +36,16 @@ const createFolders = async array => {
 
   const folderArray = convertToArray.map((album, index) => {
     return {
-      id: index.toString(),
-      name: album[0],
-      data: album[1],
-      tracksAmount: album[1].length,
+      type: 'NORMAL',
+      item: {
+        folderId: index.toString(),
+        name: album[0],
+        data: album[1].map(data => ({
+          type: 'NORMAL',
+          item: data
+        })),
+        tracksAmount: album[1].length,
+      },
     };
   });
   setAsyncStorage('folders', folderArray);
@@ -56,11 +68,17 @@ const createAlbums = async array => {
 
   const albumArray = convertToArray.map((album, index) => {
     return {
-      id: index.toString(),
-      name: album[0],
-      data: album[1],
-      artwork: album[1][0].artwork,
-      tracksAmount: album[1].length
+      type: 'NORMAL',
+      item: {
+        albumId: index.toString(),
+        name: album[0],
+        data: album[1].map(data => ({
+          type: 'NORMAL',
+          item: data
+        })),
+        artwork: album[1][0].artwork,
+        tracksAmount: album[1].length,
+      },
     };
   });
 
@@ -86,11 +104,6 @@ export const getPermissions = async () => {
   }
 };
 
-const durationConverter = millis => {
-  var minutes = Math.floor(millis / 60000);
-  var seconds = ((millis % 60000) / 1000).toFixed(0);
-  return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-};
 
 const firstTimeloadTracks = async () => {
   getTrackData()
@@ -98,7 +111,7 @@ const firstTimeloadTracks = async () => {
       const convertTracks = tracks.map((track, index) => ({
         type: 'NORMAL',
         item: {
-          flatlistId: index.toString(),
+          index: index,
           album: track.album,
           artist: track.author ? track.author : 'Unknown',
           artwork: track.cover,
@@ -108,15 +121,15 @@ const firstTimeloadTracks = async () => {
           id: track.id,
           url: track.cover,
           title: track.title ? track.title : track.fileName.replace(/.mp3/, ''),
-        }
-       
+        },
       }));
       const originalTracks = tracks.map((track, index) => ({
-        flatlistId: index.toString(),
+        index: index,
         album: track.album,
         artist: track.author ? track.author : 'Unknown',
         artwork: track.cover,
         duration: durationConverter(track.duration),
+        time: track.duration,
         fileName: track.fileName,
         folder: track.folder,
         id: track.id,
