@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import FoldersScreen from './screens/FoldersScreen';
-import SongsScreen from './screens/SongsScreen';
+import TracksScreen from './screens/TracksScreen';
 import FavoritesScreen from './screens/FavoritesScreen';
 import AlbumsScreen from './screens/AlbumsScreen';
 import {getPermissions} from './data/MusicDataProvider.js';
@@ -78,7 +78,6 @@ const options = {
   inactiveTintColor: 'white',
   labelStyle: {
     textTransform: 'capitalize',
-
   }, 
   style: {
     backgroundColor: colorBlack,
@@ -99,7 +98,7 @@ const SwipeNavigator = () => (
     <Tab.Navigator tabBarOptions={options}>
       <Tab.Screen  name="Albums" component={AlbumsScreen} />
       <Tab.Screen name="Folders" component={FoldersScreen} />
-      <Tab.Screen name="Songs" component={SongsScreen} />
+      <Tab.Screen name="Songs" component={TracksScreen} />
       <Tab.Screen name="Favorites" component={FavoritesScreen} />
     </Tab.Navigator>
 

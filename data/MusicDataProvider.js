@@ -59,7 +59,8 @@ const createAlbums = async array => {
       id: index.toString(),
       name: album[0],
       data: album[1],
-      image: album[1][0].artwork,
+      artwork: album[1][0].artwork,
+      tracksAmount: album[1].length
     };
   });
 

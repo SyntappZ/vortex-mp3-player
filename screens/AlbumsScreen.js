@@ -1,50 +1,49 @@
-import React, {useState, useEffect} from 'react';
+import React, {Component, useState, useEffect} from 'react';
 import {View, StyleSheet, Text, FlatList} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import {getAsyncStorage} from '../data/AsyncStorage.js';
-import Album from '../components/Album'
-const Tester = ({albumName}) => {
-  return (
-    <View style={[styles.container, {backgroundColor: 'white'}]}>
-      <Text>{albumName}</Text>
-    </View>
-  );
-};
+import Album from '../components/Album';
 
-const AlbumsScreen = () => {
-  const [albums, setAlbums] = useState([]);
+export default class AlbumsScreen extends Component {
+  constructor(props) {
+    super(props);
 
-  useEffect(() => {
-    console.log('get data');
+    this.state = {
+      albums: [],
+    };
+  }
+  componentDidMount() {
     getAsyncStorage('albums').then(data => {
-      setAlbums(data);
+      this.setState({albums: data});
     });
-  }, []);
+  }
 
-  
-const renderItem = ({item}) => (
-  <Album albumName={item.name} artwork={item.artwork} data={item.data} />
-)
-
-  return (
-    <View style={styles.container}>
-      <FlatList
-        contentContainerStyle={{
-          margin: 4,
-          paddingBottom: 80,
-          flexGrow: 1,
-          justifyContent: 'space-between',
-        }}
-        numColumns={2}
-        data={albums}
-        removeClippedSubviews={true}
-      
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-      />
-    </View>
+  renderItem = ({item}) => (
+    <Album albumName={item.name} artwork={item.artwork} data={item.data} />
   );
-};
+  render() {
+    const { albums } = this.state
+    return (
+      <View style={styles.container}>
+        <FlatList
+          contentContainerStyle={{
+            margin: 4,
+            paddingBottom: 80,
+            flexGrow: 1,
+            justifyContent: 'space-between',
+          }}
+          numColumns={2}
+          data={albums}
+          removeClippedSubviews={true}
+          renderItem={this.renderItem}
+          keyExtractor={item => item.id}
+        />
+      </View>
+    );
+  }
+}
+
+
 
 const colorLightBlack = '#131313';
 const styles = StyleSheet.create({
@@ -55,5 +54,3 @@ const styles = StyleSheet.create({
     color: 'white',
   },
 });
-
-export default AlbumsScreen;
