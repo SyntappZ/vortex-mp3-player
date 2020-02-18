@@ -4,10 +4,11 @@ import {View, StyleSheet, Dimensions } from 'react-native';
 import {getAsyncStorage} from '../data/AsyncStorage.js';
 import Track from '../components/Track';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
-
+ import {PlaylistContext} from '../context/PlaylistProvider';
 const screenWidth = Dimensions.get('window').width;
 
 export default class TracksScreen extends Component {
+  static contextType = PlaylistContext
   constructor(props) {
     super(props);
 
@@ -36,10 +37,15 @@ export default class TracksScreen extends Component {
       },
     );
   }
+  getPlaylist = trackId => {
+    const { playlistRetriever } = this.context
+    playlistRetriever(1000000, trackId, 'all')
+
+  }
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;
-    return <Track artist={artist} duration={duration} id={id} title={title} />;
+    return <Track artist={artist} duration={duration} trackId={id} getPlaylist={this.getPlaylist} title={title} />;
   };
   componentDidMount() {
     getAsyncStorage('tracks').then(data => {

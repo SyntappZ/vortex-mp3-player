@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import TextTicker from 'react-native-text-ticker';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
+import {PlaylistContext} from '../context/PlaylistProvider';
 
 import {
   View,
@@ -17,6 +18,7 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 const screenWidth = Dimensions.get('window').width;
 export default class FolderPlaylist extends Component {
+  static contextType = PlaylistContext
   constructor(props) {
     super(props);
 
@@ -62,12 +64,19 @@ export default class FolderPlaylist extends Component {
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;
-    return <Track artist={artist} duration={duration} id={id} title={title} />;
+    return <Track artist={artist} duration={duration} getPlaylist={this.getPlaylist} trackId={id} title={title} />;
   };
 
+  getPlaylist = (trackId) => {
+    const { folderId } = this.props.data
+    const { playlistRetriever } = this.context
+    playlistRetriever(folderId, trackId, 'folder')
+  }
+
   render() {
-    const {name, trackAmount} = this.props.data;
+    const {name, tracksAmount} = this.props.data;
     const {closeModal} = this.props;
+    console.log(name)
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor="#062D83" />
@@ -116,7 +125,7 @@ export default class FolderPlaylist extends Component {
               </TouchableOpacity>
             </View>
             <View style={styles.infoWrap}>
-              <Text style={styles.songs}>Songs: {trackAmount}</Text>
+              <Text style={styles.songs}>Songs: {tracksAmount}</Text>
               <View style={styles.timeWrap}>
                 <Icon name="clock" size={12} color="#ccc" />
                 <Text style={styles.totalTime}>{this.state.totalTime}</Text>

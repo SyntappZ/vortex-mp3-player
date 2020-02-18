@@ -119,7 +119,7 @@ const firstTimeloadTracks = async () => {
           fileName: track.fileName,
           folder: track.folder,
           id: track.id,
-          url: track.cover,
+          url: track.path,
           title: track.title ? track.title : track.fileName.replace(/.mp3/, ''),
         },
       }));
@@ -133,7 +133,7 @@ const firstTimeloadTracks = async () => {
         fileName: track.fileName,
         folder: track.folder,
         id: track.id,
-        url: track.cover,
+        url: track.path,
         title: track.title ? track.title : track.fileName.replace(/.mp3/, ''),
       }));
 

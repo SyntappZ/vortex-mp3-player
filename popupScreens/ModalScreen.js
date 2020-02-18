@@ -7,11 +7,9 @@ import {PlaylistContext} from '../context/PlaylistProvider';
 const ModalScreen = ({route, navigation}) => {
   const {isAlbumScreen, data} = route.params;
 
-
-
   // const [totalTime, setTotalTime] = useState(0)
 
-// console.log(data)
+  // console.log(data)
   // useEffect(() => {
 
   // }, [])
@@ -19,14 +17,15 @@ const ModalScreen = ({route, navigation}) => {
   const closeModal = () => {
     navigation.navigate('MainScreen');
   };
+ 
 
   return isAlbumScreen ? (
     <AlbumPlaylist
       tracklist={data.item.data}
       data={data.item}
-      artist={data.item.data[0].artist}
+      artist={data.item.data[0].item.artist}
       closeModal={closeModal}
-      // totalTime={totalTime}
+      tracksAmount={data.item.data.length}
       // playlistShuffler={playlistShuffler}
     />
   ) : (
@@ -34,7 +33,7 @@ const ModalScreen = ({route, navigation}) => {
       tracklist={data.item.data}
       data={data.item}
       closeModal={closeModal}
-      // totalTime={totalTime}
+      tracksAmount={data.item.data.length}
 
 
       // playlistShuffler={playlistShuffler}

@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 import {View, StyleSheet, Image, TouchableOpacity, Text} from 'react-native';
-// import {PlaylistContext} from '../context/PlaylistProvider';
+
 // import TrackPlayer from 'react-native-track-player/index';
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
@@ -29,11 +29,11 @@ class Track extends PureComponent {
 
 
   render() {
-    const {artist, title, id, duration} = this.props
+    const {artist, title, duration, trackId, getPlaylist} = this.props
 
     
 
-    let icon = <Entypo name={'note'} size={30} color={colorBlue} />
+   
 
     const colorBlue = '#2A56B9';
 
@@ -47,12 +47,13 @@ class Track extends PureComponent {
     // trackPlaying
     //   ? (icon = <Entypo name={'controller-play'} size={30} color={colorBlue} />)
     //   : (icon = <Entypo name={'note'} size={30} color={colorBlue} />);
+    let icon = <Entypo name={'note'} size={30} color={colorBlue} />
     return (
       <View style={styles.container}>
         <View style={styles.iconWrap}>{icon}</View>
 
         <View style={styles.textWrap}>
-          <TouchableOpacity style={styles.Touchable} onPress={this.addPlaylist}>
+          <TouchableOpacity style={styles.Touchable} onPress={() => getPlaylist(trackId)}>
             <Text numberOfLines={1} style={styles.title}>
               {title}
             </Text>

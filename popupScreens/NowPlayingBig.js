@@ -7,6 +7,7 @@ import {
   StatusBar,
   TouchableOpacity,
   View,
+  Modal,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonIcon from 'react-native-vector-icons/Ionicons';
@@ -14,10 +15,10 @@ import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 import ProgressBar from '../components/ProgressBar';
 import Gradient from '../components/Gradient';
 import TextTicker from 'react-native-text-ticker';
-import TrackPlayer from 'react-native-track-player/index';
+ import TrackPlayer from 'react-native-track-player/index';
 
 const NowPlayingBig = ({
-  modalHandler,
+ modalHandler,
   trackTitle,
   trackArt,
   trackArtist,
@@ -26,6 +27,9 @@ const NowPlayingBig = ({
 }) => {
   const playerState = TrackPlayer.usePlaybackState();
   const [startTime, setStartTime] = useState('0:00');
+  
+
+
   // console.log(trackArt)
   const darkBlue = '#062D83';
   const isPlaying = playerState === TrackPlayer.STATE_PLAYING;
@@ -45,7 +49,8 @@ const NowPlayingBig = ({
     : (image = <Icon name={'headphones-alt'} size={120} color={'white'} />);
 
   return (
-    <View style={styles.container}>
+  
+       <View style={styles.container}>
       <StatusBar backgroundColor={darkBlue} />
       <Gradient />
       <View style={styles.topbar}>
@@ -167,6 +172,9 @@ const NowPlayingBig = ({
         </TouchableOpacity>
       </View>
     </View>
+      
+  
+   
   );
 };
 

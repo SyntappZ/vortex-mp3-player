@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import TextTicker from 'react-native-text-ticker';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
+import {PlaylistContext} from '../context/PlaylistProvider';
 
 import {
   View,
@@ -20,6 +21,7 @@ import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 
 const screenWidth = Dimensions.get('window').width;
 export default class AlbumPlaylist extends Component {
+  static contextType = PlaylistContext
   constructor(props) {
     super(props);
 
@@ -50,6 +52,12 @@ export default class AlbumPlaylist extends Component {
     );
   }
 
+  getPlaylist = (trackId) => {
+    const { albumId } = this.props.data
+    const { playlistRetriever } = this.context
+    playlistRetriever(albumId, trackId, 'album')
+  }
+
   componentDidMount() {
     let total = 0
     const {tracklist} = this.props;
@@ -59,7 +67,7 @@ export default class AlbumPlaylist extends Component {
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;
-    return <Track artist={artist} duration={duration} id={id} title={title} />;
+    return <Track artist={artist} duration={duration} getPlaylist={this.getPlaylist} trackId={id} title={title} />;
   };
 
   durationConverter = millis => {
@@ -69,9 +77,9 @@ export default class AlbumPlaylist extends Component {
   };
 
   render() {
-    const {artwork, name, trackAmount} = this.props.data;
+    const {artwork, name, tracksAmount} = this.props.data;
     const {artist, closeModal} = this.props;
-
+     
     const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
 
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
@@ -120,7 +128,7 @@ export default class AlbumPlaylist extends Component {
               <Text numberOfLines={1} style={styles.author}>
                 {artist}
               </Text>
-              <Text style={styles.songs}>Songs: {trackAmount}</Text>
+              <Text style={styles.songs}>Songs: {tracksAmount}</Text>
               <View style={styles.timeWrap}>
                 <Icon name="clock" size={12} color="#ccc" />
                 <Text style={styles.totalTime}>{this.state.totalTime}</Text>

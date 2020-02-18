@@ -1,31 +1,34 @@
 import React, {createContext, useEffect, useState} from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
+import {getAsyncStorage} from '../data/AsyncStorage.js';
 
 export const PlaylistContext = createContext();
 
 const PlaylistProvider = ({children}) => {
   const [playlist, setPlaylist] = useState([]);
   const [trackToPlay, setTrackToPlay] = useState([]);
-  const [isAlbumScreen, setIsAlbumScreen] = useState('');
-  const [modalData, setModalData] = useState([]);
  
+  const [tracks, setTracks] = useState([])
+  const [folders, setFolders] = useState([])
+  const [albums, setAlbums] = useState([])
+  const [lastPlaylist, setLastPlaylist] = useState('')
+
   useEffect(() => {
-    loadPlaylistFromStorage();
+    loadTracksFromStorage()
   }, []);
 
-  const loadPlaylistFromStorage = async () => {
-    try {
-      const value = await AsyncStorage.getItem('playlist');
-
-      if (value !== null) {
-        const parsePlaylist = JSON.parse(value);
-        setPlaylist(parsePlaylist);
-        setTrackToPlay(parsePlaylist[0].id);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const loadTracksFromStorage = () => {
+    getAsyncStorage('tracks').then(data => {
+      setTracks(data.map(track => track.item))
+      
+    });
+    getAsyncStorage('albums').then(data => {
+      setAlbums(data.map(album => album.item.data.map(track => track.item)))
+      
+    });
+     getAsyncStorage('folders').then(data => {
+      setFolders(data.map(folder => folder.item.data.map(track => track.item)))
+    });
+  }
 
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
 
@@ -35,26 +38,44 @@ const PlaylistProvider = ({children}) => {
     setTrackToPlay(null);
    
   };
-  const updatePlaylist = (playlist, track) => {
-    setPlaylist(playlist);
-    setTrackToPlay(track.id);
-   
+
+  const playlistDeployer = (playlist, track) => {
+    
+    setPlaylist(playlist)
+    setTrackToPlay(track)
+  }
+
+  const playlistRetriever = (playlistId, trackId, type) => {
+    // console.log('last ' + lastPlaylist) 
+    // console.log('now ' + playlistId)
+    // let currentFolder, currentAlbum
+    // if(lastPlaylist == playlistId) {
+    //   currentFolder = null
+    //   currentAlbum = null
+    // }else{
+    // let currentAlbum = albums[playlistId]
+    //  let currentFolder = folders[playlistId]
+    //   setLastPlaylist(playlistId)
+    // }
+    
+    // switch(type) {
+    //   case 'all': playlistDeployer(tracks, trackId)
+    //   break;
+    //   case 'folder': playlistDeployer(currentFolder, trackId)
+    //   break;
+    //   case 'album': playlistDeployer(currentAlbum, trackId)
+    // }
   };
 
-  const getModalDetails = (isAlbumScreen, data) => {
-    setIsAlbumScreen(isAlbumScreen);
-    setModalData(data);
-  };
+  
 
   const data = {
     playlist: playlist,
     trackToPlay: trackToPlay,
-    updatePlaylist: updatePlaylist,
-    getModalDetails: getModalDetails,
-    isAlbumScreen: isAlbumScreen,
-    modalData: modalData,
+    playlistRetriever: playlistRetriever,
     playlistShuffler: playlistShuffler,
-    
+    playlistDeployer: playlistDeployer,
+   
   };
   return (
     <PlaylistContext.Provider value={data}>{children}</PlaylistContext.Provider>

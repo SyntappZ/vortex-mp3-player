@@ -10,7 +10,7 @@ const PlaylistConsumer = () => {
           <NowPlaying
             playlist={playlist}
             trackToPlay={trackToPlay}
-           
+         
           />
         );
       }}

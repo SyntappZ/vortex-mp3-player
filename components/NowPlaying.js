@@ -5,19 +5,16 @@ import {
   StyleSheet,
   Dimensions,
   Image,
+  Modal,
   TouchableOpacity,
 } from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import ProgressBar from './ProgressBar';
 import NowPlayingBig from '../popupScreens/NowPlayingBig';
-import ModalController from './ModalController';
 
 import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
-
-
 
 const NowPlaying = ({playlist, trackToPlay}) => {
   const playerState = TrackPlayer.usePlaybackState();
@@ -31,14 +28,16 @@ const NowPlaying = ({playlist, trackToPlay}) => {
   const modalHandler = () => setModalOpen(!modalOpen);
 
   // const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
-  const getCurrentTrack = async () => {
-    const trackId = await TrackPlayer.getCurrentTrack();
-    setCurrentTrack(trackId);
-  };
-  // useEffect(() => {
-  //   addPlaylistToQueue(playlist, trackToPlay);
-  //   getCurrentTrack();
-  // }, [playlist, trackToPlay]);
+  // const getCurrentTrack = async () => {
+  //   const trackId = await TrackPlayer.getCurrentTrack();
+  //   setCurrentTrack(trackId);
+  // };
+  
+    
+      
+    
+    //  getCurrentTrack();
+  
 
   const durationConverter = millis => {
     var minutes = Math.floor(millis / 60000);
@@ -46,94 +45,87 @@ const NowPlaying = ({playlist, trackToPlay}) => {
     return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   };
 
-  // useEffect(() => {
-  //   TrackPlayer.setupPlayer();
-  //   TrackPlayer.updateOptions({
-  //     stopWithApp: true,
-  //     capabilities: [
-  //       TrackPlayer.CAPABILITY_PLAY,
-  //       TrackPlayer.CAPABILITY_PAUSE,
-  //       TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-  //       TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-  //       TrackPlayer.CAPABILITY_STOP,
-  //     ],
-  //     compactCapabilities: [
-  //       TrackPlayer.CAPABILITY_PLAY,
-  //       TrackPlayer.CAPABILITY_PAUSE,
-  //     ],
-  //   });
+  useEffect(() => {
+    TrackPlayer.setupPlayer();
+    TrackPlayer.updateOptions({
+      stopWithApp: true,
+      capabilities: [
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_STOP,
+      ],
+      compactCapabilities: [
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_STOP,
+      ],
+    });
 
-  //   let onTrackChange = TrackPlayer.addEventListener(
-  //     'playback-track-changed',
-  //     async data => {
-  //       try {
-  //         const track = await TrackPlayer.getTrack(data.nextTrack);
-  //         setTrackArt('');
-  //         getCurrentTrack();
-  //         setTrackTitle(track.title);
-  //         convertImage(track.artwork);
-  //         setArtist(track.artist);
-  //         setDuration(durationConverter(track.duration));
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
+    let onTrackChange = TrackPlayer.addEventListener(
+      'playback-track-changed',
+      async data => {
+        try {
+          const track = await TrackPlayer.getTrack(data.nextTrack);
+          setTrackArt('');
+          // getCurrentTrack();
+          setTrackTitle(track.title);
+          setTrackArt(track.artwork);
+          setArtist(track.artist);
+          setDuration(track.duration);
+        } catch (error) {
+          console.log(error);
+        }
 
-  //       return () => {
-  //         onTrackChange.remove();
-  //         // AsyncStorage.setItem('playlist', JSON.stringify(playlist));
-  //       };
-  //     },
-  //   );
-  // }, []);
+        return () => {
+          onTrackChange.remove();
+        };
+      },
+    );
+  }, []);
 
   // const addPlaylistOnload = async (tracks, id) => {
-  //   const playlist = tracks.map(track => convertTrack(track));
+  //   const playlist = tracks.item;
 
-  //    await TrackPlayer.add(playlist);
-
+  //   await TrackPlayer.add(playlist);
   // };
 
-  const addPlaylistToQueue = async (tracks, id) => {
+   addPlaylistToQueue = async (tracks, id) => {
+    console.log(tracks)
     try {
-      const playlist = tracks.map(track => convertTrack(track));
-
-      if (playlist.length > 0) {
+     
         await TrackPlayer.reset();
-        await TrackPlayer.add(playlist);
+        await TrackPlayer.add(tracks);
+      
 
-        if (typeof id === 'string' || id instanceof String) {
-          TrackPlayer.skip(id);
-        }
-        await TrackPlayer.play();
-      }
+   
+        TrackPlayer.skip(id);
+      
+      TrackPlayer.play();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
-  const convertTrack = track => {
-    const {id, path, title, author, cover, fileName, duration} = track;
-    let trackTitle, trackAuthor;
+  // const convertTrack = track => {
+  //   const {id, url, title, author, cover, fileName, duration} = track;
 
-    title ? (trackTitle = title) : (trackTitle = fileName.replace(/.mp3/, ''));
-    author ? (trackAuthor = author) : (trackAuthor = 'Unknown');
-    return {
-      id: id,
-      url: path,
-      title: trackTitle,
-      artist: trackAuthor,
-      artwork: cover,
-      duration: duration,
-    };
-  };
-
-  const chosenPlaylistToPlay = (playlist, track) => {
-    addPlaylistToQueue(playlist, track.id);
-  };
-
-  // const trackPlayerController = (control) => {
-  //   playerControls(control)
+  //   return {
+  //     id: id,
+  //     url: path,
+  //     title: trackTitle,
+  //     artist: trackAuthor,
+  //     artwork: cover,
+  //     duration: duration,
+  //   };
   // };
+
+  const trackPlayerController = control => {
+    playerControls(control);
+  };
 
   const playerControls = control => {
     switch (control) {
@@ -157,14 +149,6 @@ const NowPlaying = ({playlist, trackToPlay}) => {
     }
   };
 
-  // const convertImage = async file => {
-  //   await ImgToBase64.getBase64String(file)
-  //     .then(base64String => {
-  //       setTrackArt(`data:image/jpg;base64, ${base64String} `);
-  //     })
-  //     .catch(err => console.log(err));
-  // };
-
   const image = <Image style={styles.image} source={{uri: trackArt}} />;
   const colorBlue = '#2A56B9';
 
@@ -174,20 +158,22 @@ const NowPlaying = ({playlist, trackToPlay}) => {
 
   return (
     <View style={styles.container}>
-      <ModalController
-        modalOpen={modalOpen}
-        modalHandler={modalHandler}
-        content={
-          <NowPlayingBig
-            modalHandler={modalHandler}
-            trackTitle={trackTitle}
-            trackArtist={trackArtist}
-            trackArt={trackArt}
-            playerControls={playerControls}
-            duration={duration}
-          />
-        }
-      />
+      <Modal
+        animationType="fade"
+        transparent={false}
+        visible={modalOpen}
+        onRequestClose={() => {
+          modalHandler();
+        }}>
+        <NowPlayingBig
+          modalHandler={modalHandler}
+          trackTitle={trackTitle}
+          trackArtist={trackArtist}
+          trackArt={trackArt}
+          playerControls={playerControls}
+          duration={duration}
+        />
+      </Modal>
       <View style={styles.imageWrap}>
         <TouchableOpacity onPress={modalHandler} style={styles.touchableImage}>
           {trackArt ? image : defaultImage}
