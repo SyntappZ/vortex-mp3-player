@@ -27,6 +27,7 @@ export default class FolderPlaylist extends Component {
         this.props.tracklist,
       ),
       totalTime: 0,
+      isShuffled: false
     };
 
     this.rowRenderer = this.rowRenderer.bind(this);
@@ -72,11 +73,18 @@ export default class FolderPlaylist extends Component {
     const { playlistRetriever } = this.context
     playlistRetriever(folderId, trackId, 'folder')
   }
+  shuffle = () => {
+    this.setState({isShuffled: !this.state.isShuffled})
+    const { playlistShuffler } = this.context
+    const { folderId } = this.props.data
+    playlistShuffler(folderId, 'folder', this.state.isShuffled)
+  }
 
   render() {
     const {name, tracksAmount} = this.props.data;
     const {closeModal} = this.props;
-    console.log(name)
+    const { isShuffled } = this.state
+    
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor="#062D83" />
@@ -105,12 +113,12 @@ export default class FolderPlaylist extends Component {
           </View>
           <View style={styles.information}>
             <View style={styles.backButton}>
-              <TouchableOpacity style={styles.touchable}>
+              <TouchableOpacity onPress={this.shuffle} style={styles.touchable}>
                 <SimpleLineIcon
                   style={styles.backIcon}
                   name={'shuffle'}
                   size={20}
-                  color="#fff"
+                  color={isShuffled ? "#fff" : "#aaa"}
                 />
               </TouchableOpacity>
               <TouchableOpacity
@@ -153,6 +161,7 @@ const darkBlue = '#062D83';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 70
   },
 
   top: {

@@ -8,6 +8,7 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
+import {getAsyncStorage} from '../data/AsyncStorage.js';
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import ProgressBar from './ProgressBar';
@@ -26,18 +27,25 @@ const NowPlaying = ({playlist, trackToPlay}) => {
   const [duration, setDuration] = useState('');
   const [currentTrack, setCurrentTrack] = useState('');
   const modalHandler = () => setModalOpen(!modalOpen);
-
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
   // const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
   // const getCurrentTrack = async () => {
   //   const trackId = await TrackPlayer.getCurrentTrack();
   //   setCurrentTrack(trackId);
   // };
-  
-    
+
+  useEffect(() => {
+    if (isFirstLoad) {
+      getAsyncStorage('lastPlayed').then(data => {
       
-    
-    //  getCurrentTrack();
-  
+        addPlaylistToQueue(data, data[0].id);
+      });
+    } else {
+      addPlaylistToQueue(playlist, trackToPlay);
+    }
+  }, [playlist, trackToPlay]);
+
+  //  getCurrentTrack();
 
   const durationConverter = millis => {
     var minutes = Math.floor(millis / 60000);
@@ -93,21 +101,35 @@ const NowPlaying = ({playlist, trackToPlay}) => {
   //   await TrackPlayer.add(playlist);
   // };
 
-   addPlaylistToQueue = async (tracks, id) => {
-    console.log(tracks)
-    try {
-     
-        await TrackPlayer.reset();
-        await TrackPlayer.add(tracks);
-      
-
-   
-        TrackPlayer.skip(id);
-      
-      TrackPlayer.play();
-    } catch (error) {
-      console.error(error);
+  addPlaylistToQueue = async (tracks, id) => {
+    let playlist;
+    if (tracks) {
+      playlist = [...tracks];
     }
+    if (isFirstLoad) {
+      try {
+        TrackPlayer.add(playlist);
+        TrackPlayer.skip(id);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
+        if (tracks) {
+          await TrackPlayer.reset();
+          await TrackPlayer.add(playlist);
+        }
+
+        if (id) {
+          TrackPlayer.skip(id);
+        }
+
+        TrackPlayer.play();
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    setIsFirstLoad(false);
   };
 
   // const convertTrack = track => {

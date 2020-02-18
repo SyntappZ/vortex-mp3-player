@@ -15,7 +15,7 @@ class Folder extends PureComponent {
 
   modalHandler = () => {
     const {folderId, openModal} = this.props;
-    console.log(folderId)
+    
     openModal(folderId)
   }
 

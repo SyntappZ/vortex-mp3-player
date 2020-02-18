@@ -76,6 +76,13 @@ export default class AlbumPlaylist extends Component {
     return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   };
 
+  shuffle = () => {
+    this.setState({isShuffled: !this.state.isShuffled})
+    const { playlistShuffler } = this.context
+    const { albumId } = this.props.data
+    playlistShuffler(albumId, 'album', this.state.isShuffled)
+  }
+
   render() {
     const {artwork, name, tracksAmount} = this.props.data;
     const {artist, closeModal} = this.props;
@@ -83,7 +90,7 @@ export default class AlbumPlaylist extends Component {
     const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
 
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
-
+    const { isShuffled } = this.state
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor="#062D83" />
@@ -96,12 +103,12 @@ export default class AlbumPlaylist extends Component {
           </View>
           <View style={styles.information}>
             <View style={styles.backButton}>
-              <TouchableOpacity style={styles.touchable}>
+              <TouchableOpacity onPress={this.shuffle} style={styles.touchable}>
                 <SimpleLineIcon
                   style={styles.backIcon}
                   name={'shuffle'}
                   size={20}
-                  color="#fff"
+                  color={isShuffled ? "#fff" : "#aaa"}
                 />
               </TouchableOpacity>
               <TouchableOpacity
@@ -159,6 +166,7 @@ const colorDarkGrey = '#222';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 70
   },
 
   top: {

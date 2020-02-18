@@ -6,13 +6,7 @@ const PlaylistConsumer = () => {
   return (
     <PlaylistContext.Consumer>
       {({playlist, trackToPlay}) => {
-        return (
-          <NowPlaying
-            playlist={playlist}
-            trackToPlay={trackToPlay}
-         
-          />
-        );
+        return <NowPlaying playlist={playlist} trackToPlay={trackToPlay} />;
       }}
     </PlaylistContext.Consumer>
   );

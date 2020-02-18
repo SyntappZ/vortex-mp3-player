@@ -4,7 +4,7 @@
  * @flow
  */
 
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -12,7 +12,7 @@ import ModalScreen from './popupScreens/ModalScreen';
 import PlaylistProvider from './context/PlaylistProvider';
 import PlaylistConsumer from './components/PlaylistConsumer';
 import SwipeNavigator from './navigation/SwipeNavigator';
-import {getPermissions} from './data/MusicDataProvider.js';
+import {askPermissions} from './data/MusicDataProvider.js';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 
 const colorBlack = '#0D0D0D';
@@ -31,8 +31,11 @@ const MyTheme = {
 };
 
 const App = () => {
+
+
+
   useEffect(() => {
-    getPermissions();
+   
   }, []);
 
   return (
@@ -43,6 +46,7 @@ const App = () => {
             name="MainScreen"
             component={SwipeNavigator}
             options={{headerShown: false}}
+            
           />
           <Stack.Screen
             name="Modal"

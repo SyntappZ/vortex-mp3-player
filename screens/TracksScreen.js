@@ -1,14 +1,28 @@
 import React, {Component, useState, useEffect} from 'react';
 
-import {View, StyleSheet, Dimensions } from 'react-native';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import {getAsyncStorage} from '../data/AsyncStorage.js';
 import Track from '../components/Track';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
- import {PlaylistContext} from '../context/PlaylistProvider';
+import {PlaylistContext} from '../context/PlaylistProvider';
 const screenWidth = Dimensions.get('window').width;
 
 export default class TracksScreen extends Component {
-  static contextType = PlaylistContext
+  static contextType = PlaylistContext;
+
+  getPlaylist = trackId => {
+    const {playlistRetriever} = this.context;
+    playlistRetriever('1000000', trackId, 'all');
+  };
+
+  render() {
+    const { isFirstLoad } = this.context
+
+  return <List isFirstLoad={isFirstLoad} getPlaylist={this.getPlaylist}/>;
+  }
+}
+
+class List extends Component {
   constructor(props) {
     super(props);
 
@@ -37,15 +51,19 @@ export default class TracksScreen extends Component {
       },
     );
   }
-  getPlaylist = trackId => {
-    const { playlistRetriever } = this.context
-    playlistRetriever(1000000, trackId, 'all')
-
-  }
+ 
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;
-    return <Track artist={artist} duration={duration} trackId={id} getPlaylist={this.getPlaylist} title={title} />;
+    return (
+      <Track
+        artist={artist}
+        duration={duration}
+        trackId={id}
+        getPlaylist={this.props.getPlaylist}
+        title={title}
+      />
+    );
   };
   componentDidMount() {
     getAsyncStorage('tracks').then(data => {
@@ -53,6 +71,17 @@ export default class TracksScreen extends Component {
         tracks: this.state.tracks.cloneWithRows(data),
       });
     });
+  }
+
+
+  componentDidUpdate(prevProps) {
+    if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
+      getAsyncStorage('tracks').then(data => {
+        this.setState({
+          tracks: this.state.tracks.cloneWithRows(data),
+        });
+      });
+    }
   }
 
   render() {
@@ -64,17 +93,16 @@ export default class TracksScreen extends Component {
           rowRenderer={this.rowRenderer}
           dataProvider={tracks}
           layoutProvider={this.layoutProvider}
-          
         />
       </View>
     );
   }
 }
-
 const colorLightBlack = '#131313';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingBottom: 70,
     // backgroundColor: colorLightBlack,
   },
 });

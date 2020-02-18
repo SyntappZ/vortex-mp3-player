@@ -15,7 +15,8 @@ const colorLightBlack = '#131313';
     const styles = StyleSheet.create({
       container: {
         flex: 1,
-        backgroundColor: 'transparent'
+        backgroundColor: 'transparent',
+        paddingBottom: 70
       },
     });
 

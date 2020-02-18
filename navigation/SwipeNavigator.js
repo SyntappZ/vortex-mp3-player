@@ -6,6 +6,8 @@ import FavoritesScreen from '../screens/FavoritesScreen';
 import AlbumsScreen from '../screens/AlbumsScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
+import {askPermissions} from '../data/MusicDataProvider.js';
+
 import {
   SafeAreaView,
   StyleSheet,
@@ -53,6 +55,13 @@ const Header = () => {
 };
 const Tab = createMaterialTopTabNavigator();
 export default class SwipeNavigator extends Component {
+  constructor(props) {
+    super(props)
+  }
+
+  componentDidMount() {
+   
+  }
   render() {
     const options = {
       activeTintColor: colorLightBlue,
@@ -73,7 +82,7 @@ export default class SwipeNavigator extends Component {
         <Header />
         <View style={styles.screens}>
           <Tab.Navigator tabBarOptions={options}>
-            <Tab.Screen name="Albums" component={AlbumsScreen} />
+            <Tab.Screen name="Albums" component={AlbumsScreen} jeff={'hello im jeffffffffffff'} />
             <Tab.Screen name="Folders" component={FoldersScreen} />
             <Tab.Screen name="Songs" component={TracksScreen} />
             <Tab.Screen name="Favorites" component={FavoritesScreen} />
