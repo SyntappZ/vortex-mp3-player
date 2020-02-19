@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import TextTicker from 'react-native-text-ticker';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
-import {PlaylistContext} from '../context/PlaylistProvider';
+import {PlayerContext} from '../player/PlayerFunctions';
 
 import {
   View,
@@ -18,7 +18,7 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 const screenWidth = Dimensions.get('window').width;
 export default class FolderPlaylist extends Component {
-  static contextType = PlaylistContext
+  static contextType = PlayerContext
   constructor(props) {
     super(props);
 
@@ -70,13 +70,16 @@ export default class FolderPlaylist extends Component {
 
   getPlaylist = (trackId) => {
     const { folderId } = this.props.data
-    const { playlistRetriever } = this.context
-    playlistRetriever(folderId, trackId, 'folder')
+    const { playlistFromTracks } = this.context
+    playlistFromTracks(folderId, trackId, 'folder')
   }
+
+ 
+
   shuffle = () => {
-    const { playlistShuffler } = this.context
+    const { oneTimeShuffle } = this.context
     const { folderId } = this.props.data
-    playlistShuffler(folderId, 'folder')
+    oneTimeShuffle(folderId, 'folder')
   }
 
   render() {

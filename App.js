@@ -9,7 +9,7 @@ import React, {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import ModalScreen from './popupScreens/ModalScreen';
-import PlaylistProvider from './context/PlaylistProvider';
+import PlayerFunctions from './player/PlayerFunctions';
 import PlaylistConsumer from './player/PlaylistConsumer';
 import SwipeNavigator from './navigation/SwipeNavigator';
 import {askPermissions} from './data/MusicDataProvider.js';
@@ -31,22 +31,16 @@ const MyTheme = {
 };
 
 const App = () => {
-
-
-
-  useEffect(() => {
-   
-  }, []);
+  useEffect(() => {}, []);
 
   return (
-    <PlaylistProvider>
+    <PlayerFunctions>
       <NavigationContainer theme={MyTheme}>
         <Stack.Navigator mode="modal" initialRouteName="MainScreen">
           <Stack.Screen
             name="MainScreen"
             component={SwipeNavigator}
             options={{headerShown: false}}
-            
           />
           <Stack.Screen
             name="Modal"
@@ -56,7 +50,7 @@ const App = () => {
         </Stack.Navigator>
       </NavigationContainer>
       <PlaylistConsumer />
-    </PlaylistProvider>
+    </PlayerFunctions>
   );
 };
 

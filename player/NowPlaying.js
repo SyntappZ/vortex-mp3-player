@@ -17,7 +17,7 @@ import NowPlayingBig from '../popupScreens/NowPlayingBig';
 import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
 
-const NowPlaying = ({playlist, trackToPlay, currentAlbum}) => {
+const NowPlaying = ({isShuffled, shuffleUpComingPlaylist}) => {
   const playerState = TrackPlayer.usePlaybackState();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -29,23 +29,6 @@ const NowPlaying = ({playlist, trackToPlay, currentAlbum}) => {
   const [albumPlaying, setAlbumPlaying] = useState('');
   const modalHandler = () => setModalOpen(!modalOpen);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-  // const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
-  // const getCurrentTrack = async () => {
-  //   const trackId = await TrackPlayer.getCurrentTrack();
-  //   setCurrentTrack(trackId);
-  // };
-
-  useEffect(() => {
-    if (isFirstLoad) {
-      getAsyncStorage('lastPlayed').then(data => {
-        addPlaylistOnload(data, data[0].id);
-      });
-    } else {
-      addPlaylistToQueue(playlist, trackToPlay);
-    }
-  }, [playlist, trackToPlay]);
-
-  //  getCurrentTrack();
 
   const durationConverter = millis => {
     var minutes = Math.floor(millis / 60000);
@@ -79,7 +62,7 @@ const NowPlaying = ({playlist, trackToPlay, currentAlbum}) => {
         try {
           const track = await TrackPlayer.getTrack(data.nextTrack);
           setTrackArt('');
-          // getCurrentTrack();
+
           setTrackTitle(track.title);
           setTrackArt(track.artwork);
           setArtist(track.artist);
@@ -94,64 +77,6 @@ const NowPlaying = ({playlist, trackToPlay, currentAlbum}) => {
       },
     );
   }, []);
-
-  const addPlaylistOnload = async (tracks, id) => {
-    let playlist;
-    if (tracks) {
-      playlist = [...tracks];
-    }
-
-    try {
-      await TrackPlayer.add(playlist);
-      TrackPlayer.skip(id);
-    } catch (error) {
-      console.error(error);
-    }
-    setIsFirstLoad(false);
-  };
-
-  addPlaylistToQueue = async (tracks, id) => {
-    let playlist;
-    if (tracks) {
-      playlist = [...tracks];
-    }
-
-    //TrackPlayer.removeUpcomingTracks()
-
-    try {
-      if (albumPlaying !== currentAlbum) {
-        console.log('added')
-        await TrackPlayer.reset();
-        await TrackPlayer.add(playlist);
-      }
-
-      if (id) {
-        TrackPlayer.skip(id);
-      }
-
-      TrackPlayer.play();
-      setAlbumPlaying(currentAlbum);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  // const convertTrack = track => {
-  //   const {id, url, title, author, cover, fileName, duration} = track;
-
-  //   return {
-  //     id: id,
-  //     url: path,
-  //     title: trackTitle,
-  //     artist: trackAuthor,
-  //     artwork: cover,
-  //     duration: duration,
-  //   };
-  // };
-
-  const trackPlayerController = control => {
-    playerControls(control);
-  };
 
   const playerControls = control => {
     switch (control) {
@@ -198,6 +123,8 @@ const NowPlaying = ({playlist, trackToPlay, currentAlbum}) => {
           trackArt={trackArt}
           playerControls={playerControls}
           duration={duration}
+          isShuffled={isShuffled}
+          shuffleUpComingPlaylist={shuffleUpComingPlaylist}
         />
       </Modal>
       <View style={styles.imageWrap}>

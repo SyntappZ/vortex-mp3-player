@@ -2,7 +2,7 @@ import React, {Component, useState, useEffect} from 'react';
 import {View, StyleSheet} from 'react-native';
 import AlbumPlaylist from './AlbumPlaylist';
 import FolderPlaylist from './FolderPlaylist';
-import {PlaylistContext} from '../context/PlaylistProvider';
+
 
 const ModalScreen = ({route, navigation}) => {
   const {isAlbumScreen, data} = route.params;

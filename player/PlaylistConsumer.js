@@ -1,20 +1,19 @@
 import React from 'react';
-import {PlaylistContext} from '../context/PlaylistProvider';
+import {PlayerContext} from './PlayerFunctions';
 import NowPlaying from './NowPlaying';
 
 const PlaylistConsumer = () => {
   return (
-    <PlaylistContext.Consumer>
-      {({playlist, trackToPlay, currentAlbum}) => {
+    <PlayerContext.Consumer>
+      {({isShuffled, shuffleUpComingPlaylist}) => {
         return (
           <NowPlaying
-            playlist={playlist}
-            trackToPlay={trackToPlay}
-            currentAlbum={currentAlbum}
+          isShuffled={isShuffled}
+          shuffleUpComingPlaylist={shuffleUpComingPlaylist}
           />
         );
       }}
-    </PlaylistContext.Consumer>
+    </PlayerContext.Consumer>
   );
 };
 

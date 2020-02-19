@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import TextTicker from 'react-native-text-ticker';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
-import {PlaylistContext} from '../context/PlaylistProvider';
+import {PlayerContext} from '../player/PlayerFunctions';
 
 import {
   View,
@@ -21,7 +21,7 @@ import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 
 const screenWidth = Dimensions.get('window').width;
 export default class AlbumPlaylist extends Component {
-  static contextType = PlaylistContext;
+  static contextType = PlayerContext;
   constructor(props) {
     super(props);
 
@@ -30,6 +30,7 @@ export default class AlbumPlaylist extends Component {
         this.props.tracklist,
       ),
       totalTime: 0,
+      isShuffled: false
     };
 
     this.rowRenderer = this.rowRenderer.bind(this);
@@ -54,8 +55,9 @@ export default class AlbumPlaylist extends Component {
 
   getPlaylist = trackId => {
     const {albumId} = this.props.data;
-    const {playlistRetriever} = this.context;
-    playlistRetriever(albumId, trackId, 'album');
+    const {playlistFromTracks} = this.context;
+    playlistFromTracks(albumId, trackId, 'album', false);
+    
   };
 
   componentDidMount() {
@@ -85,15 +87,17 @@ export default class AlbumPlaylist extends Component {
   };
 
   shuffle = () => {
-    const {playlistShuffler} = this.context;
+    
+    const {oneTimeShuffle} = this.context;
     const {albumId} = this.props.data;
-    playlistShuffler(albumId, 'album');
+    oneTimeShuffle(albumId, 'album', true);
+    
   };
 
   render() {
     const {artwork, name, tracksAmount} = this.props.data;
     const {artist, closeModal} = this.props;
-    const {tracks} = this.state;
+    const {tracks, isShuffled} = this.state;
     const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
 
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;

@@ -3,11 +3,11 @@ import {View, StyleSheet, Dimensions, FlatList} from 'react-native';
 import Folder from '../components/Folder';
 import {getAsyncStorage} from '../data/AsyncStorage.js';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
-import {PlaylistContext} from '../context/PlaylistProvider';
+import {PlayerContext} from '../player/PlayerFunctions';
 const screenWidth = Dimensions.get('window').width;
 
 export default class FoldersScreen extends Component {
-  static contextType = PlaylistContext;
+  static contextType = PlayerContext;
 _isMounted = false
 
  

@@ -13,7 +13,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {getAsyncStorage} from '../data/AsyncStorage.js';
 import Album from '../components/Album';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
-import {PlaylistContext} from '../context/PlaylistProvider';
+import {PlayerContext} from '../player/PlayerFunctions';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -24,7 +24,7 @@ const ViewTypes = {
 };
 
 export default class AlbumsScreen extends Component {
-  static contextType = PlaylistContext;
+  static contextType = PlayerContext;
   _isMounted = false;
   render() {
     const {isFirstLoad} = this.context;

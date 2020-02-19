@@ -24,13 +24,17 @@ const NowPlayingBig = ({
   trackArtist,
   playerControls,
   duration,
+  isShuffled,
+  shuffleUpComingPlaylist
 }) => {
   const playerState = TrackPlayer.usePlaybackState();
   const [startTime, setStartTime] = useState('0:00');
   
+const shuffleToggle = () => {
+  shuffleUpComingPlaylist(!isShuffled)
+}
 
-
-  // console.log(trackArt)
+ 
   const darkBlue = '#062D83';
   const isPlaying = playerState === TrackPlayer.STATE_PLAYING;
   let image;
@@ -82,12 +86,12 @@ const NowPlayingBig = ({
       </View>
 
       <View style={styles.repeatSection}>
-        <TouchableOpacity style={styles.shuffle}>
+        <TouchableOpacity onPress={shuffleToggle} style={styles.shuffle}>
           <SimpleLineIcon
             style={styles.shuffleIcon}
             name="shuffle"
             size={20}
-            color="#fff"
+            color={isShuffled ? "#fff" : '#555'}
           />
         </TouchableOpacity>
 
@@ -100,7 +104,7 @@ const NowPlayingBig = ({
             style={styles.repeatIcon}
             name="loop"
             size={20}
-            color="#fff"
+            color={"#555"}
           />
         </TouchableOpacity>
       </View>
@@ -266,18 +270,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  shuffleIcon: {
-    color: '#555',
-  },
+ 
   repeat: {
     flex: 2,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  repeatIcon: {
-    color: '#555',
-  },
+ 
   favorite: {
     flex: 4,
     height: '100%',

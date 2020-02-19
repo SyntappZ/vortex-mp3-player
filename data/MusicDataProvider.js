@@ -2,7 +2,7 @@ import {getTrackData} from './TrackData.js';
 import {PermissionsAndroid} from 'react-native';
 import {setAsyncStorage} from './AsyncStorage.js';
 import AsyncStorage from '@react-native-community/async-storage';
-import { loadTracks } from '../context/PlaylistProvider.js'
+
 
 export const askPermissions = () => {
  return new Promise((resolve) => {
