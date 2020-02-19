@@ -23,6 +23,7 @@ export default class TracksScreen extends Component {
 }
 
 class List extends Component {
+  _isMounted = false
   constructor(props) {
     super(props);
 
@@ -66,10 +67,14 @@ class List extends Component {
     );
   };
   componentDidMount() {
+    this._isMounted = true
     getAsyncStorage('tracks').then(data => {
-      this.setState({
-        tracks: this.state.tracks.cloneWithRows(data),
-      });
+      if(this._isMounted) {
+        this.setState({
+          tracks: this.state.tracks.cloneWithRows(data),
+        });
+      }
+      
     });
   }
 
@@ -77,15 +82,21 @@ class List extends Component {
   componentDidUpdate(prevProps) {
     if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
       getAsyncStorage('tracks').then(data => {
-        this.setState({
-          tracks: this.state.tracks.cloneWithRows(data),
-        });
+        if(this._isMounted) {
+          this.setState({
+            tracks: this.state.tracks.cloneWithRows(data),
+          });
+        }
       });
     }
+  }
+  componentWillUnmount() {
+    this._isMounted = false
   }
 
   render() {
     const {tracks} = this.state;
+    
     return (
       <View style={styles.container}>
         <RecyclerListView

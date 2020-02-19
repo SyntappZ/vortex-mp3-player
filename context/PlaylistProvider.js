@@ -8,7 +8,7 @@ const PlaylistProvider = ({children}) => {
   const [playlist, setPlaylist] = useState([]);
   const [trackToPlay, setTrackToPlay] = useState([]);
   const [lastPlaylist, setLastPlaylist] = useState('');
-
+  const [currentAlbum, setCurrentAlbum] = useState('')
   const [tracks, setTracks] = useState([]);
   const [folders, setFolders] = useState([]);
   const [albums, setAlbums] = useState([]);
@@ -41,45 +41,35 @@ const PlaylistProvider = ({children}) => {
 
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
 
-  const playlistShuffler = (id, type, isShuffled) => {
-    let shuffledArray;
-    if (type === 'album') {
-      shuffledArray = shuffle(albums[id]);
+  const playlistShuffler = (id, type) => {
+    let shuffledArray, shuffleId, folder = [...folders], album = [...albums]
 
-      // shuffledArray = albums[id]
+    if (type === 'album') {
+      shuffledArray = shuffle(album[id]);
+      shuffleId = `shuffleAlbum${id}`
     } else if (type === 'folder') {
-      if (isShuffled) {
-        shuffledArray = shuffle(folders[id]);
-      } else {
-        shuffledArray = folders[id];
-      }
+      shuffledArray = shuffle(folder[id]);
+      shuffleId = `shuffleFolder${id}`
     }
 
     setPlaylist(shuffledArray);
     setTrackToPlay(null);
+    setCurrentAlbum(shuffleId)
   };
 
-  const playlistDeployer = (playlist, track) => {
+  const playlistDeployer = (playlist, track, playing) => {
     setPlaylist(playlist);
     setTrackToPlay(track);
+    setCurrentAlbum(playing)
   };
 
-  const playlistRetriever = (playlistId, trackId, type) => {
+  const playlistRetriever = (id, trackId, type) => {
     if (type === 'all') {
-      playlistId === lastPlaylist
-        ? playlistDeployer(null, trackId)
-        : playlistDeployer(tracks, trackId);
-      setLastPlaylist(playlistId);
+      playlistDeployer(tracks, trackId, 'all');
     } else if (type === 'folder') {
-      `folder${playlistId}` === lastPlaylist
-        ? playlistDeployer(null, trackId)
-        : playlistDeployer(folders[playlistId], trackId);
-      setLastPlaylist(`folder${playlistId}`);
+      playlistDeployer(folders[id], trackId, `folder${id}`);
     } else {
-      `album${playlistId}` === lastPlaylist
-        ? playlistDeployer(null, trackId)
-        : playlistDeployer(albums[playlistId], trackId);
-      setLastPlaylist(`album${playlistId}`);
+      playlistDeployer(albums[id], trackId, `album${id}`);
     }
   };
 
@@ -89,6 +79,7 @@ const PlaylistProvider = ({children}) => {
     playlistRetriever: playlistRetriever,
     playlistShuffler: playlistShuffler,
     isFirstLoad: isFirstLoad,
+    currentAlbum: currentAlbum
   };
   return (
     <PlaylistContext.Provider value={data}>{children}</PlaylistContext.Provider>

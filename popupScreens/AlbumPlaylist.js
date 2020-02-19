@@ -21,7 +21,7 @@ import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 
 const screenWidth = Dimensions.get('window').width;
 export default class AlbumPlaylist extends Component {
-  static contextType = PlaylistContext
+  static contextType = PlaylistContext;
   constructor(props) {
     super(props);
 
@@ -52,22 +52,30 @@ export default class AlbumPlaylist extends Component {
     );
   }
 
-  getPlaylist = (trackId) => {
-    const { albumId } = this.props.data
-    const { playlistRetriever } = this.context
-    playlistRetriever(albumId, trackId, 'album')
-  }
+  getPlaylist = trackId => {
+    const {albumId} = this.props.data;
+    const {playlistRetriever} = this.context;
+    playlistRetriever(albumId, trackId, 'album');
+  };
 
   componentDidMount() {
-    let total = 0
+    let total = 0;
     const {tracklist} = this.props;
-    tracklist.forEach(track => total += Number(track.item.time));
-     this.setState({totalTime: this.durationConverter(total)})
+    tracklist.forEach(track => (total += Number(track.item.time)));
+    this.setState({totalTime: this.durationConverter(total)});
   }
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;
-    return <Track artist={artist} duration={duration} getPlaylist={this.getPlaylist} trackId={id} title={title} />;
+    return (
+      <Track
+        artist={artist}
+        duration={duration}
+        getPlaylist={this.getPlaylist}
+        trackId={id}
+        title={title}
+      />
+    );
   };
 
   durationConverter = millis => {
@@ -77,20 +85,19 @@ export default class AlbumPlaylist extends Component {
   };
 
   shuffle = () => {
-    this.setState({isShuffled: !this.state.isShuffled})
-    const { playlistShuffler } = this.context
-    const { albumId } = this.props.data
-    playlistShuffler(albumId, 'album', this.state.isShuffled)
-  }
+    const {playlistShuffler} = this.context;
+    const {albumId} = this.props.data;
+    playlistShuffler(albumId, 'album');
+  };
 
   render() {
     const {artwork, name, tracksAmount} = this.props.data;
     const {artist, closeModal} = this.props;
-     
+    const {tracks} = this.state;
     const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
 
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
-    const { isShuffled } = this.state
+
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor="#062D83" />
@@ -108,7 +115,7 @@ export default class AlbumPlaylist extends Component {
                   style={styles.backIcon}
                   name={'shuffle'}
                   size={20}
-                  color={isShuffled ? "#fff" : "#aaa"}
+                  color={'#fff'}
                 />
               </TouchableOpacity>
               <TouchableOpacity
@@ -148,7 +155,7 @@ export default class AlbumPlaylist extends Component {
           <RecyclerListView
             style={{flex: 1}}
             rowRenderer={this.rowRenderer}
-            dataProvider={this.state.tracks}
+            dataProvider={tracks}
             layoutProvider={this.layoutProvider}
           />
         </View>
@@ -166,7 +173,7 @@ const colorDarkGrey = '#222';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 70
+    paddingBottom: 70,
   },
 
   top: {

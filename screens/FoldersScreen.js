@@ -8,7 +8,7 @@ const screenWidth = Dimensions.get('window').width;
 
 export default class FoldersScreen extends Component {
   static contextType = PlaylistContext;
-
+_isMounted = false
 
  
 
@@ -49,21 +49,30 @@ class List extends Component {
   }
 
   componentDidMount() {
+    this._isMounted = true
     getAsyncStorage('folders').then(data => {
-      this.setState({
-        folders: this.state.folders.cloneWithRows(data),
-      });
+      if(this._isMounted) {
+        this.setState({
+          folders: this.state.folders.cloneWithRows(data),
+        });
+      }
     });
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
       getAsyncStorage('folders').then(data => {
-        this.setState({
-          folders: this.state.folders.cloneWithRows(data),
-        });
+        if(this._isMounted) {
+          this.setState({
+            folders: this.state.folders.cloneWithRows(data),
+          });
+        }
       });
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false
   }
 
  

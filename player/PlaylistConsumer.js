@@ -5,8 +5,14 @@ import NowPlaying from './NowPlaying';
 const PlaylistConsumer = () => {
   return (
     <PlaylistContext.Consumer>
-      {({playlist, trackToPlay}) => {
-        return <NowPlaying playlist={playlist} trackToPlay={trackToPlay} />;
+      {({playlist, trackToPlay, currentAlbum}) => {
+        return (
+          <NowPlaying
+            playlist={playlist}
+            trackToPlay={trackToPlay}
+            currentAlbum={currentAlbum}
+          />
+        );
       }}
     </PlaylistContext.Consumer>
   );

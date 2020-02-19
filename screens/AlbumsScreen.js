@@ -25,10 +25,12 @@ const ViewTypes = {
 
 export default class AlbumsScreen extends Component {
   static contextType = PlaylistContext;
-
+  _isMounted = false;
   render() {
     const {isFirstLoad} = this.context;
-    return <List isFirstLoad={isFirstLoad} navigation={this.props.navigation} />;
+    return (
+      <List isFirstLoad={isFirstLoad} navigation={this.props.navigation} />
+    );
   }
 }
 
@@ -71,21 +73,30 @@ class List extends Component {
   }
 
   componentDidMount() {
+    this._isMounted = true;
     getAsyncStorage('albums').then(data => {
-      this.setState({
-        albums: this.state.albums.cloneWithRows(data),
-      });
+      if (this._isMounted) {
+        this.setState({
+          albums: this.state.albums.cloneWithRows(data),
+        });
+      }
     });
   }
 
   componentDidUpdate(prevProps) {
     if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
       getAsyncStorage('albums').then(data => {
-        this.setState({
-          albums: this.state.albums.cloneWithRows(data),
-        });
+        if (this._isMounted) {
+          this.setState({
+            albums: this.state.albums.cloneWithRows(data),
+          });
+        }
       });
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   openModal = albumId => {
@@ -130,6 +141,7 @@ class List extends Component {
   }
   render() {
     const {albums} = this.state;
+    
     return (
       <View style={styles.container}>
         <RecyclerListView

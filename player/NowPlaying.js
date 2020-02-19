@@ -11,13 +11,13 @@ import {
 import {getAsyncStorage} from '../data/AsyncStorage.js';
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
-import ProgressBar from './ProgressBar';
+import ProgressBar from '../components/ProgressBar';
 import NowPlayingBig from '../popupScreens/NowPlayingBig';
 
 import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
 
-const NowPlaying = ({playlist, trackToPlay}) => {
+const NowPlaying = ({playlist, trackToPlay, currentAlbum}) => {
   const playerState = TrackPlayer.usePlaybackState();
 
   const [modalOpen, setModalOpen] = useState(false);
@@ -26,6 +26,7 @@ const NowPlaying = ({playlist, trackToPlay}) => {
   const [trackArtist, setArtist] = useState('');
   const [duration, setDuration] = useState('');
   const [currentTrack, setCurrentTrack] = useState('');
+  const [albumPlaying, setAlbumPlaying] = useState('');
   const modalHandler = () => setModalOpen(!modalOpen);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   // const shuffle = (arr) => arr.sort(() => Math.random() - 0.5);
@@ -37,8 +38,7 @@ const NowPlaying = ({playlist, trackToPlay}) => {
   useEffect(() => {
     if (isFirstLoad) {
       getAsyncStorage('lastPlayed').then(data => {
-      
-        addPlaylistToQueue(data, data[0].id);
+        addPlaylistOnload(data, data[0].id);
       });
     } else {
       addPlaylistToQueue(playlist, trackToPlay);
@@ -95,41 +95,45 @@ const NowPlaying = ({playlist, trackToPlay}) => {
     );
   }, []);
 
-  // const addPlaylistOnload = async (tracks, id) => {
-  //   const playlist = tracks.item;
+  const addPlaylistOnload = async (tracks, id) => {
+    let playlist;
+    if (tracks) {
+      playlist = [...tracks];
+    }
 
-  //   await TrackPlayer.add(playlist);
-  // };
+    try {
+      await TrackPlayer.add(playlist);
+      TrackPlayer.skip(id);
+    } catch (error) {
+      console.error(error);
+    }
+    setIsFirstLoad(false);
+  };
 
   addPlaylistToQueue = async (tracks, id) => {
     let playlist;
     if (tracks) {
       playlist = [...tracks];
     }
-    if (isFirstLoad) {
-      try {
-        TrackPlayer.add(playlist);
+
+    //TrackPlayer.removeUpcomingTracks()
+
+    try {
+      if (albumPlaying !== currentAlbum) {
+        console.log('added')
+        await TrackPlayer.reset();
+        await TrackPlayer.add(playlist);
+      }
+
+      if (id) {
         TrackPlayer.skip(id);
-      } catch (error) {
-        console.error(error);
       }
-    } else {
-      try {
-        if (tracks) {
-          await TrackPlayer.reset();
-          await TrackPlayer.add(playlist);
-        }
 
-        if (id) {
-          TrackPlayer.skip(id);
-        }
-
-        TrackPlayer.play();
-      } catch (error) {
-        console.error(error);
-      }
+      TrackPlayer.play();
+      setAlbumPlaying(currentAlbum);
+    } catch (error) {
+      console.error(error);
     }
-    setIsFirstLoad(false);
   };
 
   // const convertTrack = track => {

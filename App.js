@@ -10,7 +10,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {createStackNavigator} from '@react-navigation/stack';
 import ModalScreen from './popupScreens/ModalScreen';
 import PlaylistProvider from './context/PlaylistProvider';
-import PlaylistConsumer from './components/PlaylistConsumer';
+import PlaylistConsumer from './player/PlaylistConsumer';
 import SwipeNavigator from './navigation/SwipeNavigator';
 import {askPermissions} from './data/MusicDataProvider.js';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
