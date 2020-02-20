@@ -5,12 +5,14 @@ import NowPlaying from './NowPlaying';
 const PlaylistConsumer = () => {
   return (
     <PlayerContext.Consumer>
-      {({isShuffled, shuffleUpComingPlaylist, renderFavoritesScreen}) => {
+      {({isShuffled, shuffleUpComingPlaylist,favorites, setFavorites}) => {
         return (
           <NowPlaying
           isShuffled={isShuffled}
           shuffleUpComingPlaylist={shuffleUpComingPlaylist}
-          renderFavoritesScreen={renderFavoritesScreen}
+          setFavorites={setFavorites}
+          favorites={favorites}
+         
           />
         );
       }}

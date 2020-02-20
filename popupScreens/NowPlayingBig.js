@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   Modal,
+  ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import IonIcon from 'react-native-vector-icons/Ionicons';
@@ -28,7 +29,8 @@ const NowPlayingBig = ({
   isShuffled,
   trackId,
   shuffleUpComingPlaylist,
-  renderFavoritesScreen,
+  setFavorites,
+  favorites,
 }) => {
   const playerState = TrackPlayer.usePlaybackState();
   const [startTime, setStartTime] = useState('0:00');
@@ -38,22 +40,24 @@ const NowPlayingBig = ({
     shuffleUpComingPlaylist(!isShuffled);
   };
 
-  const renderScreen = () => {
-    renderFavoritesScreen(favoriteChange);
-  };
+  
 
   useEffect(() => {
-    favoriteCheck(trackId).then(bool => {
-      console.log(bool)
-      setIsFavorite(bool);
-    });
-  }, []);
+    setIsFavorite(favorites.includes(trackId));
+  }, [favorites]);
 
   const storeFavorite = () => {
-    addFavorite(trackId).then(message => {
-      setIsFavorite(true);
-      console.log(message);
-    });
+    if (isFavorite) {
+      const removeId = favorites.filter(id => id !== trackId);
+
+      setFavorites(removeId);
+    } else {
+      setFavorites([...favorites, trackId]);
+    }
+    ToastAndroid.show(
+      `${isFavorite ? 'removed from' : 'added to'} favorites`,
+      ToastAndroid.SHORT,
+    );
   };
 
   const darkBlue = '#062D83';

@@ -1,10 +1,11 @@
 import React, {createContext, useEffect, useState} from 'react';
-import {getAsyncStorage} from '../data/AsyncStorage.js';
+import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import {askPermissions} from '../data/MusicDataProvider.js';
-import TrackPlayer, { CAPABILITY_DISLIKE } from 'react-native-track-player/index';
+import TrackPlayer, {CAPABILITY_DISLIKE} from 'react-native-track-player/index';
 import Track from '../components/Track.js';
 import {ToastAndroid} from 'react-native';
 import {getAlbums, getFolders} from '../data/CreateAlbums.js';
+import AsyncStorage from '@react-native-community/async-storage';
 export const PlayerContext = createContext();
 
 const PlayerFunctions = ({children}) => {
@@ -12,37 +13,65 @@ const PlayerFunctions = ({children}) => {
   const [tracks, setTracks] = useState([]);
   const [folders, setFolders] = useState([]);
   const [albums, setAlbums] = useState([]);
-  const [cleanAlbums, setCleanAlbums] = useState([])
-  const [cleanFolders, setCleanFolders] = useState([])
-  // const [isFirstLoad, setIsFirstLoad] = useState(false);
+  const [favorites, setFavorites] = useState([]);
+  const [cleanAlbums, setCleanAlbums] = useState([]);
+  const [cleanFolders, setCleanFolders] = useState([]);
+  const [afterFirstLoad, setIsFirstLoad] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
   const [currentAlbum, setCurrentAlbum] = useState([]);
-  const [renderScreen, setRender] = useState('');
+
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
 
+  useEffect(() => {
+    if (afterFirstLoad) {
+      setAsyncStorage('favorites', favorites);
+    }
+  }, [favorites]);
 
   useEffect(() => {
+    setIsFirstLoad(true);
+    loadFavorites();
     askPermissions().then(tracks => {
       if (tracks) {
-        setTracks(tracks)
+        setTracks(tracks);
         createAlbums(tracks);
-        createCleanAlbums(tracks)
+        createCleanAlbums(tracks);
       } else {
         loadTracksFromStorage();
       }
     });
   }, []);
 
-  const loadTracksFromStorage = () => {
-    getAsyncStorage('tracks').then(data => {
-      setTracks(data);
-      createAlbums(data)
-      createCleanAlbums(data)
+  useEffect(() => {
+    if (afterFirstLoad) {
+      ToastAndroid.show(
+        `Shuffle is ${isShuffled ? 'on' : 'off'}`,
+        ToastAndroid.SHORT,
+      );
+    }
+  }, [isShuffled]);
 
+  useEffect(() => {
+    if (afterFirstLoad) {
+    }
+  }, [isShuffled]);
+
+  const loadFavorites = () => {
+    getAsyncStorage('favorites').then(data => {
+      setFavorites(data);
     });
   };
 
-  const createAlbums = (data) => {
+  const loadTracksFromStorage = () => {
+    getAsyncStorage('tracks').then(data => {
+      setTracks(data);
+      createAlbums(data);
+      createCleanAlbums(data);
+      loadAlbumOnSetup();
+    });
+  };
+
+  const createAlbums = data => {
     getFolders(data, false).then(folders => {
       setFolders(folders);
     });
@@ -52,22 +81,15 @@ const PlayerFunctions = ({children}) => {
     });
   };
 
-  const createCleanAlbums = (data) => {
+  const createCleanAlbums = data => {
     getFolders(data, true).then(folders => {
-      setCleanFolders(folders)
+      setCleanFolders(folders);
     });
 
     getAlbums(data, true).then(albums => {
-      setCleanAlbums(albums)
+      setCleanAlbums(albums);
     });
   };
-
-  useEffect(() => {
-    ToastAndroid.show(
-      `Shuffle is ${isShuffled ? 'on' : 'off'}`,
-      ToastAndroid.SHORT,
-    );
-  }, [isShuffled]);
 
   const oneTimeShuffle = async (id, type) => {
     setCurrentAlbum([id, type]);
@@ -119,8 +141,6 @@ const PlayerFunctions = ({children}) => {
     setIsShuffled(shuffleState);
   };
 
-  
-
   const playFromAlbums = async (id, trackToPlay, type) => {
     let nextAlbum = id + type;
     let lastAlbum = currentAlbum.join('');
@@ -146,22 +166,24 @@ const PlayerFunctions = ({children}) => {
     setCurrentAlbum([id, type]);
   };
 
-  // const playFromTracks = async trackToPlay => {
-  //   const playlist = selectPlaylist(null, 'all');
+  const loadAlbumOnSetup = async () => {
+   
+      let id = tracks[0].id
+      // if(!id) {
+      //   id = tracks[0].id
+      // }
+      const playlist = tracks
+      playlist.length = 20
+      if (playlist) {
+        await TrackPlayer.add(playlist);
+       
+        if (id) {
+          await TrackPlayer.skip(id);
+        }
+      
+    }
 
-  //   await TrackPlayer.reset();
-  //   await TrackPlayer.add(playlist);
-
-  //   if (trackToPlay) {
-  //     await TrackPlayer.skip(trackToPlay);
-  //   }
-
-  //   await TrackPlayer.play();
-  //   setIsShuffled(false);
-  //   setCurrentAlbum([null, 'all']);
-  // };
-  const renderFavoritesScreen = render => {
-    setRender(render);
+    setCurrentAlbum([null, 'all']);
   };
 
   const data = {
@@ -169,11 +191,11 @@ const PlayerFunctions = ({children}) => {
     playFromAlbums: playFromAlbums,
     oneTimeShuffle: oneTimeShuffle,
     isShuffled: isShuffled,
-    renderFavoritesScreen: renderFavoritesScreen,
-    renderScreen: renderScreen,
     tracks: tracks,
     folders: folders,
-    albums: albums
+    albums: albums,
+    favorites: favorites,
+    setFavorites: setFavorites,
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>

@@ -27,18 +27,29 @@ export default class FavoritesScreen extends Component {
     return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(converted);
   };
 
+  // componentWillUnmount() {
+  //   console.log(this.context.favorites)
+  //   setAsyncStorage('favorites', '2345')
+  // }
+  // saveFavorites = () => {
+  //   const {favorites} = this.context
+    
+  // }
+
   render() {
-    const {renderScreen, tracks} = this.context;
-    const favs = tracks.filter(track => track.favorite == true);
+    const {renderScreen, tracks, favorites} = this.context;
+    
+    const favs = tracks.filter(track => favorites.includes(track.id))
+    
     return (
       <View style={styles.container}>
         {favs.length > 0 ? (
           <List
-            favorite={this.dataConverter(favs)}
+            favorites={this.dataConverter(favs)}
             getPlaylist={this.getPlaylist}
           />
         ) : (
-          <Loader />
+          null
         )}
       </View>
     );

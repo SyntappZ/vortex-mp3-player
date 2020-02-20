@@ -8,7 +8,7 @@ import {
   Modal,
   TouchableOpacity,
 } from 'react-native';
-import {getAsyncStorage} from '../data/AsyncStorage.js';
+import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import ProgressBar from '../components/ProgressBar';
@@ -17,28 +17,43 @@ import NowPlayingBig from '../popupScreens/NowPlayingBig';
 import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
 
-const NowPlaying = ({isShuffled, shuffleUpComingPlaylist, renderFavoritesScreen}) => {
+const NowPlaying = ({
+  isShuffled,
+  shuffleUpComingPlaylist,
+  favorites,
+  setFavorites,
+ 
+}) => {
   const playerState = TrackPlayer.usePlaybackState();
-let isMounted = false
+  let isMounted = false;
   const [modalOpen, setModalOpen] = useState(false);
   const [trackTitle, setTrackTitle] = useState([]);
   const [trackArt, setTrackArt] = useState('');
   const [trackArtist, setArtist] = useState('');
   const [duration, setDuration] = useState('');
-  const [currentTrack, setCurrentTrack] = useState('');
- 
+
+  const [afterFirstLoad, setIsFirstLoad] = useState(false);
+
   const [albumPlaying, setAlbumPlaying] = useState('');
   const modalHandler = () => setModalOpen(!modalOpen);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
-  const [trackId, setId] = useState('')
+  // const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const [trackId, setId] = useState('');
+
   const durationConverter = millis => {
     var minutes = Math.floor(millis / 60000);
     var seconds = ((millis % 60000) / 1000).toFixed(0);
     return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   };
 
+  const storeTrack = async () => {
+    const currentTrack = await TrackPlayer.getCurrentTrack();
+
+    setAsyncStorage('track', currentTrack);
+  };
+
   useEffect(() => {
-    isMounted = true
+    isMounted = true;
+    setIsFirstLoad(true);
     TrackPlayer.setupPlayer();
     TrackPlayer.updateOptions({
       stopWithApp: true,
@@ -63,22 +78,21 @@ let isMounted = false
       async data => {
         try {
           const track = await TrackPlayer.getTrack(data.nextTrack);
-          if(isMounted) {
-          setTrackArt('');
-          setTrackTitle(track.title);
-          setTrackArt(track.artwork);
-          setArtist(track.artist);
-          setDuration(track.duration);
-          setId(track.id)
-          
+          if (isMounted) {
+            setTrackArt('');
+            setTrackTitle(track.title);
+            setTrackArt(track.artwork);
+            setArtist(track.artist);
+            setDuration(track.duration);
+            setId(track.id);
+            storeTrack();
           }
-        
         } catch (error) {
           console.log(error);
         }
 
         return () => {
-          isMounted = false
+          isMounted = false;
           onTrackChange.remove();
         };
       },
@@ -117,8 +131,10 @@ let isMounted = false
   return (
     <View style={styles.container}>
       <Modal
-        animationType="fade"
+        animationType="slide"
         transparent={false}
+        presentationStyle={'fullScreen'}
+        hardwareAccelerated={true}
         visible={modalOpen}
         onRequestClose={() => {
           modalHandler();
@@ -133,8 +149,8 @@ let isMounted = false
           duration={duration}
           isShuffled={isShuffled}
           shuffleUpComingPlaylist={shuffleUpComingPlaylist}
-          renderFavoritesScreen={renderFavoritesScreen}
-        
+          setFavorites={setFavorites}
+          favorites={favorites}
         />
       </Modal>
       <View style={styles.imageWrap}>
