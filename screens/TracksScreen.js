@@ -5,7 +5,7 @@ import {getAsyncStorage} from '../data/AsyncStorage.js';
 import Track from '../components/Track';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
-
+import Loader from '../components/Loader';
 const screenWidth = Dimensions.get('window').width;
 
 export default class TracksScreen extends Component {
@@ -37,7 +37,9 @@ export default class TracksScreen extends Component {
             tracks={this.dataConverter(tracks)}
             getPlaylist={this.getPlaylist}
           />
-        ) : null}
+        ) : (
+          <Loader />
+        )}
       </View>
     );
   }

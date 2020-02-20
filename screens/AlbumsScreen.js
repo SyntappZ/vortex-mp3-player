@@ -14,7 +14,7 @@ import {getAsyncStorage} from '../data/AsyncStorage.js';
 import Album from '../components/Album';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
-
+import Loader from '../components/Loader'
 const screenWidth = Dimensions.get('window').width;
 
 const ViewTypes = {
@@ -41,7 +41,7 @@ export default class AlbumsScreen extends Component {
             albums={this.dataConverter(albums)}
             navigation={this.props.navigation}
           />
-        ) : null}
+        ) : <Loader />}
       </View>
     );
   }

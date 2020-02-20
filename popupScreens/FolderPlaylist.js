@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import TextTicker from 'react-native-text-ticker';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
-
+import Loader from '../components/Loader'
 import {
   View,
   StyleSheet,
@@ -18,23 +18,17 @@ import EntypoIcon from 'react-native-vector-icons/Entypo';
 import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 const screenWidth = Dimensions.get('window').width;
 export default class FolderPlaylist extends Component {
-  static contextType = PlayerContext
+  static contextType = PlayerContext;
   constructor(props) {
     super(props);
 
-    this.state = {
-      tracks: new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(
-        this.props.tracklist,
-      ),
-      totalTime: 0,
-      
-    };
+    this.state = {};
 
     this.rowRenderer = this.rowRenderer.bind(this);
 
     this.layoutProvider = new LayoutProvider(
       i => {
-        return this.state.tracks.getDataForIndex(i).type;
+        return this.props.tracklist.getDataForIndex(i).type;
       },
       (type, dim) => {
         switch (type) {
@@ -51,10 +45,10 @@ export default class FolderPlaylist extends Component {
   }
 
   componentDidMount() {
-    let total = 0;
-    const {tracklist} = this.props;
-    tracklist.forEach(track => (total += Number(track.item.time)));
-    this.setState({totalTime: this.durationConverter(total)});
+    // let total = 0;
+    // const {tracklist} = this.props;
+    // tracklist.forEach(track => (total += Number(track.item.time)));
+    // this.setState({totalTime: this.durationConverter(total)});
   }
 
   durationConverter = millis => {
@@ -65,28 +59,33 @@ export default class FolderPlaylist extends Component {
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;
-    return <Track artist={artist} duration={duration} getPlaylist={this.getPlaylist} trackId={id} title={title} />;
+    return (
+      <Track
+        artist={artist}
+        duration={duration}
+        getPlaylist={this.getPlaylist}
+        trackId={id}
+        title={title}
+      />
+    );
   };
 
-  getPlaylist = (trackId) => {
-    const { folderId } = this.props.data
-    const { playFromAlbums } = this.context
-    playFromAlbums(folderId, trackId, 'folder')
-  }
-
- 
+  getPlaylist = trackId => {
+    const {folderId} = this.props.data;
+    const {playFromAlbums} = this.context;
+    playFromAlbums(folderId, trackId, 'folder');
+  };
 
   shuffle = () => {
-    const { oneTimeShuffle } = this.context
-    const { folderId } = this.props.data
-    oneTimeShuffle(folderId, 'folder')
-  }
+    const {oneTimeShuffle} = this.context;
+    const {folderId} = this.props.data;
+    oneTimeShuffle(folderId, 'folder');
+  };
 
   render() {
-    const {name, tracksAmount} = this.props.data;
-    const {closeModal} = this.props;
-   const { tracks } = this.state
-    
+    const {name} = this.props.data;
+    const {closeModal, tracksAmount, tracklist, totalTime} = this.props;
+
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor="#062D83" />
@@ -138,19 +137,19 @@ export default class FolderPlaylist extends Component {
               <Text style={styles.songs}>Songs: {tracksAmount}</Text>
               <View style={styles.timeWrap}>
                 <Icon name="clock" size={12} color="#ccc" />
-                <Text style={styles.totalTime}>{this.state.totalTime}</Text>
+                <Text style={styles.totalTime}>{totalTime}</Text>
               </View>
             </View>
           </View>
         </View>
 
         <View style={styles.tracklist}>
-          <RecyclerListView
+        {tracksAmount > 0 ? ( <RecyclerListView
             style={{flex: 1}}
             rowRenderer={this.rowRenderer}
-            dataProvider={tracks}
+            dataProvider={tracklist}
             layoutProvider={this.layoutProvider}
-          />
+          />) : <Loader />}
         </View>
       </View>
     );
@@ -163,7 +162,7 @@ const darkBlue = '#062D83';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingBottom: 70
+    paddingBottom: 70,
   },
 
   top: {

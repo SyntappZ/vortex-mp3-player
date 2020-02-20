@@ -5,7 +5,7 @@ import {getAsyncStorage} from '../data/AsyncStorage.js';
 import Track from '../components/Track';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
-
+import Loader from '../components/Loader';
 const screenWidth = Dimensions.get('window').width;
 
 export default class FavoritesScreen extends Component {
@@ -16,15 +16,31 @@ export default class FavoritesScreen extends Component {
     playFromAlbums('2000000', trackId, 'fav');
   };
 
-  render() {
-    const { renderScreen} = this.context;
+  listViewConvertor = arr =>
+    arr.map(data => ({
+      type: 'NORMAL',
+      item: data,
+    }));
 
+  dataConverter = tracks => {
+    const converted = this.listViewConvertor(tracks);
+    return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(converted);
+  };
+
+  render() {
+    const {renderScreen, tracks} = this.context;
+    const favs = tracks.filter(track => track.favorite == true);
     return (
-      <List
-        
-        renderScreen={renderScreen}
-        getPlaylist={this.getPlaylist}
-      />
+      <View style={styles.container}>
+        {favs.length > 0 ? (
+          <List
+            favorite={this.dataConverter(favs)}
+            getPlaylist={this.getPlaylist}
+          />
+        ) : (
+          <Loader />
+        )}
+      </View>
     );
   }
 }
@@ -34,17 +50,11 @@ class List extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      favorites: new DataProvider((r1, r2) => {
-        return r1 !== r2;
-      }),
-    };
-
     this.rowRenderer = this.rowRenderer.bind(this);
 
     this.layoutProvider = new LayoutProvider(
       i => {
-        return this.state.favorites.getDataForIndex(i).type;
+        return this.props.favorites.getDataForIndex(i).type;
       },
       (type, dim) => {
         switch (type) {
@@ -69,52 +79,44 @@ class List extends Component {
         trackId={id}
         getPlaylist={this.props.getPlaylist}
         title={title}
-        
       />
     );
   };
-  componentDidMount() {
-    this._isMounted = true;
-    getAsyncStorage('favorites').then(data => {
-      
-      if (this._isMounted) {
-        this.setState({
-          favorites: this.state.favorites.cloneWithRows(data),
-        });
-      }
-    });
-  }
+  // componentDidMount() {
+  //   this._isMounted = true;
+  //   getAsyncStorage('favorites').then(data => {
+  //     if (this._isMounted) {
+  //       this.setState({
+  //         favorites: this.state.favorites.cloneWithRows(data),
+  //       });
+  //     }
+  //   });
+  // }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.renderScreen !== prevProps.renderScreen) {
-      getAsyncStorage('favorites').then(data => {
-        
-        if (this._isMounted) {
-          this.setState({
-            favorites: this.state.favorites.cloneWithRows(data),
-          });
-        }
-      });
-    }
-  }
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (this.props.renderScreen !== prevProps.renderScreen) {
+  //     getAsyncStorage('favorites').then(data => {
+  //       if (this._isMounted) {
+  //         this.setState({
+  //           favorites: this.state.favorites.cloneWithRows(data),
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
+  // componentWillUnmount() {
+  //   this._isMounted = false;
+  // }
 
   render() {
-    const {favorites} = this.state;
-
+    const {favorites} = this.props;
     return (
-      <View style={styles.container}>
-        {/* {favorites ? (
-          <RecyclerListView
-            style={{flex: 1}}
-            rowRenderer={this.rowRenderer}
-            dataProvider={favorites}
-            layoutProvider={this.layoutProvider}
-          />
-        ) : null} */}
-      </View>
+      <RecyclerListView
+        style={{flex: 1}}
+        rowRenderer={this.rowRenderer}
+        dataProvider={favorites}
+        layoutProvider={this.layoutProvider}
+      />
     );
   }
 }

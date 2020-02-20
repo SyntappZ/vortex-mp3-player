@@ -268,9 +268,9 @@ const styles = StyleSheet.create({
     height: 220,
     borderRadius: 20,
     borderColor: 'white',
-    borderWidth: 2,
+    borderWidth: 1,
     overflow: 'hidden',
-    backgroundColor: '#CDCDCD',
+    // backgroundColor: '#CDCDCD',
   },
 
   progressSection: {

@@ -5,7 +5,7 @@ import {getAsyncStorage} from '../data/AsyncStorage.js';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
 const screenWidth = Dimensions.get('window').width;
-
+import Loader from '../components/Loader';
 export default class FoldersScreen extends Component {
   static contextType = PlayerContext;
   _isMounted = false;
@@ -24,7 +24,9 @@ export default class FoldersScreen extends Component {
             folders={this.dataConverter(folders)}
             navigation={this.props.navigation}
           />
-        ) : null}
+        ) : (
+          <Loader />
+        )}
       </View>
     );
   }
@@ -33,8 +35,6 @@ export default class FoldersScreen extends Component {
 class List extends Component {
   constructor(props) {
     super(props);
-
-  
 
     this.rowRenderer = this.rowRenderer.bind(this);
 
