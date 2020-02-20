@@ -55,8 +55,8 @@ export default class AlbumPlaylist extends Component {
 
   getPlaylist = trackId => {
     const {albumId} = this.props.data;
-    const {playlistFromTracks} = this.context;
-    playlistFromTracks(albumId, trackId, 'album', false);
+    const {playFromAlbums} = this.context;
+    playFromAlbums(albumId, trackId, 'album', false);
     
   };
 

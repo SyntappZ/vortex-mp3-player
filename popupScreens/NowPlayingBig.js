@@ -1,4 +1,4 @@
-import React, {useEffct, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -15,26 +15,47 @@ import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 import ProgressBar from '../components/ProgressBar';
 import Gradient from '../components/Gradient';
 import TextTicker from 'react-native-text-ticker';
- import TrackPlayer from 'react-native-track-player/index';
-
+import TrackPlayer from 'react-native-track-player/index';
+import {addFavorite, favoriteCheck} from '../data/AddToFavorites.js';
+import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 const NowPlayingBig = ({
- modalHandler,
+  modalHandler,
   trackTitle,
   trackArt,
   trackArtist,
   playerControls,
   duration,
   isShuffled,
-  shuffleUpComingPlaylist
+  trackId,
+  shuffleUpComingPlaylist,
+  renderFavoritesScreen,
 }) => {
   const playerState = TrackPlayer.usePlaybackState();
   const [startTime, setStartTime] = useState('0:00');
-  
-const shuffleToggle = () => {
-  shuffleUpComingPlaylist(!isShuffled)
-}
 
- 
+  const [isFavorite, setIsFavorite] = useState(false);
+  const shuffleToggle = () => {
+    shuffleUpComingPlaylist(!isShuffled);
+  };
+
+  const renderScreen = () => {
+    renderFavoritesScreen(favoriteChange);
+  };
+
+  useEffect(() => {
+    favoriteCheck(trackId).then(bool => {
+      console.log(bool)
+      setIsFavorite(bool);
+    });
+  }, []);
+
+  const storeFavorite = () => {
+    addFavorite(trackId).then(message => {
+      setIsFavorite(true);
+      console.log(message);
+    });
+  };
+
   const darkBlue = '#062D83';
   const isPlaying = playerState === TrackPlayer.STATE_PLAYING;
   let image;
@@ -53,8 +74,7 @@ const shuffleToggle = () => {
     : (image = <Icon name={'headphones-alt'} size={120} color={'white'} />);
 
   return (
-  
-       <View style={styles.container}>
+    <View style={styles.container}>
       <StatusBar backgroundColor={darkBlue} />
       <Gradient />
       <View style={styles.topbar}>
@@ -82,7 +102,7 @@ const shuffleToggle = () => {
       </View>
 
       <View style={styles.imageSection}>
-  <View style={styles.imageWrap}>{image}</View>
+        <View style={styles.imageWrap}>{image}</View>
       </View>
 
       <View style={styles.repeatSection}>
@@ -91,12 +111,17 @@ const shuffleToggle = () => {
             style={styles.shuffleIcon}
             name="shuffle"
             size={20}
-            color={isShuffled ? "#fff" : '#555'}
+            color={isShuffled ? '#fff' : '#555'}
           />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.favorite}>
-          <Icon style={styles.heartIcon} name="heart" size={25} color="#fff" />
+        <TouchableOpacity onPress={storeFavorite} style={styles.favorite}>
+          <Icon
+            style={styles.heartIcon}
+            name="heart"
+            size={25}
+            color={isFavorite ? 'red' : 'white'}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.repeat}>
@@ -104,7 +129,7 @@ const shuffleToggle = () => {
             style={styles.repeatIcon}
             name="loop"
             size={20}
-            color={"#555"}
+            color={'#555'}
           />
         </TouchableOpacity>
       </View>
@@ -176,9 +201,6 @@ const shuffleToggle = () => {
         </TouchableOpacity>
       </View>
     </View>
-      
-  
-   
   );
 };
 
@@ -188,8 +210,6 @@ const colorLightBlack = '#131313';
 const colorDarkGrey = '#222';
 const colorBlue = '#2A56B9';
 const colorLightBlue = '#0B64D9';
-
-
 
 const styles = StyleSheet.create({
   container: {
@@ -202,9 +222,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    
     position: 'absolute',
-    top: 30,
+    top: 10,
     zIndex: 3,
   },
 
@@ -213,12 +232,14 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 20,
   },
   backButton: {
     flex: 2,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 20,
   },
   nowPlaying: {
     flex: 4,
@@ -270,14 +291,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
- 
+
   repeat: {
     flex: 2,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
- 
+
   favorite: {
     flex: 4,
     height: '100%',

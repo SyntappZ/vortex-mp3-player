@@ -70,8 +70,8 @@ export default class FolderPlaylist extends Component {
 
   getPlaylist = (trackId) => {
     const { folderId } = this.props.data
-    const { playlistFromTracks } = this.context
-    playlistFromTracks(folderId, trackId, 'folder')
+    const { playFromAlbums } = this.context
+    playFromAlbums(folderId, trackId, 'folder')
   }
 
  

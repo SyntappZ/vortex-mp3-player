@@ -122,21 +122,7 @@ const getPermissions = async (callback) => {
 const firstTimeloadTracks = async (callback) => {
   getTrackData()
     .then(tracks => {
-      // const convertTracks = tracks.map((track, index) => ({
-      //   type: 'NORMAL',
-      //   item: {
-      //     index: index,
-      //     album: track.album,
-      //     artist: track.author ? track.author : 'Unknown',
-      //     artwork: track.cover,
-      //     duration: durationConverter(track.duration),
-      //     fileName: track.fileName,
-      //     folder: track.folder,
-      //     id: track.id,
-      //     url: track.path,
-      //     title: track.title ? track.title : track.fileName.replace(/.mp3/, ''),
-      //   },
-      // }));
+     
       const originalTracks = tracks.map((track, index) => ({
         index: index,
         album: track.album,
@@ -148,6 +134,7 @@ const firstTimeloadTracks = async (callback) => {
         folder: track.folder,
         id: track.id,
         url: track.path,
+        favorite: false,
         title: track.title ? track.title : track.fileName.replace(/.mp3/, ''),
       }));
 

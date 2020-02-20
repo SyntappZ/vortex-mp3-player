@@ -3,20 +3,24 @@ import {getAsyncStorage} from '../data/AsyncStorage.js';
 import {askPermissions} from '../data/MusicDataProvider.js';
 import TrackPlayer from 'react-native-track-player/index';
 import Track from '../components/Track.js';
+import {ToastAndroid} from 'react-native';
 export const PlayerContext = createContext();
 
 const PlayerFunctions = ({children}) => {
-  let [tracks, setTracks] = useState([]);
-  let [folders, setFolders] = useState([]);
-  let [albums, setAlbums] = useState([]);
+  const [tracks, setTracks] = useState([]);
+  const [folders, setFolders] = useState([]);
+  const [albums, setAlbums] = useState([]);
   const playbackState = TrackPlayer.usePlaybackState();
   const [isFirstLoad, setIsFirstLoad] = useState(false);
-  const [isShuffled, setIsShuffled] = useState(false)
-  const [currentAlbum, setCurrentAlbum] = useState([])
+  const [isShuffled, setIsShuffled] = useState(false);
+  const [currentAlbum, setCurrentAlbum] = useState([]);
+  const [renderScreen, setRender] = useState('');
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
+
   useEffect(() => {
     loadTracksFromStorage();
-
+  }, [isFirstLoad]);
+  useEffect(() => {
     askPermissions().then(isFirst => {
       if (isFirst) {
         setIsFirstLoad(isFirst);
@@ -24,13 +28,20 @@ const PlayerFunctions = ({children}) => {
     });
   }, []);
 
+  useEffect(() => {
+    ToastAndroid.show(
+      `Shuffle is ${isShuffled ? 'on' : 'off'}`,
+      ToastAndroid.SHORT,
+    );
+  }, [isShuffled]);
+
   const oneTimeShuffle = async (id, type) => {
-    setCurrentAlbum([id, type])
+    setCurrentAlbum([id, type]);
     const playlist = selectPlaylist(id, type);
     await TrackPlayer.reset();
-    await TrackPlayer.add(shuffle(playlist))
-    await TrackPlayer.play()
-    setIsShuffled(true)
+    await TrackPlayer.add(shuffle(playlist));
+    await TrackPlayer.play();
+    setIsShuffled(true);
   };
   const selectPlaylist = (id, type) => {
     const copy = arr => [...arr];
@@ -44,33 +55,24 @@ const PlayerFunctions = ({children}) => {
     }
   };
 
-  const shuffleUpComingPlaylist = async (shuffleState) => {
-   const playlist = selectPlaylist(currentAlbum[0], currentAlbum[1]);
-
+  const shuffleUpComingPlaylist = async shuffleState => {
+    const playlist = selectPlaylist(currentAlbum[0], currentAlbum[1]);
     const currentTrack = await TrackPlayer.getCurrentTrack();
-    
     const queue = await TrackPlayer.getQueue();
-    
-    let filterQueue = queue.filter(track => track.id !== currentTrack);
-   
-   
+
+    const filterQueue = queue.filter(track => track.id !== currentTrack);
 
     if (isShuffled) {
-      console.log('not shuffling...');
-      let index = playlist.reduce((a, b, i) => {
+      const index = playlist.reduce((a, b, i) => {
         if (b.id === currentTrack) a = i;
         return a;
       });
       const newPlaylist = playlist.filter(
         track => playlist.indexOf(track) > index,
       );
-
-
       await TrackPlayer.removeUpcomingTracks();
       await TrackPlayer.add(newPlaylist);
     } else {
-      console.log('shuffling...');
-
       const shuffledPlaylist = shuffle(filterQueue);
       await TrackPlayer.removeUpcomingTracks();
       await TrackPlayer.add(shuffledPlaylist);
@@ -79,7 +81,7 @@ const PlayerFunctions = ({children}) => {
     if (playbackState === TrackPlayer.STATE_STOPPED) {
       await TrackPlayer.play();
     }
-    setIsShuffled(shuffleState)
+    setIsShuffled(shuffleState);
   };
 
   const loadTracksFromStorage = () => {
@@ -94,23 +96,18 @@ const PlayerFunctions = ({children}) => {
     });
   };
 
-  // const playlistShuffler = (id, type) => {
+  const playFromAlbums = async (id, trackToPlay, type) => {
+    let nextAlbum = id + type;
+    let lastAlbum = currentAlbum.join('');
+    let playlist = selectPlaylist(id, type);
 
-  // };
-
-  // const playlistDeployer = (playlist, track, playing) => {
-
-  // };
-
-  // const playlistRetriever = (id, trackId, type) => {
-
-  // };
-  const playlistFromTracks = async (id, trackToPlay, type) => {
-    // const currentTrack = await TrackPlayer.getCurrentTrack();
-    setCurrentAlbum([id, type])
-    const playlist = selectPlaylist(id, type);
+    if (nextAlbum == lastAlbum && !isShuffled) {
+      console.log('is the same album');
+      playlist = null;
+    }
 
     if (playlist) {
+      console.log('add playlist');
       await TrackPlayer.reset();
       await TrackPlayer.add(playlist);
     }
@@ -120,16 +117,36 @@ const PlayerFunctions = ({children}) => {
     }
 
     await TrackPlayer.play();
-    setIsShuffled(false)
+    setIsShuffled(false);
+    setCurrentAlbum([id, type]);
+  };
 
+  const playFromTracks = async trackToPlay => {
+    const playlist = selectPlaylist(null, 'all');
+
+    await TrackPlayer.reset();
+    await TrackPlayer.add(playlist);
+
+    if (trackToPlay) {
+      await TrackPlayer.skip(trackToPlay);
+    }
+
+    await TrackPlayer.play();
+    setIsShuffled(false);
+    setCurrentAlbum([null, 'all']);
+  };
+  const renderFavoritesScreen = render => {
+    setRender(render);
   };
 
   const data = {
     shuffleUpComingPlaylist: shuffleUpComingPlaylist,
     isFirstLoad: isFirstLoad,
-    playlistFromTracks: playlistFromTracks,
+    playFromAlbums: playFromAlbums,
     oneTimeShuffle: oneTimeShuffle,
-    isShuffled: isShuffled
+    isShuffled: isShuffled,
+    renderFavoritesScreen: renderFavoritesScreen,
+    renderScreen: renderScreen,
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>

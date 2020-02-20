@@ -12,8 +12,8 @@ export default class TracksScreen extends Component {
   static contextType = PlayerContext;
 
   getPlaylist = trackId => {
-    const {playlistFromTracks} = this.context;
-    playlistFromTracks('1000000', trackId, 'all');
+    const {playFromAlbums} = this.context;
+    playFromAlbums('1000000', trackId, 'all');
   };
 
   render() {

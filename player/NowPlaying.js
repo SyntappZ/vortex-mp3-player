@@ -17,19 +17,20 @@ import NowPlayingBig from '../popupScreens/NowPlayingBig';
 import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
 
-const NowPlaying = ({isShuffled, shuffleUpComingPlaylist}) => {
+const NowPlaying = ({isShuffled, shuffleUpComingPlaylist, renderFavoritesScreen}) => {
   const playerState = TrackPlayer.usePlaybackState();
-
+let isMounted = false
   const [modalOpen, setModalOpen] = useState(false);
   const [trackTitle, setTrackTitle] = useState([]);
   const [trackArt, setTrackArt] = useState('');
   const [trackArtist, setArtist] = useState('');
   const [duration, setDuration] = useState('');
   const [currentTrack, setCurrentTrack] = useState('');
+ 
   const [albumPlaying, setAlbumPlaying] = useState('');
   const modalHandler = () => setModalOpen(!modalOpen);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
-
+  const [trackId, setId] = useState('')
   const durationConverter = millis => {
     var minutes = Math.floor(millis / 60000);
     var seconds = ((millis % 60000) / 1000).toFixed(0);
@@ -37,6 +38,7 @@ const NowPlaying = ({isShuffled, shuffleUpComingPlaylist}) => {
   };
 
   useEffect(() => {
+    isMounted = true
     TrackPlayer.setupPlayer();
     TrackPlayer.updateOptions({
       stopWithApp: true,
@@ -61,17 +63,22 @@ const NowPlaying = ({isShuffled, shuffleUpComingPlaylist}) => {
       async data => {
         try {
           const track = await TrackPlayer.getTrack(data.nextTrack);
+          if(isMounted) {
           setTrackArt('');
-
           setTrackTitle(track.title);
           setTrackArt(track.artwork);
           setArtist(track.artist);
           setDuration(track.duration);
+          setId(track.id)
+          
+          }
+        
         } catch (error) {
           console.log(error);
         }
 
         return () => {
+          isMounted = false
           onTrackChange.remove();
         };
       },
@@ -121,10 +128,13 @@ const NowPlaying = ({isShuffled, shuffleUpComingPlaylist}) => {
           trackTitle={trackTitle}
           trackArtist={trackArtist}
           trackArt={trackArt}
+          trackId={trackId}
           playerControls={playerControls}
           duration={duration}
           isShuffled={isShuffled}
           shuffleUpComingPlaylist={shuffleUpComingPlaylist}
+          renderFavoritesScreen={renderFavoritesScreen}
+        
         />
       </Modal>
       <View style={styles.imageWrap}>
