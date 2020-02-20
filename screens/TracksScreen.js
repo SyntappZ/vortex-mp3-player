@@ -16,29 +16,45 @@ export default class TracksScreen extends Component {
     playFromAlbums('1000000', trackId, 'all');
   };
 
-  render() {
-    const { isFirstLoad } = this.context
+  listViewConvertor = arr =>
+    arr.map(data => ({
+      type: 'NORMAL',
+      item: data,
+    }));
 
-  return <List isFirstLoad={isFirstLoad} getPlaylist={this.getPlaylist}/>;
+  dataConverter = tracks => {
+    const converted = this.listViewConvertor(tracks);
+    return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(converted);
+  };
+
+  render() {
+    const {tracks} = this.context;
+
+    return (
+      <View style={styles.container}>
+        {tracks.length > 0 ? (
+          <List
+            tracks={this.dataConverter(tracks)}
+            getPlaylist={this.getPlaylist}
+          />
+        ) : null}
+      </View>
+    );
   }
 }
 
 class List extends Component {
-  _isMounted = false
+  _isMounted = false;
   constructor(props) {
     super(props);
 
-    this.state = {
-      tracks: new DataProvider((r1, r2) => {
-        return r1 !== r2;
-      }),
-    };
+    this.state = {};
 
     this.rowRenderer = this.rowRenderer.bind(this);
 
     this.layoutProvider = new LayoutProvider(
       i => {
-        return this.state.tracks.getDataForIndex(i).type;
+        return this.props.tracks.getDataForIndex(i).type;
       },
       (type, dim) => {
         switch (type) {
@@ -53,7 +69,6 @@ class List extends Component {
       },
     );
   }
- 
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;
@@ -67,46 +82,36 @@ class List extends Component {
       />
     );
   };
+
   componentDidMount() {
-    this._isMounted = true
-    getAsyncStorage('tracks').then(data => {
-      if(this._isMounted) {
-        this.setState({
-          tracks: this.state.tracks.cloneWithRows(data),
-        });
-      }
-      
-    });
+    this._isMounted = true;
   }
 
-
-  componentDidUpdate(prevProps) {
-    if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
-      getAsyncStorage('tracks').then(data => {
-        if(this._isMounted) {
-          this.setState({
-            tracks: this.state.tracks.cloneWithRows(data),
-          });
-        }
-      });
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
+  //     getAsyncStorage('tracks').then(data => {
+  //       if(this._isMounted) {
+  //         this.setState({
+  //           tracks: this.state.tracks.cloneWithRows(data),
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
   componentWillUnmount() {
-    this._isMounted = false
+    this._isMounted = false;
   }
 
   render() {
-    const {tracks} = this.state;
-    
+    const {tracks} = this.props;
+
     return (
-      <View style={styles.container}>
-        <RecyclerListView
-          style={{flex: 1}}
-          rowRenderer={this.rowRenderer}
-          dataProvider={tracks}
-          layoutProvider={this.layoutProvider}
-        />
-      </View>
+      <RecyclerListView
+        style={{flex: 1}}
+        rowRenderer={this.rowRenderer}
+        dataProvider={tracks}
+        layoutProvider={this.layoutProvider}
+      />
     );
   }
 }

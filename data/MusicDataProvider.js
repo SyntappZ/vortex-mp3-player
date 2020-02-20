@@ -34,72 +34,6 @@ const durationConverter = millis => {
   return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 };
 
-const createFolders = async array => {
-  const prop = 'folder';
-
-  const folders = await array.reduce((a, b) => {
-    if (!a[b[prop]]) {
-      a[b[prop]] = [];
-    }
-    a[b[prop]].push(b);
-    return a;
-  }, {});
-
-  const convertToArray = Object.entries(folders);
-
-  const folderArray = convertToArray.map((album, index) => {
-    return {
-      type: 'NORMAL',
-      item: {
-        folderId: index.toString(),
-        name: album[0],
-        data: album[1].map(data => ({
-          type: 'NORMAL',
-          item: data,
-        })),
-        tracksAmount: album[1].length,
-      },
-    };
-  });
-  setAsyncStorage('folders', folderArray);
-  
-  
-};
-
-const createAlbums = async (array, callback) => {
-  array = array.filter(track => track.album !== null);
-  const prop = 'album';
-  const albums = await array.reduce((a, b) => {
-    if (!a[b[prop]]) {
-      a[b[prop]] = [];
-    }
-    a[b[prop]].push(b);
-
-    return a;
-  }, {});
-
-  const convertToArray = Object.entries(albums);
-
-  const albumArray = convertToArray.map((album, index) => {
-    return {
-      type: 'NORMAL',
-      item: {
-        albumId: index.toString(),
-        name: album[0],
-        data: album[1].map(data => ({
-          type: 'NORMAL',
-          item: data,
-        })),
-        artwork: album[1][0].artwork,
-        tracksAmount: album[1].length,
-      },
-    };
-  });
-
- await setAsyncStorage('albums', albumArray);
- callback(true)
-};
-
 const getPermissions = async (callback) => {
   const granted = await PermissionsAndroid.request(
     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -138,15 +72,13 @@ const firstTimeloadTracks = async (callback) => {
         title: track.title ? track.title : track.fileName.replace(/.mp3/, ''),
       }));
 
-      createFolders(originalTracks);
-      createAlbums(originalTracks, callback);
+     
       setAsyncStorage(
         'tracks',
-        originalTracks.map(track => {
-          return {type: 'NORMAL', item: track};
-        }),
+        originalTracks
       );
       setAsyncStorage('lastPlayed', [originalTracks[0]]);
+      callback(originalTracks)
     })
     .catch(error => {
       console.log(error);

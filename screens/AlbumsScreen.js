@@ -26,10 +26,23 @@ const ViewTypes = {
 export default class AlbumsScreen extends Component {
   static contextType = PlayerContext;
   _isMounted = false;
+
+  dataConverter = tracks => {
+    return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(tracks);
+  };
+
   render() {
-    const {isFirstLoad} = this.context;
+    const {albums} = this.context;
+   
     return (
-      <List isFirstLoad={isFirstLoad} navigation={this.props.navigation} />
+      <View style={styles.container}>
+        {albums.length > 0 ? (
+          <List
+            albums={this.dataConverter(albums)}
+            navigation={this.props.navigation}
+          />
+        ) : null}
+      </View>
     );
   }
 }
@@ -38,11 +51,7 @@ class List extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      albums: new DataProvider((r1, r2) => {
-        return r1 !== r2;
-      }),
-    };
+    this.state = {};
 
     this.rowRenderer = this.rowRenderer.bind(this);
 
@@ -72,35 +81,35 @@ class List extends Component {
     );
   }
 
-  componentDidMount() {
-    this._isMounted = true;
-    getAsyncStorage('albums').then(data => {
-      if (this._isMounted) {
-        this.setState({
-          albums: this.state.albums.cloneWithRows(data),
-        });
-      }
-    });
-  }
+  // componentDidMount() {
+  //   this._isMounted = true;
+  //   getAsyncStorage('albums').then(data => {
+  //     if (this._isMounted) {
+  //       this.setState({
+  //         albums: this.state.albums.cloneWithRows(data),
+  //       });
+  //     }
+  //   });
+  // }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
-      getAsyncStorage('albums').then(data => {
-        if (this._isMounted) {
-          this.setState({
-            albums: this.state.albums.cloneWithRows(data),
-          });
-        }
-      });
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
+  //     getAsyncStorage('albums').then(data => {
+  //       if (this._isMounted) {
+  //         this.setState({
+  //           albums: this.props.albums.cloneWithRows(data),
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
 
   componentWillUnmount() {
     this._isMounted = false;
   }
 
   openModal = albumId => {
-    const album = this.state.albums['_data'][albumId];
+    const album = this.props.albums['_data'][albumId];
 
     this.props.navigation.navigate('Modal', {
       data: album,
@@ -140,17 +149,15 @@ class List extends Component {
     }
   }
   render() {
-    const {albums} = this.state;
-    
+    const {albums} = this.props;
+
     return (
-      <View style={styles.container}>
-        <RecyclerListView
-          style={{flex: 1}}
-          rowRenderer={this.rowRenderer}
-          dataProvider={albums}
-          layoutProvider={this.layoutProvider}
-        />
-      </View>
+      <RecyclerListView
+        style={{flex: 1}}
+        rowRenderer={this.rowRenderer}
+        dataProvider={albums}
+        layoutProvider={this.layoutProvider}
+      />
     );
   }
 }

@@ -8,13 +8,25 @@ const screenWidth = Dimensions.get('window').width;
 
 export default class FoldersScreen extends Component {
   static contextType = PlayerContext;
-_isMounted = false
+  _isMounted = false;
 
- 
+  dataConverter = tracks => {
+    return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(tracks);
+  };
 
   render() {
-    const { isFirstLoad } = this.context
-    return <List isFirstLoad={isFirstLoad} navigation={this.props.navigation} />;
+    const {folders} = this.context;
+
+    return (
+      <View style={styles.container}>
+        {folders.length > 0 ? (
+          <List
+            folders={this.dataConverter(folders)}
+            navigation={this.props.navigation}
+          />
+        ) : null}
+      </View>
+    );
   }
 }
 
@@ -22,17 +34,13 @@ class List extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      folders: new DataProvider((r1, r2) => {
-        return r1 !== r2;
-      }),
-    };
+  
 
     this.rowRenderer = this.rowRenderer.bind(this);
 
     this.layoutProvider = new LayoutProvider(
       i => {
-        return this.state.folders.getDataForIndex(i).type;
+        return this.props.folders.getDataForIndex(i).type;
       },
       (type, dim) => {
         switch (type) {
@@ -48,34 +56,32 @@ class List extends Component {
     );
   }
 
-  componentDidMount() {
-    this._isMounted = true
-    getAsyncStorage('folders').then(data => {
-      if(this._isMounted) {
-        this.setState({
-          folders: this.state.folders.cloneWithRows(data),
-        });
-      }
-    });
-  }
+  // componentDidMount() {
+  //   this._isMounted = true;
+  //   getAsyncStorage('folders').then(data => {
+  //     if (this._isMounted) {
+  //       this.setState({
+  //         folders: this.state.folders.cloneWithRows(data),
+  //       });
+  //     }
+  //   });
+  // }
 
-  componentDidUpdate(prevProps) {
-    if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
-      getAsyncStorage('folders').then(data => {
-        if(this._isMounted) {
-          this.setState({
-            folders: this.state.folders.cloneWithRows(data),
-          });
-        }
-      });
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
+  //     getAsyncStorage('folders').then(data => {
+  //       if (this._isMounted) {
+  //         this.setState({
+  //           folders: this.state.folders.cloneWithRows(data),
+  //         });
+  //       }
+  //     });
+  //   }
+  // }
 
   componentWillUnmount() {
-    this._isMounted = false
+    this._isMounted = false;
   }
-
- 
 
   rowRenderer = (type, data) => {
     const {name, tracksAmount, folderId} = data.item;
@@ -90,7 +96,7 @@ class List extends Component {
   };
 
   openModal = folderId => {
-    const folder = this.state.folders['_data'][folderId];
+    const folder = this.props.folders['_data'][folderId];
 
     this.props.navigation.navigate('Modal', {
       data: folder,
@@ -99,16 +105,14 @@ class List extends Component {
   };
 
   render() {
-    const {folders} = this.state;
+    const {folders} = this.props;
     return (
-      <View style={styles.container}>
-        <RecyclerListView
-          style={{flex: 1}}
-          rowRenderer={this.rowRenderer}
-          dataProvider={folders}
-          layoutProvider={this.layoutProvider}
-        />
-      </View>
+      <RecyclerListView
+        style={{flex: 1}}
+        rowRenderer={this.rowRenderer}
+        dataProvider={folders}
+        layoutProvider={this.layoutProvider}
+      />
     );
   }
 }
