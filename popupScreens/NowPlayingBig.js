@@ -20,6 +20,8 @@ import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
 import {addFavorite, favoriteCheck} from '../data/AddToFavorites.js';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
+import ProgressSlider from '../components/ProgressSlider'
+import TimeInterval from '../components/TimeInterval'
 const NowPlayingBig = ({
   modalHandler,
   trackTitle,
@@ -147,12 +149,10 @@ const NowPlayingBig = ({
       </View>
 
       <View style={styles.progressSection}>
-        <ProgressBar radius={50} />
+        <ProgressSlider />
 
         <View style={styles.timeSection}>
-          <View style={styles.startTime}>
-            <Text style={styles.time}>{startTime}</Text>
-          </View>
+       <TimeInterval isPlaying={isPlaying} />
           <View style={styles.artistWrap}>
             <TextTicker
               style={styles.song}
