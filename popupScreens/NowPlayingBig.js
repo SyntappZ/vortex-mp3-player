@@ -78,7 +78,7 @@ const NowPlayingBig = ({
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor={darkBlue} />
+      <StatusBar backgroundColor={darkBlue} animated={true}/>
       <Gradient />
       <View style={styles.topbar}>
         <TouchableOpacity style={styles.menu}>

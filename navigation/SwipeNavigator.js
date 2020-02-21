@@ -78,11 +78,11 @@ export default class SwipeNavigator extends Component {
     };
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor={colorBlack} />
+        <StatusBar backgroundColor={colorBlack} animated={true} />
         <Header />
         <View style={styles.screens}>
           <Tab.Navigator tabBarOptions={options}>
-            <Tab.Screen name="Albums" component={AlbumsScreen} jeff={'hello im jeffffffffffff'} />
+            <Tab.Screen name="Albums" component={AlbumsScreen} />
             <Tab.Screen name="Folders" component={FoldersScreen} />
             <Tab.Screen name="Songs" component={TracksScreen} />
             <Tab.Screen name="Favorites" component={FavoritesScreen} />

@@ -45,11 +45,11 @@ const NowPlaying = ({
     return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
   };
 
-  const storeTrack = async () => {
-    const currentTrack = await TrackPlayer.getCurrentTrack();
+  // const storeTrack = async () => {
+  //   const currentTrack = await TrackPlayer.getCurrentTrack();
 
-    setAsyncStorage('track', currentTrack);
-  };
+  //   setAsyncStorage('track', currentTrack);
+  // };
 
   useEffect(() => {
     isMounted = true;
@@ -57,6 +57,7 @@ const NowPlaying = ({
     TrackPlayer.setupPlayer();
     TrackPlayer.updateOptions({
       stopWithApp: true,
+      alwaysPauseOnInterruption: true,
       capabilities: [
         TrackPlayer.CAPABILITY_PLAY,
         TrackPlayer.CAPABILITY_PAUSE,
@@ -71,6 +72,13 @@ const NowPlaying = ({
         TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
         TrackPlayer.CAPABILITY_STOP,
       ],
+      notificationCapabilities : [
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_STOP,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS
+    ],
     });
 
     let onTrackChange = TrackPlayer.addEventListener(
@@ -85,7 +93,7 @@ const NowPlaying = ({
             setArtist(track.artist);
             setDuration(track.duration);
             setId(track.id);
-            storeTrack();
+            
           }
         } catch (error) {
           console.log(error);

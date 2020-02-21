@@ -1,19 +1,32 @@
 import React, {Component, useState, useEffect} from 'react';
 
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
 import {getAsyncStorage} from '../data/AsyncStorage.js';
 import Track from '../components/Track';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
 import Loader from '../components/Loader';
+import Icon from 'react-native-vector-icons/Entypo';
+import FAB from 'react-native-fab';
 const screenWidth = Dimensions.get('window').width;
 
 export default class TracksScreen extends Component {
   static contextType = PlayerContext;
+  constructor(props) {
+    super(props);
+    this.state = {
+      isVisible: true,
+    };
+  }
 
   getPlaylist = trackId => {
     const {playFromAlbums} = this.context;
-    playFromAlbums('1000000', trackId, 'all');
+    playFromAlbums('all', trackId, 'all');
+  };
+
+  shuffle = () => {
+    const {oneTimeShuffle} = this.context;
+    oneTimeShuffle('all', 'all');
   };
 
   listViewConvertor = arr =>
@@ -27,19 +40,40 @@ export default class TracksScreen extends Component {
     return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(converted);
   };
 
+  fabHandler = visible => {
+    this.setState({isVisible: visible});
+  };
+
   render() {
     const {tracks} = this.context;
-
+    const icon = (
+      <Icon
+        style={styles.shuffleIcon}
+        name="shuffle"
+        size={25}
+        color={colorBlue}
+      />
+    );
     return (
       <View style={styles.container}>
         {tracks.length > 0 ? (
           <List
             tracks={this.dataConverter(tracks)}
             getPlaylist={this.getPlaylist}
+            fabHandler={this.fabHandler}
           />
         ) : (
           <Loader />
         )}
+       
+        <FAB
+          buttonColor="white"
+          snackOffset={70}
+          iconTextColor={colorBlue}
+          onClickAction={this.shuffle}
+          visible={this.state.isVisible}
+          iconTextComponent={icon}
+        />
       </View>
     );
   }
@@ -85,30 +119,28 @@ class List extends Component {
     );
   };
 
-  componentDidMount() {
-    this._isMounted = true;
-  }
+  onScroll = event => {
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const dif = currentOffset - (this.offset || 0);
+    const {fabHandler} = this.props;
 
-  // componentDidUpdate(prevProps) {
-  //   if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
-  //     getAsyncStorage('tracks').then(data => {
-  //       if(this._isMounted) {
-  //         this.setState({
-  //           tracks: this.state.tracks.cloneWithRows(data),
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+    if (Math.abs(dif) < 3) {
+      fabHandler(true);
+    } else if (dif < 0) {
+      fabHandler(false);
+    } else {
+      fabHandler(false);
+    }
+
+    this.offset = currentOffset;
+  };
 
   render() {
     const {tracks} = this.props;
 
     return (
       <RecyclerListView
+        onScroll={this.onScroll}
         style={{flex: 1}}
         rowRenderer={this.rowRenderer}
         dataProvider={tracks}
@@ -117,11 +149,23 @@ class List extends Component {
     );
   }
 }
+const colorBlack = '#0D0D0D';
+
+const darkBlue = '#062D83';
+const colorBlue = '#074DD9';
 const colorLightBlack = '#131313';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: 70,
-    // backgroundColor: colorLightBlack,
+  },
+  fab: {
+    position: 'absolute',
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20,
+    bottom: 70,
+    right: 0,
   },
 });

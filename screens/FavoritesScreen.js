@@ -1,21 +1,27 @@
 import React, {Component, useState, useEffect} from 'react';
 
-import {View,  TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import {View, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import {getAsyncStorage} from '../data/AsyncStorage.js';
 import Track from '../components/Track';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
 import Loader from '../components/Loader';
-import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
+import Icon from 'react-native-vector-icons/Entypo';
+import FAB from 'react-native-fab';
 const screenWidth = Dimensions.get('window').width;
 
 export default class FavoritesScreen extends Component {
   static contextType = PlayerContext;
+  constructor(props) {
+    super(props);
+    this.state = {
+      isVisible: true,
+    };
+  }
 
   getPlaylist = trackId => {
-    
     const {playFromAlbums} = this.context;
-    playFromAlbums('2000000', trackId, 'favorites');
+    playFromAlbums('fav', trackId, 'favorites');
   };
 
   listViewConvertor = arr =>
@@ -24,36 +30,52 @@ export default class FavoritesScreen extends Component {
       item: data,
     }));
 
+    shuffle = () => {
+      const {oneTimeShuffle} = this.context;
+      oneTimeShuffle('fav', 'favorites');
+    };
+
   dataConverter = tracks => {
     const converted = this.listViewConvertor(tracks);
     return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(converted);
   };
+  fabHandler = visible => {
+    this.setState({isVisible: visible});
+  };
 
-  
   render() {
     const {renderScreen, tracks, favorites} = this.context;
-    
-    const favs = tracks.filter(track => favorites.includes(track.id))
-    
+
+    const favs = tracks.filter(track => favorites.includes(track.id));
+    const icon = (
+      <Icon
+        style={styles.shuffleIcon}
+        name="shuffle"
+        size={25}
+        color={colorBlue}
+      />
+    );
+    const darkBlue = '#062D83';
+    const colorBlue = '#074DD9';
+
     return (
       <View style={styles.container}>
         {favs.length > 0 ? (
           <List
             favorites={this.dataConverter(favs)}
             getPlaylist={this.getPlaylist}
+            fabHandler={this.fabHandler}
           />
-        ) : (
-          null
-        )}
-        <TouchableOpacity style={styles.fab}>
-        <SimpleLineIcon
-            style={styles.shuffleIcon}
-            name="shuffle"
-            size={25}
-            // color={isShuffled ? '#fff' : '#555'}
-            color={'white'}
-          />
-        </TouchableOpacity>
+        ) : null}
+        
+        <FAB
+          buttonColor="white"
+          snackOffset={70}
+          iconTextColor={colorBlue}
+          onClickAction={this.shuffle}
+          visible={this.state.isVisible}
+          iconTextComponent={icon}
+        />
       </View>
     );
   }
@@ -96,12 +118,28 @@ class List extends Component {
       />
     );
   };
- 
+
+  onScroll = event => {
+    const currentOffset = event.nativeEvent.contentOffset.y;
+    const dif = currentOffset - (this.offset || 0);
+    const {fabHandler} = this.props;
+
+    if (Math.abs(dif) < 3) {
+      fabHandler(true);
+    } else if (dif < 0) {
+      fabHandler(false);
+    } else {
+      fabHandler(false);
+    }
+
+    this.offset = currentOffset;
+  };
 
   render() {
     const {favorites} = this.props;
     return (
       <RecyclerListView
+        onScroll={this.onScroll}
         style={{flex: 1}}
         rowRenderer={this.rowRenderer}
         dataProvider={favorites}
@@ -118,18 +156,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: 70,
-   
   },
   fab: {
-    width: 50,
-    height: 50,
-    backgroundColor: colorBlue,
+    width: 60,
+    height: 60,
+    backgroundColor: 'white',
     flex: 1,
     position: 'absolute',
-    borderRadius: 25,
+    borderRadius: 30,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 20
-
-  }
+    margin: 20,
+    bottom: 70,
+    right: 0,
+  },
 });

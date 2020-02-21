@@ -88,7 +88,7 @@ export default class FolderPlaylist extends Component {
 
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor="#062D83" />
+        <StatusBar backgroundColor="#062D83" animated={true}/>
 
         <View style={styles.top}>
           <View style={styles.imageContainer}>

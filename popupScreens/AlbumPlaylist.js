@@ -87,7 +87,7 @@ export default class AlbumPlaylist extends Component {
     
     const {oneTimeShuffle} = this.context;
     const {albumId} = this.props.data;
-    oneTimeShuffle(albumId, 'album', true);
+    oneTimeShuffle(albumId, 'album');
     
   };
 
@@ -101,7 +101,7 @@ export default class AlbumPlaylist extends Component {
 
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor="#062D83" />
+        <StatusBar backgroundColor="#062D83" animated={true}/>
 
         <View style={styles.top}>
           <View style={styles.imageContainer}>
