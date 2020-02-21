@@ -1,7 +1,7 @@
 import React, {createContext, useEffect, useState} from 'react';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import {askPermissions} from '../data/MusicDataProvider.js';
-import TrackPlayer, {CAPABILITY_DISLIKE} from 'react-native-track-player/index';
+import TrackPlayer from 'react-native-track-player/index';
 import Track from '../components/Track.js';
 import {ToastAndroid} from 'react-native';
 import {getAlbums, getFolders} from '../data/CreateAlbums.js';
@@ -19,12 +19,13 @@ const PlayerFunctions = ({children}) => {
   const [afterFirstLoad, setIsFirstLoad] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
   const [currentAlbum, setCurrentAlbum] = useState([]);
-
+  
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
 
   useEffect(() => {
     if (afterFirstLoad) {
       setAsyncStorage('favorites', favorites);
+     
     }
   }, [favorites]);
 
@@ -59,6 +60,7 @@ const PlayerFunctions = ({children}) => {
   const loadFavorites = () => {
     getAsyncStorage('favorites').then(data => {
       setFavorites(data);
+      
     });
   };
 
@@ -100,18 +102,21 @@ const PlayerFunctions = ({children}) => {
     setIsShuffled(true);
   };
   const selectPlaylist = (id, type) => {
-    // console.log(cleanAlbums[id])
+    
+    const favs = tracks.filter(track => favorites.includes(track.id))
     const copy = arr => [...arr];
     switch (type) {
       case 'folder':
         return copy(cleanFolders[id]);
       case 'album':
         return copy(cleanAlbums[id]);
+      case 'favorites':
+        return copy(favs);
       case 'all':
         return copy(tracks);
     }
   };
-
+  
   const shuffleUpComingPlaylist = async shuffleState => {
     const playlist = selectPlaylist(currentAlbum[0], currentAlbum[1]);
     const currentTrack = await TrackPlayer.getCurrentTrack();
@@ -166,24 +171,13 @@ const PlayerFunctions = ({children}) => {
     setCurrentAlbum([id, type]);
   };
 
-  const loadAlbumOnSetup = async () => {
-   
-      let id = tracks[0].id
-      // if(!id) {
-      //   id = tracks[0].id
-      // }
-      const playlist = tracks
-      playlist.length = 20
-      if (playlist) {
-        await TrackPlayer.add(playlist);
-       
-        if (id) {
-          await TrackPlayer.skip(id);
-        }
-      
-    }
+  const loadAlbumOnSetup = () => {
+    getAsyncStorage('lastPlayed').then(async data => {
+      await TrackPlayer.add(data);
+      const id = data[0].id;
 
-    setCurrentAlbum([null, 'all']);
+      await TrackPlayer.skip(id);
+    });
   };
 
   const data = {
@@ -196,6 +190,7 @@ const PlayerFunctions = ({children}) => {
     albums: albums,
     favorites: favorites,
     setFavorites: setFavorites,
+   
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>

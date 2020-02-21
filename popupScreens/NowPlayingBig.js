@@ -10,7 +10,8 @@ import {
   Modal,
   ToastAndroid,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 import ProgressBar from '../components/ProgressBar';
@@ -39,8 +40,6 @@ const NowPlayingBig = ({
   const shuffleToggle = () => {
     shuffleUpComingPlaylist(!isShuffled);
   };
-
-  
 
   useEffect(() => {
     setIsFavorite(favorites.includes(trackId));
@@ -75,7 +74,7 @@ const NowPlayingBig = ({
           }}
         />
       ))
-    : (image = <Icon name={'headphones-alt'} size={120} color={'white'} />);
+    : (image = <Icon5 name={'headphones-alt'} size={120} color={'white'} />);
 
   return (
     <View style={styles.container}>
@@ -120,12 +119,21 @@ const NowPlayingBig = ({
         </TouchableOpacity>
 
         <TouchableOpacity onPress={storeFavorite} style={styles.favorite}>
-          <Icon
-            style={styles.heartIcon}
-            name="heart"
-            size={25}
-            color={isFavorite ? 'red' : 'white'}
-          />
+          {isFavorite ? (
+            <Icon
+              style={styles.heartIcon}
+              name="heart"
+              size={25}
+              color={'white'}
+            />
+          ) : (
+            <Icon
+              style={styles.heartIcon}
+              name="heart-o"
+              size={25}
+              color={'white'}
+            />
+          )}
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.repeat}>

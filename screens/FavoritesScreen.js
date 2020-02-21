@@ -1,19 +1,21 @@
 import React, {Component, useState, useEffect} from 'react';
 
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View,  TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import {getAsyncStorage} from '../data/AsyncStorage.js';
 import Track from '../components/Track';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
 import Loader from '../components/Loader';
+import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 const screenWidth = Dimensions.get('window').width;
 
 export default class FavoritesScreen extends Component {
   static contextType = PlayerContext;
 
   getPlaylist = trackId => {
+    
     const {playFromAlbums} = this.context;
-    playFromAlbums('2000000', trackId, 'fav');
+    playFromAlbums('2000000', trackId, 'favorites');
   };
 
   listViewConvertor = arr =>
@@ -27,15 +29,7 @@ export default class FavoritesScreen extends Component {
     return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(converted);
   };
 
-  // componentWillUnmount() {
-  //   console.log(this.context.favorites)
-  //   setAsyncStorage('favorites', '2345')
-  // }
-  // saveFavorites = () => {
-  //   const {favorites} = this.context
-    
-  // }
-
+  
   render() {
     const {renderScreen, tracks, favorites} = this.context;
     
@@ -51,6 +45,15 @@ export default class FavoritesScreen extends Component {
         ) : (
           null
         )}
+        <TouchableOpacity style={styles.fab}>
+        <SimpleLineIcon
+            style={styles.shuffleIcon}
+            name="shuffle"
+            size={25}
+            // color={isShuffled ? '#fff' : '#555'}
+            color={'white'}
+          />
+        </TouchableOpacity>
       </View>
     );
   }
@@ -93,31 +96,7 @@ class List extends Component {
       />
     );
   };
-  // componentDidMount() {
-  //   this._isMounted = true;
-  //   getAsyncStorage('favorites').then(data => {
-  //     if (this._isMounted) {
-  //       this.setState({
-  //         favorites: this.state.favorites.cloneWithRows(data),
-  //       });
-  //     }
-  //   });
-  // }
-
-  // componentDidUpdate(prevProps) {
-  //   if (this.props.renderScreen !== prevProps.renderScreen) {
-  //     getAsyncStorage('favorites').then(data => {
-  //       if (this._isMounted) {
-  //         this.setState({
-  //           favorites: this.state.favorites.cloneWithRows(data),
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
-  // componentWillUnmount() {
-  //   this._isMounted = false;
-  // }
+ 
 
   render() {
     const {favorites} = this.props;
@@ -131,11 +110,26 @@ class List extends Component {
     );
   }
 }
+const darkBlue = '#062D83';
 const colorLightBlack = '#131313';
+const colorBlue = '#074DD9';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: 70,
-    // backgroundColor: colorLightBlack,
+   
   },
+  fab: {
+    width: 50,
+    height: 50,
+    backgroundColor: colorBlue,
+    flex: 1,
+    position: 'absolute',
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 20
+
+  }
 });

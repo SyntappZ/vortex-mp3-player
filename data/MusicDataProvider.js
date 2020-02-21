@@ -87,7 +87,7 @@ const firstTimeloadTracks = async callback => {
       }});
 
       setAsyncStorage('tracks', originalTracks);
-      // setAsyncStorage('lastPlayed', [originalTracks[0]]);
+      setAsyncStorage('lastPlayed', [originalTracks[0]]);
       callback(originalTracks);
     })
     .catch(error => {
