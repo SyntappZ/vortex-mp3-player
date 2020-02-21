@@ -31,7 +31,7 @@ const NowPlaying = ({
   const [trackArt, setTrackArt] = useState('');
   const [trackArtist, setArtist] = useState('');
   const [duration, setDuration] = useState('');
-
+const [seconds, setSeconds] = useState('')
   const [afterFirstLoad, setIsFirstLoad] = useState(false);
 
   const [albumPlaying, setAlbumPlaying] = useState('');
@@ -93,7 +93,7 @@ const NowPlaying = ({
             setArtist(track.artist);
             setDuration(track.duration);
             setId(track.id);
-            
+           setSeconds(track.seconds)
           }
         } catch (error) {
           console.log(error);
@@ -159,6 +159,7 @@ const NowPlaying = ({
           shuffleUpComingPlaylist={shuffleUpComingPlaylist}
           setFavorites={setFavorites}
           favorites={favorites}
+          seconds={seconds}
         />
       </Modal>
       <View style={styles.imageWrap}>

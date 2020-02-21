@@ -34,9 +34,10 @@ const NowPlayingBig = ({
   shuffleUpComingPlaylist,
   setFavorites,
   favorites,
+  seconds
 }) => {
   const playerState = TrackPlayer.usePlaybackState();
-  const [startTime, setStartTime] = useState('0:00');
+ 
 
   const [isFavorite, setIsFavorite] = useState(false);
   const shuffleToggle = () => {
@@ -45,7 +46,7 @@ const NowPlayingBig = ({
 
   useEffect(() => {
     setIsFavorite(favorites.includes(trackId));
-  }, [favorites]);
+  }, [favorites, trackId]);
 
   const storeFavorite = () => {
     if (isFavorite) {
@@ -149,7 +150,7 @@ const NowPlayingBig = ({
       </View>
 
       <View style={styles.progressSection}>
-        <ProgressSlider />
+        <ProgressSlider seconds={seconds} duration={duration} />
 
         <View style={styles.timeSection}>
        <TimeInterval isPlaying={isPlaying} />

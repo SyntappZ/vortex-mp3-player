@@ -29,6 +29,12 @@ const durationConverter = millis => {
   return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
 };
 
+const secondsConverter = millis => (millis / 1000).toFixed(1);
+
+   
+
+
+
 const getPermissions = async callback => {
   const granted = await PermissionsAndroid.request(
     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
@@ -77,6 +83,8 @@ const firstTimeloadTracks = async callback => {
         artist: artist ? artist : track.author ? track.author : 'Unknown',
         artwork: track.cover,
         duration: durationConverter(track.duration),
+        seconds: secondsConverter(track.duration),
+        millis: track.duration,
         time: track.duration,
         fileName: track.fileName,
         folder: track.folder,
