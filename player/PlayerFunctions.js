@@ -19,13 +19,13 @@ const PlayerFunctions = ({children}) => {
   const [afterFirstLoad, setIsFirstLoad] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
   const [currentAlbum, setCurrentAlbum] = useState([]);
-  
+  const [isMenuOpen, setMenu] = useState(false)
+  const [isSearching, setIsSearch] = useState(false)
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
 
   useEffect(() => {
     if (afterFirstLoad) {
-      setAsyncStorage('favorites', favorites);
-     
+      setAsyncStorage('favorites', favorites); 
     }
   }, [favorites]);
 
@@ -146,18 +146,20 @@ const PlayerFunctions = ({children}) => {
     setIsShuffled(shuffleState);
   };
 
+  
+
   const playFromAlbums = async (id, trackToPlay, type) => {
     let nextAlbum = id + type;
     let lastAlbum = currentAlbum.join('');
     let playlist = selectPlaylist(id, type);
 
     if (nextAlbum == lastAlbum && !isShuffled) {
-      console.log('is the same album');
+     
       playlist = null;
     }
 
     if (playlist) {
-      console.log('add playlist');
+     
       await TrackPlayer.reset();
       await TrackPlayer.add(playlist);
     }
@@ -180,6 +182,15 @@ const PlayerFunctions = ({children}) => {
     });
   };
 
+  const openMenu = () => {
+    
+    setMenu(!isMenuOpen)
+  }
+
+  const openSearch = (value) => {
+   setIsSearch(!isSearching)
+  }
+
   const data = {
     shuffleUpComingPlaylist: shuffleUpComingPlaylist,
     playFromAlbums: playFromAlbums,
@@ -190,6 +201,12 @@ const PlayerFunctions = ({children}) => {
     albums: albums,
     favorites: favorites,
     setFavorites: setFavorites,
+    openMenu: openMenu,
+    isMenuOpen:isMenuOpen,
+    // searchValue:searchValue,
+    openSearch:openSearch,
+    isSearching: isSearching
+
    
   };
   return (

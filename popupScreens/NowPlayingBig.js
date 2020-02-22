@@ -20,8 +20,8 @@ import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
 import {addFavorite, favoriteCheck} from '../data/AddToFavorites.js';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
-import ProgressSlider from '../components/ProgressSlider'
-import TimeInterval from '../components/TimeInterval'
+import ProgressSlider from '../components/ProgressSlider';
+import TimeInterval from '../components/TimeInterval';
 const NowPlayingBig = ({
   modalHandler,
   trackTitle,
@@ -34,11 +34,10 @@ const NowPlayingBig = ({
   shuffleUpComingPlaylist,
   setFavorites,
   favorites,
-  seconds
+  seconds,
 }) => {
-  let isMounted = false
+  let isMounted = false;
   const playerState = TrackPlayer.usePlaybackState();
- 
 
   const [isFavorite, setIsFavorite] = useState(false);
   const shuffleToggle = () => {
@@ -46,26 +45,20 @@ const NowPlayingBig = ({
   };
 
   useEffect(() => {
-    isMounted = true
-    if(isMounted) {
-    setIsFavorite(favorites.includes(trackId));
-
+    isMounted = true;
+    if (isMounted) {
+      setIsFavorite(favorites.includes(trackId));
     }
-    return () => isMounted = false
+    return () => (isMounted = false);
   }, [favorites, trackId]);
 
   const storeFavorite = () => {
     if (isFavorite) {
       const removeId = favorites.filter(id => id !== trackId);
-      if(isMounted) {
-        setFavorites(removeId);
-      }
-     
-    } else {
-      if(isMounted) {
-      setFavorites([...favorites, trackId]);
 
-      }
+      setFavorites(removeId);
+    } else {
+      setFavorites([...favorites, trackId]);
     }
     ToastAndroid.show(
       `${isFavorite ? 'removed from' : 'added to'} favorites`,
@@ -92,7 +85,7 @@ const NowPlayingBig = ({
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor={darkBlue} animated={true}/>
+      <StatusBar backgroundColor={darkBlue} animated={true} />
       <Gradient />
       <View style={styles.topbar}>
         <TouchableOpacity style={styles.menu}>
@@ -164,7 +157,7 @@ const NowPlayingBig = ({
         <ProgressSlider seconds={seconds} duration={duration} />
 
         <View style={styles.timeSection}>
-       <TimeInterval />
+          <TimeInterval />
           <View style={styles.artistWrap}>
             <TextTicker
               style={styles.song}
@@ -176,7 +169,9 @@ const NowPlayingBig = ({
               {trackTitle}
             </TextTicker>
 
-            <Text numberOfLines={1} style={styles.artist}>{trackArtist}</Text>
+            <Text numberOfLines={1} style={styles.artist}>
+              {trackArtist}
+            </Text>
           </View>
           <View style={styles.endTime}>
             <Text style={styles.time}>{duration ? duration : '0:00'}</Text>

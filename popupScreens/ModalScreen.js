@@ -15,15 +15,21 @@ const ModalScreen = ({route, navigation}) => {
     return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(tracks);
   };
 
-  const durationConverter = millis => {
-    var minutes = Math.floor(millis / 60000);
-    var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+  const durationConverter = d => {
+    d = Number(d);
+    var h = Math.floor(d / 3600);
+    var m = Math.floor((d % 3600) / 60);
+
+    var hDisplay = h > 0 ? h + (h == 1 ? ' hr, ' : ' hrs, ') : '';
+    var mDisplay = m > 0 ? m + (m == 1 ? ' min' : ' mins') : '';
+
+    return hDisplay + mDisplay;
   };
+
   const timeCalc = () => {
     let total = 0;
 
-    data.item.data.forEach(track => (total += Number(track.item.time)));
+    data.item.data.forEach(track => (total += Number(track.item.seconds)));
     return durationConverter(total);
   };
 

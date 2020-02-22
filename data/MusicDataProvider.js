@@ -85,7 +85,6 @@ const firstTimeloadTracks = async callback => {
         duration: durationConverter(track.duration),
         seconds: secondsConverter(track.duration),
         millis: track.duration,
-        time: track.duration,
         fileName: track.fileName,
         folder: track.folder,
         id: track.id,

@@ -44,18 +44,7 @@ export default class FolderPlaylist extends Component {
     );
   }
 
-  componentDidMount() {
-    // let total = 0;
-    // const {tracklist} = this.props;
-    // tracklist.forEach(track => (total += Number(track.item.time)));
-    // this.setState({totalTime: this.durationConverter(total)});
-  }
-
-  durationConverter = millis => {
-    var minutes = Math.floor(millis / 60000);
-    var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-  };
+  
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;
@@ -166,7 +155,7 @@ const styles = StyleSheet.create({
   },
 
   top: {
-    flex: 1,
+    flex: 1.2,
     backgroundColor: darkBlue,
     flexDirection: 'row',
     borderBottomColor: '#aaa',
@@ -190,9 +179,9 @@ const styles = StyleSheet.create({
   infoWrap: {
     flex: 1,
     paddingHorizontal: 20,
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
     justifyContent: 'space-between',
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   imageWrap: {
     flex: 1,
