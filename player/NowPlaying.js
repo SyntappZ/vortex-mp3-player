@@ -31,7 +31,7 @@ const NowPlaying = ({
   const [trackArt, setTrackArt] = useState('');
   const [trackArtist, setArtist] = useState('');
   const [duration, setDuration] = useState('');
-const [seconds, setSeconds] = useState('')
+  const [seconds, setSeconds] = useState('')
   const [afterFirstLoad, setIsFirstLoad] = useState(false);
 
   const [albumPlaying, setAlbumPlaying] = useState('');
@@ -53,33 +53,36 @@ const [seconds, setSeconds] = useState('')
 
   useEffect(() => {
     isMounted = true;
-    setIsFirstLoad(true);
-    TrackPlayer.setupPlayer();
-    TrackPlayer.updateOptions({
-      stopWithApp: true,
-      alwaysPauseOnInterruption: true,
-      capabilities: [
-        TrackPlayer.CAPABILITY_PLAY,
-        TrackPlayer.CAPABILITY_PAUSE,
-        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-        TrackPlayer.CAPABILITY_STOP,
+    if(isMounted) {
+      setIsFirstLoad(true);
+      TrackPlayer.setupPlayer();
+      TrackPlayer.updateOptions({
+        stopWithApp: true,
+        alwaysPauseOnInterruption: true,
+        capabilities: [
+          TrackPlayer.CAPABILITY_PLAY,
+          TrackPlayer.CAPABILITY_PAUSE,
+          TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+          TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+          TrackPlayer.CAPABILITY_STOP,
+        ],
+        compactCapabilities: [
+          TrackPlayer.CAPABILITY_PLAY,
+          TrackPlayer.CAPABILITY_PAUSE,
+          TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+          TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+          TrackPlayer.CAPABILITY_STOP,
+        ],
+        notificationCapabilities : [
+          TrackPlayer.CAPABILITY_PLAY,
+          TrackPlayer.CAPABILITY_PAUSE,
+          TrackPlayer.CAPABILITY_STOP,
+          TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+          TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS
       ],
-      compactCapabilities: [
-        TrackPlayer.CAPABILITY_PLAY,
-        TrackPlayer.CAPABILITY_PAUSE,
-        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-        TrackPlayer.CAPABILITY_STOP,
-      ],
-      notificationCapabilities : [
-        TrackPlayer.CAPABILITY_PLAY,
-        TrackPlayer.CAPABILITY_PAUSE,
-        TrackPlayer.CAPABILITY_STOP,
-        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS
-    ],
-    });
+      });
+    }
+   
 
     let onTrackChange = TrackPlayer.addEventListener(
       'playback-track-changed',

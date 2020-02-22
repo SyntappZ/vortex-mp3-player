@@ -25,7 +25,7 @@ const ViewTypes = {
 
 export default class AlbumsScreen extends Component {
   static contextType = PlayerContext;
-  _isMounted = false;
+  
 
   dataConverter = tracks => {
     return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(tracks);
@@ -51,7 +51,7 @@ class List extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+   
 
     this.rowRenderer = this.rowRenderer.bind(this);
 
@@ -81,32 +81,7 @@ class List extends Component {
     );
   }
 
-  // componentDidMount() {
-  //   this._isMounted = true;
-  //   getAsyncStorage('albums').then(data => {
-  //     if (this._isMounted) {
-  //       this.setState({
-  //         albums: this.state.albums.cloneWithRows(data),
-  //       });
-  //     }
-  //   });
-  // }
-
-  // componentDidUpdate(prevProps) {
-  //   if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
-  //     getAsyncStorage('albums').then(data => {
-  //       if (this._isMounted) {
-  //         this.setState({
-  //           albums: this.props.albums.cloneWithRows(data),
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
+ 
 
   openModal = albumId => {
     const album = this.props.albums['_data'][albumId];

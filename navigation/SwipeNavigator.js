@@ -6,7 +6,7 @@ import FavoritesScreen from '../screens/FavoritesScreen';
 import AlbumsScreen from '../screens/AlbumsScreen';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-community/async-storage';
-import {askPermissions} from '../data/MusicDataProvider.js';
+
 
 import {
   SafeAreaView,
@@ -59,9 +59,7 @@ export default class SwipeNavigator extends Component {
     super(props)
   }
 
-  componentDidMount() {
-   
-  }
+  
   render() {
     const options = {
       activeTintColor: colorLightBlue,

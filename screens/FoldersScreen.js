@@ -8,7 +8,7 @@ const screenWidth = Dimensions.get('window').width;
 import Loader from '../components/Loader';
 export default class FoldersScreen extends Component {
   static contextType = PlayerContext;
-  _isMounted = false;
+
 
   dataConverter = tracks => {
     return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(tracks);
@@ -56,33 +56,8 @@ class List extends Component {
     );
   }
 
-  // componentDidMount() {
-  //   this._isMounted = true;
-  //   getAsyncStorage('folders').then(data => {
-  //     if (this._isMounted) {
-  //       this.setState({
-  //         folders: this.state.folders.cloneWithRows(data),
-  //       });
-  //     }
-  //   });
-  // }
 
-  // componentDidUpdate(prevProps) {
-  //   if (this.props.isFirstLoad !== prevProps.isFirstLoad) {
-  //     getAsyncStorage('folders').then(data => {
-  //       if (this._isMounted) {
-  //         this.setState({
-  //           folders: this.state.folders.cloneWithRows(data),
-  //         });
-  //       }
-  //     });
-  //   }
-  // }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-  }
-
+  
   rowRenderer = (type, data) => {
     const {name, tracksAmount, folderId} = data.item;
     return (

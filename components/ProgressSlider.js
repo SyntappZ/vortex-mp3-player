@@ -21,7 +21,7 @@ export default class ProgressSlider extends TrackPlayer.ProgressComponent {
 
   render() {
     const darkBlue = '#062D83';
-    const val = this.getProgress();
+  
     return (
       <View>
         <Slider
@@ -31,7 +31,7 @@ export default class ProgressSlider extends TrackPlayer.ProgressComponent {
           thumbTintColor={'white'}
           minimumTrackTintColor={darkBlue}
           maximumTrackTintColor="#aaa"
-          value={val}
+          value={this.getProgress()}
         />
       </View>
     );

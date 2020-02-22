@@ -12,6 +12,7 @@ const screenWidth = Dimensions.get('window').width;
 
 export default class FavoritesScreen extends Component {
   static contextType = PlayerContext;
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -19,6 +20,12 @@ export default class FavoritesScreen extends Component {
     };
   }
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
   getPlaylist = trackId => {
     const {playFromAlbums} = this.context;
     playFromAlbums('fav', trackId, 'favorites');
@@ -30,21 +37,23 @@ export default class FavoritesScreen extends Component {
       item: data,
     }));
 
-    shuffle = () => {
-      const {oneTimeShuffle} = this.context;
-      oneTimeShuffle('fav', 'favorites');
-    };
+  shuffle = () => {
+    const {oneTimeShuffle} = this.context;
+    oneTimeShuffle('fav', 'favorites');
+  };
 
   dataConverter = tracks => {
     const converted = this.listViewConvertor(tracks);
     return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(converted);
   };
   fabHandler = visible => {
-    this.setState({isVisible: visible});
+    if (this._isMounted) {
+      this.setState({isVisible: visible});
+    }
   };
 
   render() {
-    const {renderScreen, tracks, favorites} = this.context;
+    const {tracks, favorites} = this.context;
 
     const favs = tracks.filter(track => favorites.includes(track.id));
     const icon = (
@@ -67,7 +76,7 @@ export default class FavoritesScreen extends Component {
             fabHandler={this.fabHandler}
           />
         ) : null}
-        
+
         <FAB
           buttonColor="white"
           snackOffset={70}
@@ -82,7 +91,6 @@ export default class FavoritesScreen extends Component {
 }
 
 class List extends Component {
-  _isMounted = false;
   constructor(props) {
     super(props);
 

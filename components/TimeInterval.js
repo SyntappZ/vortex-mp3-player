@@ -1,13 +1,29 @@
+//  <script src="http://192.168.1.12:8097"></script>
+
 import TrackPlayer from 'react-native-track-player';
-import React from 'react';
+import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 
-export default class TimeInterval extends TrackPlayer.ProgressComponent {
+export default class TimeInterval extends Component {
+  _isMounted = false;
+  _interval = null;
   constructor(props) {
     super(props);
     this.state = {
       time: '0:00',
     };
+  }
+
+  componentDidMount() {
+    this._isMounted = true;
+
+    this._interval = setInterval(() => {
+      this.getPos();
+    }, 500);
+  }
+  componentWillUnmount() {
+    this._isMounted = false;
+    this._interval.clearInterval;
   }
 
   convertTime(s) {
@@ -21,12 +37,13 @@ export default class TimeInterval extends TrackPlayer.ProgressComponent {
   };
 
   getPos = async () => {
-    const pos = await TrackPlayer.getPosition();
-    this.setState({time: this.currentTime(pos)});
+    if (this._isMounted) {
+      const pos = await TrackPlayer.getPosition();
+      this.setState({time: this.currentTime(pos)});
+    }
   };
 
   render() {
-    this.getPos();
     const {time} = this.state;
     return (
       <View style={styles.startTime}>

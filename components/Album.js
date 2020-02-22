@@ -17,7 +17,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 class Album extends PureComponent {
   constructor(props) {
     super(props);
-    this.state = {};
+    
   }
   modalHandler = () => {
     const {albumId, openModal} = this.props;

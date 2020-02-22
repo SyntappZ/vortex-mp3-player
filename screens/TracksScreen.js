@@ -12,11 +12,19 @@ const screenWidth = Dimensions.get('window').width;
 
 export default class TracksScreen extends Component {
   static contextType = PlayerContext;
+  _isMounted = false
   constructor(props) {
     super(props);
     this.state = {
       isVisible: true,
     };
+  }
+
+  componentDidMount() {
+    this._isMounted = true
+  }
+  componentWillUnmount() {
+    this._isMounted = false
   }
 
   getPlaylist = trackId => {
@@ -41,7 +49,9 @@ export default class TracksScreen extends Component {
   };
 
   fabHandler = visible => {
-    this.setState({isVisible: visible});
+    if (this._isMounted) {
+      this.setState({isVisible: visible});
+    }
   };
 
   render() {

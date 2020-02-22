@@ -30,16 +30,16 @@ const MyTheme = {
   },
 };
 
-const Login = () => {
-  return (
-    <View>
-      <Text>welcome to the login page</Text>
-    </View>
-  );
-};
+// const Login = () => {
+//   return (
+//     <View>
+//       <Text>welcome to the login page</Text>
+//     </View>
+//   );
+// };
 
 const App = () => {
-  const [onLogin, setOnLogin] = useState(false);
+  // const [onLogin, setOnLogin] = useState(false);
 useEffect(() => {
   pushTracks()
 }, [])
@@ -57,15 +57,11 @@ useEffect(() => {
             component={ModalScreen}
             options={{headerShown: false}}
           />
-          {/* <Stack.Screen
-            name="NowPlaying"
-            component={Login}
-            options={{headerShown: false}}
-          /> */}
+         
         </Stack.Navigator>
       </NavigationContainer>
 
-      {!onLogin ? <PlaylistConsumer /> : null}
+       <PlaylistConsumer /> 
     </PlayerFunctions>
   );
 };

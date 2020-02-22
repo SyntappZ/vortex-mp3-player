@@ -36,6 +36,7 @@ const NowPlayingBig = ({
   favorites,
   seconds
 }) => {
+  let isMounted = false
   const playerState = TrackPlayer.usePlaybackState();
  
 
@@ -45,16 +46,26 @@ const NowPlayingBig = ({
   };
 
   useEffect(() => {
+    isMounted = true
+    if(isMounted) {
     setIsFavorite(favorites.includes(trackId));
+
+    }
+    return () => isMounted = false
   }, [favorites, trackId]);
 
   const storeFavorite = () => {
     if (isFavorite) {
       const removeId = favorites.filter(id => id !== trackId);
-
-      setFavorites(removeId);
+      if(isMounted) {
+        setFavorites(removeId);
+      }
+     
     } else {
+      if(isMounted) {
       setFavorites([...favorites, trackId]);
+
+      }
     }
     ToastAndroid.show(
       `${isFavorite ? 'removed from' : 'added to'} favorites`,
@@ -111,7 +122,7 @@ const NowPlayingBig = ({
         <View style={styles.imageWrap}>{image}</View>
       </View>
 
-      <View style={styles.repeatSection}>
+      <View style={styles.shuffleSection}>
         <TouchableOpacity onPress={shuffleToggle} style={styles.shuffle}>
           <SimpleLineIcon
             style={styles.shuffleIcon}
@@ -139,10 +150,10 @@ const NowPlayingBig = ({
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.repeat}>
+        <TouchableOpacity style={styles.playlist}>
           <SimpleLineIcon
-            style={styles.repeatIcon}
-            name="loop"
+            style={styles.playlistIcon}
+            name="playlist"
             size={20}
             color={'#555'}
           />
@@ -153,7 +164,7 @@ const NowPlayingBig = ({
         <ProgressSlider seconds={seconds} duration={duration} />
 
         <View style={styles.timeSection}>
-       <TimeInterval isPlaying={isPlaying} />
+       <TimeInterval />
           <View style={styles.artistWrap}>
             <TextTicker
               style={styles.song}
@@ -165,7 +176,7 @@ const NowPlayingBig = ({
               {trackTitle}
             </TextTicker>
 
-            <Text style={styles.artist}>{trackArtist}</Text>
+            <Text numberOfLines={1} style={styles.artist}>{trackArtist}</Text>
           </View>
           <View style={styles.endTime}>
             <Text style={styles.time}>{duration ? duration : '0:00'}</Text>
@@ -291,7 +302,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 
-  repeatSection: {
+  shuffleSection: {
     zIndex: 3,
     position: 'relative',
     flex: 1.5,
@@ -305,7 +316,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  repeat: {
+  playlist: {
     flex: 2,
     height: '100%',
     justifyContent: 'center',

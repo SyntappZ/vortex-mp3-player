@@ -24,11 +24,14 @@ import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 const screenWidth = Dimensions.get('window').width;
 export default class AlbumPlaylist extends Component {
   static contextType = PlayerContext;
+  _isMounted = false
   constructor(props) {
     super(props);
     this.state = {
       isShuffled: false
     };
+
+   
 
     this.rowRenderer = this.rowRenderer.bind(this);
 

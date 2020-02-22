@@ -22,7 +22,7 @@ export default class FolderPlaylist extends Component {
   constructor(props) {
     super(props);
 
-    this.state = {};
+   
 
     this.rowRenderer = this.rowRenderer.bind(this);
 
