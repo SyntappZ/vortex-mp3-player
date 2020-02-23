@@ -15,7 +15,7 @@ import ProgressBar from '../components/ProgressBar';
 import NowPlayingBig from '../popupScreens/NowPlayingBig';
 
 import TextTicker from 'react-native-text-ticker';
-import TrackPlayer from 'react-native-track-player/index';
+import TrackPlayer from 'react-native-track-player';
 
 const NowPlaying = ({
   isShuffled,
@@ -55,33 +55,9 @@ const NowPlaying = ({
     isMounted = true;
     if(isMounted) {
       setIsFirstLoad(true);
-      TrackPlayer.setupPlayer();
-      TrackPlayer.updateOptions({
-        stopWithApp: true,
-        alwaysPauseOnInterruption: true,
-        capabilities: [
-          TrackPlayer.CAPABILITY_PLAY,
-          TrackPlayer.CAPABILITY_PAUSE,
-          TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-          TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-          TrackPlayer.CAPABILITY_STOP,
-        ],
-        compactCapabilities: [
-          TrackPlayer.CAPABILITY_PLAY,
-          TrackPlayer.CAPABILITY_PAUSE,
-          TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-          TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-          TrackPlayer.CAPABILITY_STOP,
-        ],
-        notificationCapabilities : [
-          TrackPlayer.CAPABILITY_PLAY,
-          TrackPlayer.CAPABILITY_PAUSE,
-          TrackPlayer.CAPABILITY_STOP,
-          TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-          TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS
-      ],
-      });
+     
     }
+
    
 
     let onTrackChange = TrackPlayer.addEventListener(
@@ -89,6 +65,7 @@ const NowPlaying = ({
       async data => {
         try {
           const track = await TrackPlayer.getTrack(data.nextTrack);
+          
           if (isMounted) {
             setTrackArt('');
             setTrackTitle(track.title);
@@ -96,15 +73,17 @@ const NowPlaying = ({
             setArtist(track.artist);
             setDuration(track.duration);
             setId(track.id);
-           setSeconds(track.seconds)
+            setSeconds(track.seconds)
           }
         } catch (error) {
           console.log(error);
         }
-
+       
         return () => {
           isMounted = false;
+          
           onTrackChange.remove();
+       
         };
       },
     );

@@ -1,32 +1,20 @@
 import React from 'react';
-import Searchbar from "../components/Searchbar";
-import { View } from 'react-native'
+import Searchbar from '../components/Searchbar';
+import {View} from 'react-native';
 import {PlayerContext} from './PlayerFunctions';
 import NowPlaying from './NowPlaying';
 
 const PlaylistConsumer = () => {
   return (
     <PlayerContext.Consumer>
-      {({
-        isShuffled,
-        shuffleUpComingPlaylist,
-        favorites,
-        setFavorites,
-        isSearching,
-      }) => {
+      {({isShuffled, shuffleUpComingPlaylist, favorites, setFavorites}) => {
         return (
-          <View>
-            {isSearching ? (
-              <Searchbar />
-            ) : (
-              <NowPlaying
-                isShuffled={isShuffled}
-                shuffleUpComingPlaylist={shuffleUpComingPlaylist}
-                setFavorites={setFavorites}
-                favorites={favorites}
-              />
-            )}
-          </View>
+          <NowPlaying
+            isShuffled={isShuffled}
+            shuffleUpComingPlaylist={shuffleUpComingPlaylist}
+            setFavorites={setFavorites}
+            favorites={favorites}
+          />
         );
       }}
     </PlayerContext.Consumer>

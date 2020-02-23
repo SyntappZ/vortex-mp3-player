@@ -1,7 +1,7 @@
 import React, {createContext, useEffect, useState} from 'react';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import {askPermissions} from '../data/MusicDataProvider.js';
-import TrackPlayer from 'react-native-track-player/index';
+import TrackPlayer from 'react-native-track-player';
 import Track from '../components/Track.js';
 import {ToastAndroid} from 'react-native';
 import {getAlbums, getFolders} from '../data/CreateAlbums.js';
@@ -19,13 +19,13 @@ const PlayerFunctions = ({children}) => {
   const [afterFirstLoad, setIsFirstLoad] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
   const [currentAlbum, setCurrentAlbum] = useState([]);
-  const [isMenuOpen, setMenu] = useState(false)
-  const [isSearching, setIsSearch] = useState(false)
+  const [isMenuOpen, setMenu] = useState(false);
+  const [isSearching, setIsSearch] = useState(false);
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
 
   useEffect(() => {
     if (afterFirstLoad) {
-      setAsyncStorage('favorites', favorites); 
+      setAsyncStorage('favorites', favorites);
     }
   }, [favorites]);
 
@@ -60,7 +60,6 @@ const PlayerFunctions = ({children}) => {
   const loadFavorites = () => {
     getAsyncStorage('favorites').then(data => {
       setFavorites(data);
-      
     });
   };
 
@@ -101,9 +100,10 @@ const PlayerFunctions = ({children}) => {
     await TrackPlayer.play();
     setIsShuffled(true);
   };
-  const selectPlaylist = (id, type) => {
+  const selectPlaylist = (id, type, trackId) => {
+    const favs = tracks.filter(track => favorites.includes(track.id));
+    const search = tracks.filter(track => track.id == trackId);
     
-    const favs = tracks.filter(track => favorites.includes(track.id))
     const copy = arr => [...arr];
     switch (type) {
       case 'folder':
@@ -114,9 +114,11 @@ const PlayerFunctions = ({children}) => {
         return copy(favs);
       case 'all':
         return copy(tracks);
+      case 'none':
+        return copy(search);
     }
   };
-  
+
   const shuffleUpComingPlaylist = async shuffleState => {
     const playlist = selectPlaylist(currentAlbum[0], currentAlbum[1]);
     const currentTrack = await TrackPlayer.getCurrentTrack();
@@ -146,20 +148,17 @@ const PlayerFunctions = ({children}) => {
     setIsShuffled(shuffleState);
   };
 
-  
-
   const playFromAlbums = async (id, trackToPlay, type) => {
+    
     let nextAlbum = id + type;
     let lastAlbum = currentAlbum.join('');
-    let playlist = selectPlaylist(id, type);
+    let playlist = selectPlaylist(id, type, trackToPlay);
 
     if (nextAlbum == lastAlbum && !isShuffled) {
-     
       playlist = null;
     }
 
     if (playlist) {
-     
       await TrackPlayer.reset();
       await TrackPlayer.add(playlist);
     }
@@ -183,13 +182,12 @@ const PlayerFunctions = ({children}) => {
   };
 
   const openMenu = () => {
-    
-    setMenu(!isMenuOpen)
-  }
+    setMenu(!isMenuOpen);
+  };
 
-  const openSearch = (value) => {
-   setIsSearch(!isSearching)
-  }
+  const openSearch = value => {
+    setIsSearch(!isSearching);
+  };
 
   const data = {
     shuffleUpComingPlaylist: shuffleUpComingPlaylist,
@@ -202,12 +200,10 @@ const PlayerFunctions = ({children}) => {
     favorites: favorites,
     setFavorites: setFavorites,
     openMenu: openMenu,
-    isMenuOpen:isMenuOpen,
+    isMenuOpen: isMenuOpen,
     // searchValue:searchValue,
-    openSearch:openSearch,
-    isSearching: isSearching
-
-   
+    openSearch: openSearch,
+    isSearching: isSearching,
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>

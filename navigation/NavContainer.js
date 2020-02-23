@@ -3,12 +3,10 @@ import {View, Keyboard, Text} from 'react-native';
 
 import {createStackNavigator} from '@react-navigation/stack';
 import ModalScreen from '../popupScreens/ModalScreen';
-// import PlaylistConsumer from '../player/PlaylistConsumer';
+
 import SwipeNavigator from './SwipeNavigator';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import {PlayerContext} from '../player/PlayerFunctions';
-import SideMenu from 'react-native-side-menu';
+
 import PlaylistConsumer from '../player/PlaylistConsumer';
 
 const colorBlack = '#0D0D0D';

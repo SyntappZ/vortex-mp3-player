@@ -22,6 +22,7 @@ import {addFavorite, favoriteCheck} from '../data/AddToFavorites.js';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import ProgressSlider from '../components/ProgressSlider';
 import TimeInterval from '../components/TimeInterval';
+import Sheet from '../components/Sheet'
 const NowPlayingBig = ({
   modalHandler,
   trackTitle,
@@ -40,6 +41,7 @@ const NowPlayingBig = ({
   const playerState = TrackPlayer.usePlaybackState();
 
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
   const shuffleToggle = () => {
     shuffleUpComingPlaylist(!isShuffled);
   };
@@ -86,6 +88,7 @@ const NowPlayingBig = ({
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={darkBlue} animated={true} />
+     
       <Gradient />
       <View style={styles.topbar}>
         <TouchableOpacity style={styles.menu}>
@@ -143,7 +146,7 @@ const NowPlayingBig = ({
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.playlist}>
+        <TouchableOpacity onPress={() => setIsSheetOpen(!isSheetOpen)} style={styles.playlist}>
           <SimpleLineIcon
             style={styles.playlistIcon}
             name="playlist"
@@ -219,6 +222,7 @@ const NowPlayingBig = ({
           />
         </TouchableOpacity>
       </View>
+      <Sheet isSheetOpen={isSheetOpen} />
     </View>
   );
 };
