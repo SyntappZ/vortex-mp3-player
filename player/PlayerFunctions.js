@@ -22,6 +22,7 @@ const PlayerFunctions = ({children}) => {
   const [isMenuOpen, setMenu] = useState(false);
   const [isSearching, setIsSearch] = useState(false);
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
+  const [playlistType, setPlaylistType] = useState('');
 
   useEffect(() => {
     if (afterFirstLoad) {
@@ -93,6 +94,8 @@ const PlayerFunctions = ({children}) => {
   };
 
   const oneTimeShuffle = async (id, type) => {
+    setPlaylistType({type: type, id: id});
+
     setCurrentAlbum([id, type]);
     const playlist = selectPlaylist(id, type);
     await TrackPlayer.reset();
@@ -103,7 +106,7 @@ const PlayerFunctions = ({children}) => {
   const selectPlaylist = (id, type, trackId) => {
     const favs = tracks.filter(track => favorites.includes(track.id));
     const search = tracks.filter(track => track.id == trackId);
-    
+
     const copy = arr => [...arr];
     switch (type) {
       case 'folder':
@@ -149,13 +152,17 @@ const PlayerFunctions = ({children}) => {
   };
 
   const currentPlaylist = () => {
-   const playlist = selectPlaylist(currentAlbum[0], currentAlbum[1]);
-   return playlist
-  }
-  
+    const playlist = {
+      playlist: selectPlaylist(currentAlbum[0], currentAlbum[1]),
+      playlistType: playlistType.type,
+      playlistId: playlistType.id,
+    };
+    return playlist;
+  };
 
   const playFromAlbums = async (id, trackToPlay, type) => {
-    
+    setPlaylistType({type: type, id: id});
+
     let nextAlbum = id + type;
     let lastAlbum = currentAlbum.join('');
     let playlist = selectPlaylist(id, type, trackToPlay);
@@ -210,7 +217,7 @@ const PlayerFunctions = ({children}) => {
     // searchValue:searchValue,
     openSearch: openSearch,
     isSearching: isSearching,
-    currentPlaylist: currentPlaylist()
+    currentPlaylist: currentPlaylist(),
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>

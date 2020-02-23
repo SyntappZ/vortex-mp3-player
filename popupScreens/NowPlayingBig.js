@@ -222,7 +222,7 @@ const NowPlayingBig = ({
           />
         </TouchableOpacity>
       </View>
-      <Sheet isSheetOpen={isSheetOpen} />
+      <Sheet favorites={favorites} isSheetOpen={isSheetOpen} />
     </View>
   );
 };

@@ -1,10 +1,14 @@
-import React, {Component, useRef} from 'react';
+import React, {Component} from 'react';
 import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {PlayerContext} from '../player/PlayerFunctions';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-const Track = ({title, duration}) => {
+const Track = ({title, duration, getPlaylist, closeSheet, trackId}) => {
+  const close = () => {
+    closeSheet();
+    getPlaylist(trackId);
+  };
   return (
     <View style={styles.track}>
       <TouchableOpacity style={styles.icon}>
@@ -15,8 +19,10 @@ const Track = ({title, duration}) => {
           color={'white'}
         />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.trackTitle}>
-        <Text numberOfLines={1} style={styles.smallText}>{title}</Text>
+      <TouchableOpacity onPress={close} style={styles.trackTitle}>
+        <Text numberOfLines={1} style={styles.smallText}>
+          {title}
+        </Text>
       </TouchableOpacity>
       <View style={styles.duration}>
         <Text style={styles.smallText}>{duration}</Text>
@@ -27,23 +33,44 @@ const Track = ({title, duration}) => {
 
 export default class Sheet extends Component {
   static contextType = PlayerContext;
+  _isMounted = false;
   constructor(props) {
     super(props);
 
     this.state = {
       playlist: [],
-      albumName: '',
+      playlistName: '',
     };
   }
 
-  componentDidMount() {
+  playlistName = type => {
     const {currentPlaylist} = this.context;
-    let album = currentPlaylist[0].album;
-    if (!album) {
-      album = currentPlaylist[0].folder;
+    switch (type) {
+      case 'folder':
+        return currentPlaylist.playlist[0].folder;
+      case 'album':
+        return currentPlaylist.playlist[0].album;
+      case 'favorites':
+        return 'favorites';
+      case 'all':
+        return 'All Tracks';
+      case 'none':
+        return currentPlaylist.playlist[0].title;
     }
-    this.setState({playlist: currentPlaylist, albumName: album});
+  };
+
+  componentDidMount() {
+    this._isMounted = true;
+    const {currentPlaylist} = this.context;
+    if (this._isMounted) {
+      this.setState({
+        playlist: currentPlaylist.playlist,
+        playlistName: this.playlistName(currentPlaylist.playlistType),
+      });
+    }
   }
+
+  closeSheet = () => this.RBSheet.close();
 
   componentDidUpdate(prevProps) {
     const {isSheetOpen} = this.props;
@@ -52,14 +79,30 @@ export default class Sheet extends Component {
     }
   }
 
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+  getPlaylist = trackId => {
+    const {playFromAlbums, currentPlaylist} = this.context;
+    const {playlistType, playlistId} = currentPlaylist;
+
+    playFromAlbums(playlistId, trackId, playlistType);
+  };
+
   renderItem = ({item}) => {
     return (
-      <Track duration={item.duration} trackId={item.id} title={item.title} />
+      <Track
+        duration={item.duration}
+        getPlaylist={this.getPlaylist}
+        trackId={item.id}
+        title={item.title}
+        closeSheet={this.closeSheet}
+      />
     );
   };
 
   render() {
-    const {albumName, playlist} = this.state;
+    const {playlistName, playlist} = this.state;
     return (
       <RBSheet
         ref={ref => {
@@ -76,7 +119,7 @@ export default class Sheet extends Component {
             flex: 1,
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
-            paddingBottom: 10
+            paddingBottom: 10,
           },
           wrapper: {
             backgroundColor: 'transparent',
@@ -85,7 +128,7 @@ export default class Sheet extends Component {
         <View style={styles.container}>
           <View style={styles.titleWrap}>
             <Text numberOfLines={1} style={styles.text}>
-              {albumName}
+              {playlistName}
             </Text>
           </View>
           <View style={styles.tracksScroll}>
@@ -123,7 +166,7 @@ const styles = StyleSheet.create({
   },
   titleWrap: {
     flex: 1,
-    paddingHorizontal: 20
+    paddingHorizontal: 20,
   },
   tracksScroll: {
     flex: 4,
@@ -132,7 +175,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     paddingHorizontal: 10,
-    
+    height: 50,
   },
   icon: {
     flex: 1,
@@ -141,10 +184,8 @@ const styles = StyleSheet.create({
   },
   trackTitle: {
     flex: 4,
-    
-    
-    paddingVertical: 15,
-
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   duration: {
     flex: 1,
@@ -152,7 +193,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   smallText: {
-    color: '#666'
-  }
-  
+    color: '#666',
+  },
 });
