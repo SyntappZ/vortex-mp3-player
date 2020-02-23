@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {PlayerContext} from '../player/PlayerFunctions';
 import Searchbar from './Searchbar';
+import AsyncStorage from '@react-native-community/async-storage';
+
 import {
   StyleSheet,
   View,
@@ -42,7 +44,7 @@ const Header = ({navigation}) => {
         }}>
         <Searchbar closeSearch={search} />
       </Modal>
-      <TouchableOpacity onPress={openMenu} style={styles.hamburger}>
+      <TouchableOpacity onPress={clearAll} style={styles.hamburger}>
         <Icon color="white" name="md-menu" size={30} />
       </TouchableOpacity>
       <View style={styles.title}>

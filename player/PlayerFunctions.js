@@ -148,6 +148,12 @@ const PlayerFunctions = ({children}) => {
     setIsShuffled(shuffleState);
   };
 
+  const currentPlaylist = () => {
+   const playlist = selectPlaylist(currentAlbum[0], currentAlbum[1]);
+   return playlist
+  }
+  
+
   const playFromAlbums = async (id, trackToPlay, type) => {
     
     let nextAlbum = id + type;
@@ -204,6 +210,7 @@ const PlayerFunctions = ({children}) => {
     // searchValue:searchValue,
     openSearch: openSearch,
     isSearching: isSearching,
+    currentPlaylist: currentPlaylist()
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>
