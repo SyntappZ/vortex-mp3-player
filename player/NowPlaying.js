@@ -32,7 +32,7 @@ const NowPlaying = ({
   const [trackArtist, setArtist] = useState('');
   const [duration, setDuration] = useState('');
   const [seconds, setSeconds] = useState('');
-  const [afterFirstLoad, setIsFirstLoad] = useState(false);
+  // const [afterFirstLoad, setIsFirstLoad] = useState(false);
   // const [isMounted, setIsMounted] = useState(false);
  
   const modalHandler = () => setModalOpen(!modalOpen);
@@ -48,9 +48,9 @@ const NowPlaying = ({
 
   useEffect(() => {
     
-    if (isMounted.current) {
-      setIsFirstLoad(true);
-    }
+    // if (isMounted.current) {
+    //   setIsFirstLoad(true);
+    // }
 
     let onTrackChange = TrackPlayer.addEventListener(
       'playback-track-changed',

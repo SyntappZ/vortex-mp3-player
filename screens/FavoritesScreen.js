@@ -132,15 +132,13 @@ class List extends Component {
     const dif = currentOffset - (this.offset || 0);
     const {fabHandler} = this.props;
 
-    if (Math.abs(dif) < 3) {
-      fabHandler(true);
-    } else if (dif < 0) {
+    if (currentOffset > 400) {
       fabHandler(false);
-    } else {
-      fabHandler(false);
+    }else{
+      fabHandler(true)
     }
 
-    this.offset = currentOffset;
+    // this.offset = currentOffset;
   };
 
   render() {

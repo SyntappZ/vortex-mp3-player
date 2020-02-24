@@ -16,12 +16,11 @@ export default class TimeInterval extends Component {
 
   componentDidMount() {
     this._isMounted = true;
-
-    this.intervalID = setInterval(() => {
-      if (this._isMounted) {
+    if (this._isMounted) {
+      this.intervalID = setInterval(() => {
         this.getPos();
-      }
-    }, 500);
+      }, 500);
+    }
   }
   componentWillUnmount() {
     this._isMounted = false;

@@ -60,12 +60,7 @@ export default class AlbumPlaylist extends Component {
     
   };
 
-  componentDidMount() {
-    // let total = 0;
-    // const {tracklist} = this.props;
-    // tracklist.forEach(track => (total += Number(track.item.time)));
-    // this.setState({totalTime: this.durationConverter(total)});
-  }
+ 
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;

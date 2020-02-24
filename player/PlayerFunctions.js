@@ -1,14 +1,16 @@
-import React, {createContext, useEffect, useState} from 'react';
+import React, {createContext, useRef, useEffect, useState} from 'react';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import {askPermissions} from '../data/MusicDataProvider.js';
 import TrackPlayer from 'react-native-track-player';
 import Track from '../components/Track.js';
-import {ToastAndroid} from 'react-native';
+import {ToastAndroid, DeviceEventEmitter} from 'react-native';
 import {getAlbums, getFolders} from '../data/CreateAlbums.js';
 import AsyncStorage from '@react-native-community/async-storage';
+import {getRefresher} from '../data/RefreshData.js';
 export const PlayerContext = createContext();
 
 const PlayerFunctions = ({children}) => {
+  const isMounted = useRef(true);
   const playbackState = TrackPlayer.usePlaybackState();
   const [tracks, setTracks] = useState([]);
   const [folders, setFolders] = useState([]);
@@ -31,18 +33,28 @@ const PlayerFunctions = ({children}) => {
   }, [favorites]);
 
   useEffect(() => {
-    setIsFirstLoad(true);
-    loadFavorites();
-    askPermissions().then(tracks => {
-      if (tracks) {
-        setTracks(tracks);
-        createAlbums(tracks);
-        createCleanAlbums(tracks);
-      } else {
-        loadTracksFromStorage();
-      }
-    });
+    if (isMounted.current) {
+      setIsFirstLoad(true);
+      loadFavorites();
+      askPermissions().then(tracks => {
+        
+        if (tracks) {
+          setTracks(tracks);
+          refresher(tracks)
+          createAlbums(tracks);
+          createCleanAlbums(tracks);
+        } else {
+          loadTracksFromStorage();
+        }
+      });
+    }
+
+    return () => {
+      isMounted.current = false;
+    };
   }, []);
+
+  
 
   useEffect(() => {
     if (afterFirstLoad) {
@@ -50,11 +62,6 @@ const PlayerFunctions = ({children}) => {
         `Shuffle is ${isShuffled ? 'on' : 'off'}`,
         ToastAndroid.SHORT,
       );
-    }
-  }, [isShuffled]);
-
-  useEffect(() => {
-    if (afterFirstLoad) {
     }
   }, [isShuffled]);
 
@@ -67,9 +74,27 @@ const PlayerFunctions = ({children}) => {
   const loadTracksFromStorage = () => {
     getAsyncStorage('tracks').then(data => {
       setTracks(data);
+      refresher(data);
       createAlbums(data);
       createCleanAlbums(data);
       loadAlbumOnSetup();
+    });
+  };
+
+  const refresher = (tracks) => {
+    getRefresher().then(data => {
+      if(data.length > tracks.length || data.length < tracks.length) {
+        console.log('library updated')
+        ToastAndroid.show(
+          'Library updated',
+          ToastAndroid.SHORT,
+        );
+      }  
+      if (data) {
+        setTracks(data);
+        createAlbums(data);
+        createCleanAlbums(data);
+      }
     });
   };
 
@@ -96,7 +121,6 @@ const PlayerFunctions = ({children}) => {
   const oneTimeShuffle = async (id, type) => {
     updatePlaylist(id, type);
 
-
     setCurrentAlbum([id, type]);
     const playlist = selectPlaylist(id, type);
     await TrackPlayer.reset();
@@ -116,11 +140,11 @@ const PlayerFunctions = ({children}) => {
       case 'album':
         return copy(cleanAlbums[id]);
       case 'favorites':
-        return favs
+        return favs;
       case 'all':
         return copy(tracks);
       case 'none':
-        return search
+        return search;
     }
   };
 

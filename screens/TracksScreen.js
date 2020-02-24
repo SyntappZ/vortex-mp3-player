@@ -13,7 +13,7 @@ const screenWidth = Dimensions.get('window').width;
 
 export default class TracksScreen extends Component {
   static contextType = PlayerContext;
-  _isMounted = false
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
@@ -21,11 +21,13 @@ export default class TracksScreen extends Component {
     };
   }
 
+  
+
   componentDidMount() {
-    this._isMounted = true
+    this._isMounted = true;
   }
   componentWillUnmount() {
-    this._isMounted = false
+    this._isMounted = false;
   }
 
   getPlaylist = trackId => {
@@ -76,7 +78,7 @@ export default class TracksScreen extends Component {
         ) : (
           <Loader />
         )}
-       
+
         <FAB
           buttonColor="white"
           snackOffset={70}
@@ -132,18 +134,14 @@ class List extends Component {
 
   onScroll = event => {
     const currentOffset = event.nativeEvent.contentOffset.y;
-    const dif = currentOffset - (this.offset || 0);
     const {fabHandler} = this.props;
 
-    if (Math.abs(dif) < 3) {
-      fabHandler(true);
-    } else if (dif < 0) {
+    if (currentOffset > 400) {
       fabHandler(false);
-    } else {
-      fabHandler(false);
+    }else{
+      fabHandler(true)
     }
-
-    this.offset = currentOffset;
+   
   };
 
   render() {

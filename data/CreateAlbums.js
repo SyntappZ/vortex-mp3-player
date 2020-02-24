@@ -1,6 +1,6 @@
 //  createFolders(originalTracks);
 //  createAlbums(originalTracks);
-
+// import {fetchAlbumArt} from './AlbumArtApi.js';
 export const getFolders = (tracks, isClean) => {
   return new Promise(resolve => {
     createFolders(tracks, isClean, resolve);
@@ -11,6 +11,8 @@ export const getAlbums = (tracks, isClean) => {
     createAlbums(tracks, isClean, resolve);
   });
 };
+
+
 
 const listViewConvertor = arr =>
   arr.map(data => ({
@@ -63,6 +65,8 @@ const createAlbums = async (array, isClean, callback) => {
   const convertToArray = Object.entries(albums);
 
   const albumArray = convertToArray.map((album, index) => {
+    let image = album[1][0].artwork;
+
     return isClean
       ? album[1]
       : {
@@ -71,7 +75,7 @@ const createAlbums = async (array, isClean, callback) => {
             albumId: index.toString(),
             name: album[0],
             data: listViewConvertor(album[1]),
-            artwork: album[1][0].artwork,
+            artwork: image,
             tracksAmount: album[1].length,
           },
         };

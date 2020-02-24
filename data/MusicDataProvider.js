@@ -9,14 +9,16 @@ export const askPermissions = () => {
   });
 };
 
-const checkIfStorage = async callback => {
+const checkIfStorage = async (callback) => {
   try {
     const value = await AsyncStorage.getItem('tracks');
     if (value == null) {
       console.log('first time loading');
       firstTimeloadTracks(callback);
+     
     } else {
       callback(false);
+      
     }
   } catch (error) {
     console.log(error);
@@ -35,7 +37,7 @@ const secondsConverter = millis => (millis / 1000).toFixed(1);
 
 
 
-const getPermissions = async callback => {
+const getPermissions = async(callback) => {
   const granted = await PermissionsAndroid.request(
     PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
 
@@ -62,7 +64,9 @@ return arr.length === 2 ? arr : null
 
 };
 
-const firstTimeloadTracks = async callback => {
+
+const firstTimeloadTracks = async (callback) => {
+  
   getTrackData()
     .then(tracks => {
      
@@ -100,4 +104,6 @@ const firstTimeloadTracks = async callback => {
     .catch(error => {
       console.log(error);
     });
+
+   
 };

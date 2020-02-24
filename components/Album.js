@@ -8,58 +8,56 @@ import {
   Text,
 } from 'react-native';
 
-
-
+import {fetchAlbumArt} from '../data/AlbumArtApi.js';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
 
 class Album extends PureComponent {
   constructor(props) {
     super(props);
-    
+
+    this.state = {
+      image: ''
+    }
   }
   modalHandler = () => {
     const {albumId, openModal} = this.props;
-    openModal(albumId)
-  }
+    openModal(albumId);
+  };
 
+  
 
   render() {
     const {albumName, artwork, tracksAmount} = this.props;
 
-    
-  
     const myIcon = <Icon name="rocket" size={30} color="#900" />;
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
     const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
 
     return (
-      
-        <View style={styles.album}>
-          <View style={styles.imageWrap}>
-            <TouchableOpacity
-              style={styles.touchable}
-              onPress={this.modalHandler}>
-              {artwork ? albumArt : defaultImage}
-            </TouchableOpacity>
+      <View style={styles.album}>
+        <View style={styles.imageWrap}>
+          <TouchableOpacity
+            style={styles.touchable}
+            onPress={this.modalHandler}>
+            {artwork ? albumArt : defaultImage}
+          </TouchableOpacity>
+        </View>
+        <View style={styles.albumInfo}>
+          <View style={{flex: 3, justifyContent: 'center'}}>
+            <Text style={{color: 'white'}} numberOfLines={1}>
+              {albumName}
+            </Text>
+            <Text style={{color: '#D3D3D3'}} numberOfLines={1}>
+              songs: {tracksAmount}
+            </Text>
           </View>
-          <View style={styles.albumInfo}>
-            <View style={{flex: 3, justifyContent: 'center'}}>
-              <Text style={{color: 'white'}} numberOfLines={1}>
-                {albumName}
-              </Text>
-              <Text style={{color: '#D3D3D3'}} numberOfLines={1}>
-                songs: {tracksAmount}
-              </Text>
-            </View>
 
-            <View style={styles.more}>
-              <IonIcon name="md-more" size={30} color="#fff" />
-            </View>
+          <View style={styles.more}>
+            <IonIcon name="md-more" size={30} color="#fff" />
           </View>
         </View>
-    
+      </View>
     );
   }
 }
@@ -83,7 +81,7 @@ const styles = StyleSheet.create({
   touchable: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%'
+    width: '100%',
   },
   image: {
     borderTopLeftRadius: 10,
