@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
+
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import ProgressBar from '../components/ProgressBar';
@@ -22,28 +23,22 @@ const NowPlaying = ({
   shuffleUpComingPlaylist,
   favorites,
   setFavorites,
- 
 }) => {
   const playerState = TrackPlayer.usePlaybackState();
-  let isMounted = false;
+  const isMounted = useRef(true)
   const [modalOpen, setModalOpen] = useState(false);
   const [trackTitle, setTrackTitle] = useState([]);
   const [trackArt, setTrackArt] = useState('');
   const [trackArtist, setArtist] = useState('');
   const [duration, setDuration] = useState('');
-  const [seconds, setSeconds] = useState('')
+  const [seconds, setSeconds] = useState('');
   const [afterFirstLoad, setIsFirstLoad] = useState(false);
-
-  const [albumPlaying, setAlbumPlaying] = useState('');
+  // const [isMounted, setIsMounted] = useState(false);
+ 
   const modalHandler = () => setModalOpen(!modalOpen);
   // const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [trackId, setId] = useState('');
 
-  const durationConverter = millis => {
-    var minutes = Math.floor(millis / 60000);
-    var seconds = ((millis % 60000) / 1000).toFixed(0);
-    return minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
-  };
 
   // const storeTrack = async () => {
   //   const currentTrack = await TrackPlayer.getCurrentTrack();
@@ -52,38 +47,43 @@ const NowPlaying = ({
   // };
 
   useEffect(() => {
-    isMounted = true;
-    if(isMounted) {
+    
+    if (isMounted.current) {
       setIsFirstLoad(true);
-     
     }
-
-   
 
     let onTrackChange = TrackPlayer.addEventListener(
       'playback-track-changed',
       async data => {
         try {
           const track = await TrackPlayer.getTrack(data.nextTrack);
-          
-          if (isMounted) {
-            setTrackArt('');
-            setTrackTitle(track.title);
-            setTrackArt(track.artwork);
-            setArtist(track.artist);
-            setDuration(track.duration);
-            setId(track.id);
-            setSeconds(track.seconds)
+
+          if (isMounted.current) {
+            if(track != null) {
+              if (track.artwork) {
+                if (track.artwork != trackArt) {
+                  setTrackArt(track.artwork);
+                }
+              } else {
+                setTrackArt(null);
+              }
+  
+              setTrackTitle(track.title);
+              setArtist(track.artist);
+              setDuration(track.duration);
+              setId(track.id);
+              setSeconds(track.seconds);
+            }
+           
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
-       
+
         return () => {
-          isMounted = false;
-          
+          isMounted.current = false
+
           onTrackChange.remove();
-       
         };
       },
     );

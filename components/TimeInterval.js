@@ -6,7 +6,7 @@ import {View, Text, StyleSheet} from 'react-native';
 
 export default class TimeInterval extends Component {
   _isMounted = false;
-  _interval = null;
+  intervalID = 0;
   constructor(props) {
     super(props);
     this.state = {
@@ -17,13 +17,15 @@ export default class TimeInterval extends Component {
   componentDidMount() {
     this._isMounted = true;
 
-    this._interval = setInterval(() => {
-      this.getPos();
+    this.intervalID = setInterval(() => {
+      if (this._isMounted) {
+        this.getPos();
+      }
     }, 500);
   }
   componentWillUnmount() {
     this._isMounted = false;
-    this._interval.clearInterval;
+    clearInterval(this.intervalID);
   }
 
   convertTime(s) {

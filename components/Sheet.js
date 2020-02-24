@@ -44,7 +44,8 @@ export default class Sheet extends Component {
   }
 
   playlistName = type => {
-    const {currentPlaylist} = this.context;
+     const {currentPlaylist} = this.context;
+    
     switch (type) {
       case 'folder':
         return currentPlaylist.playlist[0].folder;
@@ -61,8 +62,9 @@ export default class Sheet extends Component {
 
   componentDidMount() {
     this._isMounted = true;
-    const {currentPlaylist} = this.context;
+  
     if (this._isMounted) {
+       const {currentPlaylist} = this.context;
       this.setState({
         playlist: currentPlaylist.playlist,
         playlistName: this.playlistName(currentPlaylist.playlistType),
@@ -102,13 +104,13 @@ export default class Sheet extends Component {
   };
 
   render() {
-    const {playlistName, playlist} = this.state;
+     const {playlistName, playlist} = this.state;
     return (
       <RBSheet
         ref={ref => {
           this.RBSheet = ref;
         }}
-        height={450}
+        height={550}
         duration={200}
         closeOnDragDown={true}
         closeOnPressMask={true}
@@ -181,16 +183,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    height: 50,
+
   },
   trackTitle: {
     flex: 4,
     justifyContent: 'center',
-    alignItems: 'center',
+   
+    height: 50,
+
   },
   duration: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    height: 50,
+
   },
   smallText: {
     color: '#666',
