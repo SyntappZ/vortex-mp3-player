@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, FlatList, TouchableOpacity, StyleSheet} from 'react-native';
 import RBSheet from 'react-native-raw-bottom-sheet';
 import {PlayerContext} from '../player/PlayerFunctions';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
 const Track = ({title, duration, getPlaylist, closeSheet, trackId}) => {
   const close = () => {
@@ -14,7 +14,7 @@ const Track = ({title, duration, getPlaylist, closeSheet, trackId}) => {
       <TouchableOpacity style={styles.icon}>
         <Icon
           style={styles.heartIcon}
-          name="heart-o"
+          name={"music-tone"}
           size={20}
           color={'white'}
         />

@@ -8,22 +8,22 @@ import Entypo from 'react-native-vector-icons/Entypo';
 
 class Track extends PureComponent {
  
-// static onTrackChange = null
+
   constructor(props) {
     super(props);
    
     this.state = {
-     
+      currentTrack: ''
     
     };
   }
   
 
 
-  // getCurrentTrack = async () => {
-  //   const trackId = await TrackPlayer.getCurrentTrack();
-  //   this.setState({currentTrack: trackId});
-  // }
+  getCurrentTrack = async () => {
+    const trackId = await TrackPlayer.getCurrentTrack();
+    this.setState({currentTrack: trackId});
+  }
 
  
 

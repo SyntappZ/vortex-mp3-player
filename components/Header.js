@@ -46,6 +46,8 @@ const Header = ({navigation}) => {
       </Modal>
       <TouchableOpacity onPress={clearAll} style={styles.hamburger}>
         <Icon color="white" name="md-menu" size={30} />
+        
+      
       </TouchableOpacity>
       <View style={styles.title}>
         <Text style={styles.titleText}>

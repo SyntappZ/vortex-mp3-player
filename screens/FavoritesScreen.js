@@ -1,6 +1,6 @@
 import React, {Component, useState, useEffect} from 'react';
 
-import {View, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
+import {View, Image, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
 import {getAsyncStorage} from '../data/AsyncStorage.js';
 import Track from '../components/Track';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
@@ -144,6 +144,10 @@ class List extends Component {
   render() {
     const {favorites} = this.props;
     return (
+      // <View>
+     
+
+      // </View>
       <RecyclerListView
         onScroll={this.onScroll}
         style={{flex: 1}}

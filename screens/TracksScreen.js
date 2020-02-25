@@ -8,7 +8,7 @@ import {PlayerContext} from '../player/PlayerFunctions';
 import Loader from '../components/Loader';
 import Icon from 'react-native-vector-icons/Entypo';
 import FAB from 'react-native-fab';
-
+import AudioBars from '../components/AudioBars'
 const screenWidth = Dimensions.get('window').width;
 
 export default class TracksScreen extends Component {
@@ -155,6 +155,7 @@ class List extends Component {
         dataProvider={tracks}
         layoutProvider={this.layoutProvider}
       />
+    
     );
   }
 }
