@@ -1,7 +1,7 @@
 import React, {createContext, useRef, useEffect, useState} from 'react';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import {askPermissions} from '../data/MusicDataProvider.js';
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer, { CAPABILITY_DISLIKE } from 'react-native-track-player';
 import Track from '../components/Track.js';
 import {ToastAndroid, DeviceEventEmitter} from 'react-native';
 import {getAlbums, getFolders} from '../data/CreateAlbums.js';
@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {getRefresher} from '../data/RefreshData.js';
 export const PlayerContext = createContext();
 
-const PlayerFunctions = ({children}) => {
+const PlayerFunctions = ({children }) => {
   const isMounted = useRef(true);
   const playbackState = TrackPlayer.usePlaybackState();
   const [tracks, setTracks] = useState([]);
@@ -20,12 +20,15 @@ const PlayerFunctions = ({children}) => {
   const [cleanFolders, setCleanFolders] = useState([]);
   const [afterFirstLoad, setIsFirstLoad] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false)
   const [currentAlbum, setCurrentAlbum] = useState([]);
   const [isMenuOpen, setMenu] = useState(false);
   const [isSearching, setIsSearch] = useState(false);
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
   const [playlistType, setPlaylistType] = useState('');
   const [currentPlaylist, setCurrentPlaylist] = useState({});
+  const [isFirstInstall, setFirstInstall] = useState(false)
+
   useEffect(() => {
     if (afterFirstLoad) {
       setAsyncStorage('favorites', favorites);
@@ -34,7 +37,7 @@ const PlayerFunctions = ({children}) => {
 
   useEffect(() => {
     if (isMounted.current) {
-      setIsFirstLoad(true);
+      firstInstallChecker()
       loadFavorites();
       askPermissions().then(tracks => {
         
@@ -54,6 +57,7 @@ const PlayerFunctions = ({children}) => {
     };
   }, []);
 
+
   
 
   useEffect(() => {
@@ -70,6 +74,17 @@ const PlayerFunctions = ({children}) => {
       setFavorites(data);
     });
   };
+
+  
+ const firstInstallChecker = () => {
+   
+   setTimeout(() => {
+    getAsyncStorage('firstLoad').then(data => {
+      setFirstInstall(data)
+    })
+   }, 800)
+ 
+  }
 
   const loadTracksFromStorage = () => {
     getAsyncStorage('tracks').then(data => {
@@ -101,10 +116,14 @@ const PlayerFunctions = ({children}) => {
   const createAlbums = data => {
     getFolders(data, false).then(folders => {
       setFolders(folders);
+      
     });
 
     getAlbums(data, false).then(albums => {
       setAlbums(albums);
+      setTimeout(() => {
+        setIsLoaded(true)
+      }, 500);
     });
   };
 
@@ -239,10 +258,11 @@ const PlayerFunctions = ({children}) => {
     setFavorites: setFavorites,
     openMenu: openMenu,
     isMenuOpen: isMenuOpen,
-    // searchValue:searchValue,
+    isLoaded: isLoaded,
     openSearch: openSearch,
     isSearching: isSearching,
     currentPlaylist: currentPlaylist,
+    isFirstInstall:isFirstInstall
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>

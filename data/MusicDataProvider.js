@@ -14,9 +14,11 @@ const checkIfStorage = async (callback) => {
     const value = await AsyncStorage.getItem('tracks');
     if (value == null) {
       console.log('first time loading');
+      setAsyncStorage('isFirstInstall', true)
       firstTimeloadTracks(callback);
      
     } else {
+      
       callback(false);
       
     }

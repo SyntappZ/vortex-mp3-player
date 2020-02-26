@@ -1,6 +1,8 @@
 import {getTrackCoverData} from './TrackData.js';
 import {setAsyncStorage} from './AsyncStorage.js';
 export const getRefresher = async () => {
+  setAsyncStorage('firstLoad', false)
+
   return new Promise((resolve, reject) => {
     getTrackCoverData()
       .then(tracks => {
