@@ -92,6 +92,8 @@ class List extends Component {
     });
   };
 
+ 
+
   rowRenderer(type, data) {
     const {name, artwork, tracksAmount, albumId} = data.item;
     switch (type) {

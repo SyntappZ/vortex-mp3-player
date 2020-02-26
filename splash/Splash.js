@@ -1,31 +1,47 @@
 import React, {Component} from 'react';
-import {View, Text, ActivityIndicator, StatusBar, Image, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  StatusBar,
+  Image,
+  StyleSheet,
+} from 'react-native';
 import {PlayerContext} from '../player/PlayerFunctions';
-import {getAsyncStorage} from '../data/AsyncStorage.js'
-
+import {getAsyncStorage} from '../data/AsyncStorage.js';
+import {CommonActions} from '@react-navigation/native';
 export default class Splash extends Component {
   static contextType = PlayerContext;
   constructor(props) {
     super(props);
 
-    this.state = {
-       
-    }
+    this.state = {};
   }
 
-  componentDidMount() {
-   
-  }
+  componentDidMount() {}
 
   loadMainPage = () => {
-    this.props.navigation.navigate('Main');
+    this._navigateTo();
+  };
+
+  _navigateTo = routeName => {
+    this.props.navigation.dispatch(
+      CommonActions.reset({
+        index: 1,
+        routes: [
+          {
+            name: 'Main',
+          },
+        ],
+      }),
+    );
   };
 
   render() {
     const {isLoaded, isFirstInstall} = this.context;
- 
+
     isLoaded ? this.loadMainPage() : null;
-    console.log('is first on splash ' + isFirstInstall)
+
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor={colorBlack} animated={true} />
@@ -41,7 +57,7 @@ export default class Splash extends Component {
           </View>
         </View>
         <View style={styles.message}>
-         {isFirstInstall ? <FirstInstallMessage /> : null}   
+          {isFirstInstall ? <FirstInstallMessage /> : null}
         </View>
       </View>
     );
@@ -52,13 +68,15 @@ const FirstInstallMessage = () => {
   return (
     <View style={{flex: 1}}>
       <View style={styles.textWrap}>
+      <Text style={styles.installTitle}>First Time Installation</Text>
+
         <Text style={styles.installText}>
           It takes a little while longer to load on first installation.
         </Text>
         <Text style={styles.installText}>Thank you for your patience!</Text>
       </View>
       <View style={styles.loader}>
-      <ActivityIndicator size="large" color="#fff" />
+        <ActivityIndicator size="large" color="#fff" />
       </View>
     </View>
   );
@@ -107,13 +125,19 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     paddingVertical: 5,
   },
+  installTitle: {
+    color: 'white',
+    fontSize: 17,
+    textAlign: 'center',
+    paddingVertical: 7,
+  },
   textWrap: {
-      paddingHorizontal: 60,
-      flex: 1,
-      justifyContent: 'center',
-      alignContent: 'center'
+    paddingHorizontal: 60,
+    flex: 1,
+    justifyContent: 'center',
+    alignContent: 'center',
   },
   loader: {
-      flex: 1
-  }
+    flex: 1,
+  },
 });

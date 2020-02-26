@@ -10,7 +10,6 @@ import {
 } from 'react-native';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 
-
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import ProgressBar from '../components/ProgressBar';
 import NowPlayingBig from '../popupScreens/NowPlayingBig';
@@ -25,7 +24,7 @@ const NowPlaying = ({
   setFavorites,
 }) => {
   const playerState = TrackPlayer.usePlaybackState();
-  const isMounted = useRef(true)
+  const isMounted = useRef(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [trackTitle, setTrackTitle] = useState([]);
   const [trackArt, setTrackArt] = useState('');
@@ -34,11 +33,10 @@ const NowPlaying = ({
   const [seconds, setSeconds] = useState('');
   // const [afterFirstLoad, setIsFirstLoad] = useState(false);
   // const [isMounted, setIsMounted] = useState(false);
- 
+
   const modalHandler = () => setModalOpen(!modalOpen);
   // const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [trackId, setId] = useState('');
-
 
   // const storeTrack = async () => {
   //   const currentTrack = await TrackPlayer.getCurrentTrack();
@@ -47,7 +45,6 @@ const NowPlaying = ({
   // };
 
   useEffect(() => {
-    
     // if (isMounted.current) {
     //   setIsFirstLoad(true);
     // }
@@ -59,7 +56,7 @@ const NowPlaying = ({
           const track = await TrackPlayer.getTrack(data.nextTrack);
 
           if (isMounted.current) {
-            if(track != null) {
+            if (track != null) {
               if (track.artwork) {
                 if (track.artwork != trackArt) {
                   setTrackArt(track.artwork);
@@ -67,21 +64,20 @@ const NowPlaying = ({
               } else {
                 setTrackArt(null);
               }
-  
+
               setTrackTitle(track.title);
               setArtist(track.artist);
               setDuration(track.duration);
               setId(track.id);
               setSeconds(track.seconds);
             }
-           
           }
         } catch (error) {
           console.error(error);
         }
 
         return () => {
-          isMounted.current = false
+          isMounted.current = false;
 
           onTrackChange.remove();
         };
@@ -155,15 +151,17 @@ const NowPlaying = ({
           <View style={styles.trackName}>
             <TouchableOpacity onPress={modalHandler} style={styles.touchable}>
               <View styles={styles.textWrap}>
-                <TextTicker
-                  style={styles.title}
-                  duration={15000}
-                  loop
-                  bounce
-                  repeatSpacer={50}
-                  marqueeDelay={1000}>
-                  {trackTitle}
-                </TextTicker>
+                {isMounted.current ? (
+                  <TextTicker
+                    style={styles.title}
+                    duration={15000}
+                    loop
+                    bounce
+                    repeatSpacer={50}
+                    marqueeDelay={1000}>
+                    {trackTitle}
+                  </TextTicker>
+                ) : null}
 
                 <Text numberOfLines={1} style={styles.artist}>
                   {trackArtist}
