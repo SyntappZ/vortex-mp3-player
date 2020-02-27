@@ -25,9 +25,9 @@ useEffect(() => {
 const firstLoad = async () => {
   try {
     const value = await AsyncStorage.getItem('firstLoad');
-   console.log(value)
+  
     if (value == null) {
-      console.log('setting to true')
+    
       setAsyncStorage('firstLoad', true)
     }
   } catch (error) {

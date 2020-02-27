@@ -19,7 +19,9 @@ const Header = ({navigation}) => {
   const openMenu = () => {
     navigation.navigate('Settings');
   };
-  const search = () => setOpenSearch(!openSearch);
+  const search = () => {
+    navigation.navigate('Search');
+  } 
 
 
 
@@ -34,7 +36,7 @@ const Header = ({navigation}) => {
   };
   return (
     <View style={styles.header}>
-      <Modal
+      {/* <Modal
         animationType="slide"
         transparent={false}
         presentationStyle={'fullScreen'}
@@ -43,8 +45,8 @@ const Header = ({navigation}) => {
           search();
         }}>
         <Searchbar closeSearch={search} />
-      </Modal>
-      <TouchableOpacity onPress={clearAll} style={styles.hamburger}>
+      </Modal> */}
+      <TouchableOpacity onPress={openMenu} style={styles.hamburger}>
         <Icon color="white" name="md-menu" size={30} />
         
       

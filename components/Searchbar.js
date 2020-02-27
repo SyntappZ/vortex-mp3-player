@@ -16,8 +16,7 @@ export default class Searchbar extends Component {
   getPlaylist = trackId => {
     const {playFromAlbums} = this.context;
     playFromAlbums('none', trackId, 'none');
-    // console.log(trackId)
-    this.props.closeSearch()
+   this.props.navigation.goBack()
   };
 
   renderItem = ({item}) => {

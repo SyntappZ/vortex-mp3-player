@@ -3,10 +3,11 @@ import {View, Keyboard, Text} from 'react-native';
 
 import {createStackNavigator} from '@react-navigation/stack';
 import ModalScreen from '../popupScreens/ModalScreen';
-
+import Search from '../components/Searchbar'
 import SwipeNavigator from './SwipeNavigator';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import Splash from '../splash/Splash';
+
 import PlaylistConsumer from '../player/PlaylistConsumer';
 const Initial = createStackNavigator();
 const colorBlack = '#0D0D0D';
@@ -24,7 +25,7 @@ class NavContainer extends Component {
 
   render() {
     return (
-      <NavigationContainer theme={MyTheme}>
+      <NavigationContainer  theme={MyTheme}>
         <Initial.Navigator initialRouteName="Splash">
           <Initial.Screen
             name="Splash"
@@ -36,6 +37,23 @@ class NavContainer extends Component {
             component={Main}
             options={{headerShown: false}}
           />
+           <Initial.Screen
+            name="Search"
+            component={Search}
+            options={{headerShown: false}}
+          />
+           <Initial.Screen
+            name="Settings"
+            component={Menu}
+             options={{
+            headerShown: true,
+            cardOverlayEnabled: true,
+            gestureEnabled: true,
+            gestureResponseDistance: {
+              vertical: 400,
+            },
+          }}
+        />
         </Initial.Navigator>
       </NavigationContainer>
     );
@@ -76,18 +94,7 @@ const Main = () => {
           component={ModalScreen}
           options={{headerShown: false}}
         />
-        <Stack.Screen
-          name="Settings"
-          component={Menu}
-          options={{
-            headerShown: false,
-            cardOverlayEnabled: true,
-            gestureEnabled: true,
-            gestureResponseDistance: {
-              vertical: 400,
-            },
-          }}
-        />
+       
       </Stack.Navigator>
       <PlaylistConsumer />
     </View>

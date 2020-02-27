@@ -18,11 +18,19 @@ import ProgressBar from '../components/ProgressBar';
 import Gradient from '../components/Gradient';
 import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
-
+import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import ProgressSlider from '../components/ProgressSlider';
 import TimeInterval from '../components/TimeInterval';
-import Sheet from '../components/Sheet'
+import Sheet from '../components/Sheet';
+
+import {fetchLyrics} from '../data/Lyrics.js'
+const darkBlue = '#062D83';
+const colorBlack = '#0D0D0D';
+const colorLightBlack = '#131313';
+const colorDarkGrey = '#222';
+const colorBlue = '#2A56B9';
+const colorLightBlue = '#0B64D9';
 const NowPlayingBig = ({
   modalHandler,
   trackTitle,
@@ -42,6 +50,7 @@ const NowPlayingBig = ({
 
   const [isFavorite, setIsFavorite] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [isRepeat, setRepeat] = useState(false);
   const shuffleToggle = () => {
     shuffleUpComingPlaylist(!isShuffled);
   };
@@ -68,7 +77,23 @@ const NowPlayingBig = ({
     );
   };
 
-  const darkBlue = '#062D83';
+  let menu = null;
+
+  const setMenuRef = ref => (menu = ref);
+
+  const showMenu = () => menu.show();
+
+  const getLyrics = () => {
+    menu.hide();
+    fetchLyrics(trackTitle, trackArtist).then(data => {
+      console.log(data)
+    })
+  };
+  const repeat = () => {
+    setRepeat(!isRepeat);
+    menu.hide();
+  };
+
   const isPlaying = playerState === TrackPlayer.STATE_PLAYING;
   let image;
 
@@ -88,16 +113,37 @@ const NowPlayingBig = ({
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor={darkBlue} animated={true} />
-     
+
       <Gradient />
+
       <View style={styles.topbar}>
-        <TouchableOpacity style={styles.menu}>
-          <SimpleLineIcon
-            style={styles.menuIcon}
-            name={'options'}
-            size={20}
-            color="#fff"
-          />
+        <TouchableOpacity onPress={showMenu} style={styles.menu}>
+          <Menu
+            style={{backgroundColor: colorBlack}}
+            ref={setMenuRef}
+            button={
+              <SimpleLineIcon
+                style={styles.menuIcon}
+                name={'options'}
+                size={20}
+                color="#fff"
+              />
+            }>
+            <MenuItem
+              textStyle={{color: 'white'}}
+          
+              onPress={getLyrics}>
+              Lyrics
+            </MenuItem>
+
+            <MenuItem
+              textStyle={{color: 'white'}}
+          
+              onPress={repeat}>
+              Repeat
+              <Icon5 name={'check'} size={15} color={'white'} />
+            </MenuItem>
+          </Menu>
         </TouchableOpacity>
         <View style={styles.nowPlaying}>
           <Text style={styles.titleText}>Now Playing</Text>
@@ -146,7 +192,9 @@ const NowPlayingBig = ({
           )}
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => setIsSheetOpen(!isSheetOpen)} style={styles.playlist}>
+        <TouchableOpacity
+          onPress={() => setIsSheetOpen(!isSheetOpen)}
+          style={styles.playlist}>
           <SimpleLineIcon
             style={styles.playlistIcon}
             name="playlist"
@@ -226,13 +274,6 @@ const NowPlayingBig = ({
     </View>
   );
 };
-
-const darkBlue = '#062D83';
-const colorBlack = '#0D0D0D';
-const colorLightBlack = '#131313';
-const colorDarkGrey = '#222';
-const colorBlue = '#2A56B9';
-const colorLightBlue = '#0B64D9';
 
 const styles = StyleSheet.create({
   container: {

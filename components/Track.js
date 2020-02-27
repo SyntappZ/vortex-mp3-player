@@ -1,59 +1,70 @@
 import React, {PureComponent} from 'react';
 import {View, StyleSheet, Image, TouchableOpacity, Text} from 'react-native';
 
-// import TrackPlayer from 'react-native-track-player/index';
+import TrackPlayer from 'react-native-track-player';
+import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
+const colorBlack = '#0D0D0D';
 
 class Track extends PureComponent {
- 
+  _isMounted = false;
 
   constructor(props) {
     super(props);
-   
+
     this.state = {
-      currentTrack: ''
-    
+      currentTrackId: '',
     };
   }
-  
 
-
-  getCurrentTrack = async () => {
-    const trackId = await TrackPlayer.getCurrentTrack();
-    this.setState({currentTrack: trackId});
+  componentDidMount() {
+    this._isMounted = true;
+  //  const {currentTrack} = this.props
+  //   if(this._isMounted && currentTrack) {
+  //     this.setState({currentTrackId: currentTrack})
+  //   }
+  }
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
- 
 
+  _menu = null;
+
+  setMenuRef = ref => {
+    this._menu = ref;
+  };
+
+  showMenu = () => this._menu.show();
+
+  addToFavorites = () => {
+    this._menu.hide();
+  };
 
   render() {
-    const {artist, title, duration, trackId, getPlaylist} = this.props
-
-    
-
+    const {artist, title, duration, trackId, getPlaylist} = this.props;
+    const { currentTrackId } = this.state
+    const colorBlue = '#2A56B9';
    
 
-    const colorBlue = '#2A56B9';
+    // console.log(currentTrack)
 
     // console.log('current ' + this.state.currentTrack)
     //  console.log('id ' + id)
-    // const trackPlaying = this.state.currentTrack == id;
+    //  const trackPlaying = this.state.currentTrack == id;
     const colorLightBlack = '#131313';
-    const colorLighterBlack = '#0a0a0a';
-
-    // let bgColor = trackPlaying ? colorLighterBlack : colorLightBlack;
-    // trackPlaying
-    //   ? (icon = <Entypo name={'controller-play'} size={30} color={colorBlue} />)
-    //   : (icon = <Entypo name={'note'} size={30} color={colorBlue} />);
-    let icon = <Entypo name={'note'} size={30} color={colorBlue} />
+  
+    let icon = <Entypo name={'note'} size={30} color={colorBlue} />;
     return (
       <View style={styles.container}>
         <View style={styles.iconWrap}>{icon}</View>
 
         <View style={styles.textWrap}>
-          <TouchableOpacity style={styles.Touchable} onPress={() => getPlaylist(trackId)}>
+          <TouchableOpacity
+            style={styles.Touchable}
+            onPress={() => getPlaylist(trackId)}>
             <Text numberOfLines={1} style={styles.title}>
               {title}
             </Text>
@@ -63,16 +74,27 @@ class Track extends PureComponent {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.moreWrap}>
+        <TouchableOpacity onPress={this.showMenu} style={styles.moreWrap}>
           <View style={styles.timeWrap}>
             <Text style={styles.trackTime}>{duration}</Text>
 
-            <IonIcon
-              style={styles.menu}
-              name="md-more"
-              size={30}
-              color="white"
-            />
+            <Menu
+              style={{backgroundColor: colorBlack}}
+              button={
+                <IonIcon
+                  style={styles.menu}
+                  name="md-more"
+                  size={30}
+                  color="white"
+                />
+              }
+              ref={this.setMenuRef}>
+              <MenuItem
+                textStyle={{color: 'white'}}
+                onPress={this.addToFavorites}>
+                add to favorites
+              </MenuItem>
+            </Menu>
           </View>
         </TouchableOpacity>
       </View>
@@ -126,8 +148,6 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     paddingRight: 15,
   },
-
-  menu: {},
 
   author: {
     fontSize: 12,

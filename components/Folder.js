@@ -84,6 +84,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'center',
+    paddingRight: 35
   },
   moreTouchable: {
     width: '100%',

@@ -14,6 +14,7 @@ const PlaylistConsumer = () => {
             shuffleUpComingPlaylist={shuffleUpComingPlaylist}
             setFavorites={setFavorites}
             favorites={favorites}
+            
           />
         );
       }}

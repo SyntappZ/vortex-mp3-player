@@ -43,6 +43,7 @@ const PlayerFunctions = ({children}) => {
     if (isMounted.current) {
       firstInstallChecker();
       loadFavorites();
+      setIsFirstLoad(true)
       askPermissions().then(tracks => {
         if (tracks) {
           setTracks(tracks);
@@ -68,6 +69,7 @@ const PlayerFunctions = ({children}) => {
       );
     }
   }, [isShuffled]);
+  
 
   const loadFavorites = () => {
     getAsyncStorage('favorites').then(data => {
