@@ -5,9 +5,10 @@ import {
   Image,
   TouchableOpacity,
   Text,
+  ActivityIndicator
 } from 'react-native';
 
-import {fetchAlbumArt} from '../data/AlbumArtApi.js';
+
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
@@ -15,46 +16,24 @@ class Album extends PureComponent {
   _isMounted = false;
   constructor(props) {
     super(props);
-
-    this.state = {
-      image: '',
-    };
   }
   modalHandler = () => {
     const {albumId, openModal} = this.props;
     openModal(albumId);
   };
 
-  // componentDidMount() {
-  //   this._isMounted = true;
-  //   const {artwork} = this.props;
-  //   console.log(artwork)
-  //   if (!artwork) {
-  //     this.albumArtLoader();
-  //   }
-  // }
-  // componentWillUnmount() {
-  //   this._isMounted = false;
-  // }
-
-  // albumArtLoader = () => {
-  //   const {albumName} = this.props;
-
-  //   fetchAlbumArt(albumName).then(data => {
-  //     if (this._isMounted) {
-  //       this.setState({image: data});
-  //     }
-  //   });
-  // };
 
   render() {
-    const {albumName, artwork, tracksAmount} = this.props;
-    // const {image} = this.state;
+    const {albumName, artwork, tracksAmount, isFirstInstall} = this.props;
+
+    console.log(isFirstInstall)
+   
 
     const myIcon = <Icon name="rocket" size={30} color="#900" />;
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
     const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
-   
+   const loader = <ActivityIndicator size="large" color="#555" />
+    let chooseImage = artwork ? albumArt : defaultImage
 
     return (
       <View style={styles.album}>
@@ -62,7 +41,8 @@ class Album extends PureComponent {
           <TouchableOpacity
             style={styles.touchable}
             onPress={this.modalHandler}>
-            {artwork ? albumArt : defaultImage}
+              {isFirstInstall && !artwork ? loader :  chooseImage }
+           
           </TouchableOpacity>
         </View>
         <View style={styles.albumInfo}>

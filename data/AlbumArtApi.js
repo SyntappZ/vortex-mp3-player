@@ -10,8 +10,8 @@ export const fetchAlbumArt = name => {
       })
       .then(myJson => {
         const image = myJson.results.albummatches.album[0].image[2]['#text'];
-
-        resolve(image);
+        let img = image ? image : 'none'
+        resolve(img);
       })
       .catch(err => reject(err));
   });

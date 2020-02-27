@@ -1,18 +1,21 @@
 import React, {createContext, useRef, useEffect, useState} from 'react';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import {askPermissions} from '../data/MusicDataProvider.js';
-import TrackPlayer, { CAPABILITY_DISLIKE } from 'react-native-track-player';
+import TrackPlayer from 'react-native-track-player';
 import Track from '../components/Track.js';
+import {fetchAlbumArt} from '../data/AlbumArtApi.js';
+
 import {ToastAndroid, DeviceEventEmitter} from 'react-native';
 import {getAlbums, getFolders} from '../data/CreateAlbums.js';
 import AsyncStorage from '@react-native-community/async-storage';
 import {getRefresher} from '../data/RefreshData.js';
 export const PlayerContext = createContext();
 
-const PlayerFunctions = ({children }) => {
+const PlayerFunctions = ({children}) => {
   const isMounted = useRef(true);
   const playbackState = TrackPlayer.usePlaybackState();
   const [tracks, setTracks] = useState([]);
+  
   const [folders, setFolders] = useState([]);
   const [albums, setAlbums] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -20,14 +23,14 @@ const PlayerFunctions = ({children }) => {
   const [cleanFolders, setCleanFolders] = useState([]);
   const [afterFirstLoad, setIsFirstLoad] = useState(false);
   const [isShuffled, setIsShuffled] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false);
   const [currentAlbum, setCurrentAlbum] = useState([]);
   const [isMenuOpen, setMenu] = useState(false);
   const [isSearching, setIsSearch] = useState(false);
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
   const [playlistType, setPlaylistType] = useState('');
   const [currentPlaylist, setCurrentPlaylist] = useState({});
-  const [isFirstInstall, setFirstInstall] = useState(false)
+  const [isFirstInstall, setFirstInstall] = useState(false);
 
   useEffect(() => {
     if (afterFirstLoad) {
@@ -35,15 +38,15 @@ const PlayerFunctions = ({children }) => {
     }
   }, [favorites]);
 
+  
   useEffect(() => {
     if (isMounted.current) {
-      firstInstallChecker()
+      firstInstallChecker();
       loadFavorites();
       askPermissions().then(tracks => {
-        
         if (tracks) {
           setTracks(tracks);
-          refresher(tracks)
+          refresher(tracks);
           createAlbums(tracks);
           createCleanAlbums(tracks);
         } else {
@@ -56,9 +59,6 @@ const PlayerFunctions = ({children }) => {
       isMounted.current = false;
     };
   }, []);
-
-
-  
 
   useEffect(() => {
     if (afterFirstLoad) {
@@ -75,16 +75,13 @@ const PlayerFunctions = ({children }) => {
     });
   };
 
-  
- const firstInstallChecker = () => {
-   
-   setTimeout(() => {
-    getAsyncStorage('firstLoad').then(data => {
-      setFirstInstall(data)
-    })
-   }, 800)
- 
-  }
+  const firstInstallChecker = () => {
+    setTimeout(() => {
+      getAsyncStorage('firstLoad').then(data => {
+        setFirstInstall(data);
+      });
+    }, 800);
+  };
 
   const loadTracksFromStorage = () => {
     getAsyncStorage('tracks').then(data => {
@@ -96,15 +93,12 @@ const PlayerFunctions = ({children }) => {
     });
   };
 
-  const refresher = (tracks) => {
+  const refresher = tracks => {
     getRefresher().then(data => {
-      if(data.length > tracks.length || data.length < tracks.length) {
-        console.log('library updated')
-        ToastAndroid.show(
-          'Library updated',
-          ToastAndroid.SHORT,
-        );
-      }  
+      if (data.length > tracks.length || data.length < tracks.length) {
+        console.log('library updated');
+        ToastAndroid.show('Library updated', ToastAndroid.SHORT);
+      }
       if (data) {
         setTracks(data);
         createAlbums(data);
@@ -116,13 +110,12 @@ const PlayerFunctions = ({children }) => {
   const createAlbums = data => {
     getFolders(data, false).then(folders => {
       setFolders(folders);
-      
     });
 
     getAlbums(data, false).then(albums => {
       setAlbums(albums);
       setTimeout(() => {
-        setIsLoaded(true)
+        setIsLoaded(true);
       }, 500);
     });
   };
@@ -134,6 +127,7 @@ const PlayerFunctions = ({children }) => {
 
     getAlbums(data, true).then(albums => {
       setCleanAlbums(albums);
+      
     });
   };
 
@@ -262,7 +256,7 @@ const PlayerFunctions = ({children }) => {
     openSearch: openSearch,
     isSearching: isSearching,
     currentPlaylist: currentPlaylist,
-    isFirstInstall:isFirstInstall
+    isFirstInstall: isFirstInstall,
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>
