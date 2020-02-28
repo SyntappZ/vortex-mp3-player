@@ -3,12 +3,14 @@ import {View, StyleSheet, Image, TouchableOpacity, Text} from 'react-native';
 
 import TrackPlayer from 'react-native-track-player';
 import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
+import {PlayerContext} from '../player/PlayerFunctions';
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 const colorBlack = '#0D0D0D';
 
 class Track extends PureComponent {
+  static contextType = PlayerContext;
   _isMounted = false;
 
   constructor(props) {
@@ -21,15 +23,10 @@ class Track extends PureComponent {
 
   componentDidMount() {
     this._isMounted = true;
-  //  const {currentTrack} = this.props
-  //   if(this._isMounted && currentTrack) {
-  //     this.setState({currentTrackId: currentTrack})
-  //   }
   }
   componentWillUnmount() {
     this._isMounted = false;
   }
-
 
   _menu = null;
 
@@ -39,15 +36,21 @@ class Track extends PureComponent {
 
   showMenu = () => this._menu.show();
 
-  addToFavorites = () => {
+  addToFavs = () => {
+    const {setFavorites, favorites} = this.context;
+    const {trackId} = this.props;
+
+    if (!favorites.includes(trackId)) {
+      setFavorites([...favorites, trackId]);
+    }
+
     this._menu.hide();
   };
 
   render() {
     const {artist, title, duration, trackId, getPlaylist} = this.props;
-    const { currentTrackId } = this.state
+    const {currentTrackId} = this.state;
     const colorBlue = '#2A56B9';
-   
 
     // console.log(currentTrack)
 
@@ -55,7 +58,7 @@ class Track extends PureComponent {
     //  console.log('id ' + id)
     //  const trackPlaying = this.state.currentTrack == id;
     const colorLightBlack = '#131313';
-  
+
     let icon = <Entypo name={'note'} size={30} color={colorBlue} />;
     return (
       <View style={styles.container}>
@@ -89,9 +92,7 @@ class Track extends PureComponent {
                 />
               }
               ref={this.setMenuRef}>
-              <MenuItem
-                textStyle={{color: 'white'}}
-                onPress={this.addToFavorites}>
+              <MenuItem textStyle={{color: 'white'}} onPress={this.addToFavs}>
                 add to favorites
               </MenuItem>
             </Menu>

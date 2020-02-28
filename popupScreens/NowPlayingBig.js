@@ -135,14 +135,14 @@ const NowPlayingBig = ({
               onPress={getLyrics}>
               Lyrics
             </MenuItem>
-
+{/* 
             <MenuItem
               textStyle={{color: 'white'}}
           
               onPress={repeat}>
               Repeat
               <Icon5 name={'check'} size={15} color={'white'} />
-            </MenuItem>
+            </MenuItem> */}
           </Menu>
         </TouchableOpacity>
         <View style={styles.nowPlaying}>
