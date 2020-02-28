@@ -9,18 +9,15 @@ export const askPermissions = () => {
   });
 };
 
-const checkIfStorage = async (callback) => {
+const checkIfStorage = async callback => {
   try {
     const value = await AsyncStorage.getItem('tracks');
     if (value == null) {
       console.log('first time loading');
-      setAsyncStorage('isFirstInstall', true)
+      setAsyncStorage('isFirstInstall', true);
       firstTimeloadTracks(callback);
-     
     } else {
-      
       callback(false);
-      
     }
   } catch (error) {
     console.log(error);
@@ -35,69 +32,75 @@ const durationConverter = millis => {
 
 const secondsConverter = millis => (millis / 1000).toFixed(1);
 
-   
+const getPermissions = async callback => {
+  try {
+    const granted = await PermissionsAndroid.requestMultiple(
+      [
+        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+      ],
+      {
+        title: 'Permission',
+        message: 'Storage access is requiered',
+        buttonPositive: 'OK',
+      },
+    );
 
-
-
-const getPermissions = async(callback) => {
-  const granted = await PermissionsAndroid.request(
-    PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-
-    {
-      title: 'Permission',
-      message: 'Storage access is requiered',
-      buttonPositive: 'OK',
-    },
-  );
-
-  if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-    console.log('storage granted');
-    checkIfStorage(callback);
-  } else {
-    console.log('storage denied');
+    if (
+      granted['android.permission.READ_EXTERNAL_STORAGE'] ===
+      PermissionsAndroid.RESULTS.GRANTED
+    ) {
+      console.log('granted')
+      checkIfStorage(callback);
+    } else {
+      console.log('noooooooooooooooo');
+    }
+  } catch (err) {
+    console.warn(err);
   }
 };
 
 
 const nameConverter = str => {
-  str = str.replace('.mp3', '')
+  str = str.replace('.mp3', '');
   let arr = str.split('-');
-return arr.length === 2 ? arr : null
-
+  return arr.length === 2 ? arr : null;
 };
 
-
-const firstTimeloadTracks = async (callback) => {
-  
+const firstTimeloadTracks = async callback => {
   getTrackData()
     .then(tracks => {
-     
       const originalTracks = tracks.map((track, index) => {
-        let title = ''
-        let artist = ''
-  
-        if(!track.author) {
-          if(nameConverter(track.fileName)) {
-          title = nameConverter(track.fileName)[1].trim()
-          artist = nameConverter(track.fileName)[0].trim()
+        let title = '';
+        let artist = '';
+
+        if (!track.author) {
+          if (nameConverter(track.fileName)) {
+            title = nameConverter(track.fileName)[1].trim();
+            artist = nameConverter(track.fileName)[0].trim();
           }
         }
-        
+
         return {
-        index: index,
-        album: track.album,
-        artist: artist ? artist : track.author ? track.author : 'Unknown',
-        artwork: track.cover,
-        duration: durationConverter(track.duration),
-        seconds: secondsConverter(track.duration),
-        millis: track.duration,
-        fileName: track.fileName,
-        folder: track.folder,
-        id: track.id,
-        url: track.path,
-        favorite: false,
-        title: title ? title : track.title ? track.title : track.fileName.replace(/.mp3/, ''),
-      }});
+          index: index,
+          album: track.album,
+          artist: artist ? artist : track.author ? track.author : 'Unknown',
+          artwork: track.cover,
+          duration: durationConverter(track.duration),
+          seconds: secondsConverter(track.duration),
+          millis: track.duration,
+          fileName: track.fileName,
+          folder: track.folder,
+          id: track.id,
+          url: track.path,
+          favorite: false,
+          title: title
+            ? title
+            : track.title
+            ? track.title
+            : track.fileName.replace(/.mp3/, ''),
+        };
+      });
 
       setAsyncStorage('tracks', originalTracks);
       setAsyncStorage('lastPlayed', [originalTracks[0]]);
@@ -106,6 +109,4 @@ const firstTimeloadTracks = async (callback) => {
     .catch(error => {
       console.log(error);
     });
-
-   
 };

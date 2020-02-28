@@ -25,9 +25,7 @@ useEffect(() => {
 const firstLoad = async () => {
   try {
     const value = await AsyncStorage.getItem('firstLoad');
-  
     if (value == null) {
-    
       setAsyncStorage('firstLoad', true)
     }
   } catch (error) {

@@ -2,6 +2,8 @@ import React, {useState} from 'react';
 import {PlayerContext} from '../player/PlayerFunctions';
 import Searchbar from './Searchbar';
 import AsyncStorage from '@react-native-community/async-storage';
+import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
+
 
 import {
   StyleSheet,
@@ -35,34 +37,63 @@ const Header = ({navigation}) => {
     console.log('strorage cleared.');
   };
   return (
-    <View style={styles.header}>
-      {/* <Modal
-        animationType="slide"
-        transparent={false}
-        presentationStyle={'fullScreen'}
-        visible={openSearch}
-        onRequestClose={() => {
-          search();
-        }}>
-        <Searchbar closeSearch={search} />
-      </Modal> */}
-      <TouchableOpacity onPress={openMenu} style={styles.hamburger}>
-        <Icon color="white" name="md-menu" size={30} />
+    <PlayerContext.Consumer>
+      {({refresher}) => {
+
+       
+
         
-      
-      </TouchableOpacity>
-      <View style={styles.title}>
-        <Text style={styles.titleText}>
-          vortex <Text style={styles.blueText}>player</Text>
-        </Text>
-      </View>
-      <TouchableOpacity onPress={search} style={styles.search}>
-        <Icon color="white" name="md-search" size={30} />
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.more}>
-        <Icon color="white" name="md-more" size={30} />
-      </TouchableOpacity>
-    </View>
+  let menu = null;
+
+  const setMenuRef = ref => (menu = ref);
+
+  const showMenu = () => menu.show();
+
+  const rescan = () => {
+    refresher()
+    console.log('scanning...')
+    menu.hide();
+  }
+
+        return (
+          <View style={styles.header}>
+     
+          <TouchableOpacity onPress={openMenu} style={styles.hamburger}>
+            <Icon color="white" name="md-menu" size={30} />
+            
+          
+          </TouchableOpacity>
+          <View style={styles.title}>
+            <TouchableOpacity onPress={clearAll}>
+            <Text style={styles.titleText}>
+              vortex <Text style={styles.blueText}>player</Text>
+            </Text>
+            </TouchableOpacity>
+           
+          </View>
+          <TouchableOpacity onPress={search} style={styles.search}>
+            <Icon color="white" name="md-search" size={30} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={showMenu} style={styles.more}>
+          <Menu
+              style={{backgroundColor: colorBlack}}
+              button={
+                <Icon color="white" name="md-more" size={30} />
+              }
+              ref={setMenuRef}>
+              <MenuItem
+                textStyle={{color: 'white'}}
+                onPress={rescan}>
+                rescan files
+              </MenuItem>
+            </Menu>
+            
+          </TouchableOpacity>
+        </View>
+        );
+      }}
+    </PlayerContext.Consumer>
+   
   );
 };
 

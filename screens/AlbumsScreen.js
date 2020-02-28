@@ -38,7 +38,7 @@ export default class AlbumsScreen extends Component {
   };
 
   componentDidMount() {
-    const {albums, isFirstInstall} = this.context;
+    const { isFirstInstall} = this.context;
     this.setState({isOpen: isFirstInstall});
   }
 

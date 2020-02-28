@@ -26,7 +26,7 @@ class Album extends PureComponent {
   render() {
     const {albumName, artwork, tracksAmount, isFirstInstall} = this.props;
 
-    console.log(isFirstInstall)
+    
    
 
     const myIcon = <Icon name="rocket" size={30} color="#900" />;
@@ -42,6 +42,7 @@ class Album extends PureComponent {
             style={styles.touchable}
             onPress={this.modalHandler}>
               {isFirstInstall && !artwork ? loader :  chooseImage }
+            
            
           </TouchableOpacity>
         </View>

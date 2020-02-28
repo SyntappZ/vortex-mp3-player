@@ -45,9 +45,10 @@ const PlayerFunctions = ({children}) => {
       loadFavorites();
       setIsFirstLoad(true)
       askPermissions().then(tracks => {
+        // console.log(tracks)
         if (tracks) {
           setTracks(tracks);
-          refresher(tracks);
+           refresher(tracks);
           createAlbums(tracks);
           createCleanAlbums(tracks);
         } else {
@@ -87,20 +88,22 @@ const PlayerFunctions = ({children}) => {
 
   const loadTracksFromStorage = () => {
     getAsyncStorage('tracks').then(data => {
+      
       setTracks(data);
-      refresher(data);
+      
       createAlbums(data);
       createCleanAlbums(data);
       loadAlbumOnSetup();
     });
   };
 
-  const refresher = tracks => {
+  const refresher = () => {
+
     getRefresher().then(data => {
-      if (data.length > tracks.length || data.length < tracks.length) {
-        console.log('library updated');
-        ToastAndroid.show('Library updated', ToastAndroid.SHORT);
-      }
+      ToastAndroid.show(
+        'Scan Complete!',
+        ToastAndroid.SHORT,
+      );
       if (data) {
         setTracks(data);
         createAlbums(data);
@@ -259,6 +262,7 @@ const PlayerFunctions = ({children}) => {
     isSearching: isSearching,
     currentPlaylist: currentPlaylist,
     isFirstInstall: isFirstInstall,
+    refresher: refresher
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>

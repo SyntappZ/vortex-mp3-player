@@ -9,7 +9,8 @@
     "test": "jest",
     "lint": "eslint .",
     "clean": "cd android && gradlew clean && cd .. && react-native run-android",
-    "build-release": "cd android && gradlew bundleRelease && cd .."
+    "build-release": "cd android && gradlew bundleRelease && cd ..",
+    "test-release": "react-native run-android --variant=release"
   },
   "dependencies": {
     "@react-native-community/async-storage": "^1.7.1",
@@ -22,8 +23,10 @@
     "react-native-animated-loader": "0.0.8",
     "react-native-elements": "^1.2.7",
     "react-native-fab": "^1.0.9",
+    "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.6.0",
-    "react-native-get-music-files": "git+https://github.com/cinder92/react-native-get-music-files.git",
+    "react-native-get-music-files": "^2.1.0",
+    "react-native-image-base64": "^0.1.4",
     "react-native-material-menu": "^1.0.0",
     "react-native-progress": "^4.0.3",
     "react-native-raw-bottom-sheet": "^2.0.6",
