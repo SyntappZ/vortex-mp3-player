@@ -5,19 +5,9 @@ import FoldersScreen from '../screens/FoldersScreen';
 import TracksScreen from '../screens/TracksScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import AlbumsScreen from '../screens/AlbumsScreen';
-import Icon from 'react-native-vector-icons/Ionicons';
-import AsyncStorage from '@react-native-community/async-storage';
 
-import Header from '../components/Header'
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  TouchableOpacity,
-} from 'react-native';
+import Header from '../components/Header';
+import {StyleSheet, View, StatusBar} from 'react-native';
 
 const colorBlack = '#0D0D0D';
 const colorLightBlack = '#131313';
@@ -29,8 +19,6 @@ export default class SwipeNavigator extends Component {
   constructor(props) {
     super(props);
   }
-
-  
 
   render() {
     const options = {

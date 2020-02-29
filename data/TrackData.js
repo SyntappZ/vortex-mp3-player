@@ -2,7 +2,6 @@ import MusicFiles from 'react-native-get-music-files';
 
 export const getTrackData = () => {
   return new Promise((resolve, reject) => {
-
     MusicFiles.getAll({
       id: true,
       blured: false,
@@ -14,23 +13,22 @@ export const getTrackData = () => {
       album: true,
       minimumSongDuration: 10000,
     })
-    .then(tracks => {
-     console.log(tracks)
-      tracks.forEach(track => {
-        const folder = track.path.split("/").reverse()[1];
-        track.folder = folder
+      .then(tracks => {
+        tracks.forEach(track => {
+          const folder = track.path.split('/').reverse()[1];
+          track.folder = folder;
+        });
+
+        resolve(tracks);
       })
-      
-      resolve(tracks);
-    }).catch(error => {
-      reject(error);
-    });
+      .catch(error => {
+        reject(error);
+      });
   });
 };
 
 export const getTrackCoverData = () => {
   return new Promise((resolve, reject) => {
-
     MusicFiles.getAll({
       id: true,
       blured: false,
@@ -42,16 +40,15 @@ export const getTrackCoverData = () => {
       album: true,
       minimumSongDuration: 10000,
     })
-    .then(tracks => {
-     console.log(tracks)
-      tracks.forEach(track => {
-        const folder = track.path.split("/").reverse()[1];
-        track.folder = folder
+      .then(tracks => {
+        tracks.forEach(track => {
+          const folder = track.path.split('/').reverse()[1];
+          track.folder = folder;
+        });
+        resolve(tracks);
       })
-      resolve(tracks)
-      
-    }).catch(error => {
-      reject(error);
-    });
+      .catch(error => {
+        reject(error);
+      });
   });
 };

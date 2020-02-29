@@ -14,7 +14,7 @@ const Track = ({title, duration, getPlaylist, closeSheet, trackId}) => {
       <TouchableOpacity style={styles.icon}>
         <Icon
           style={styles.heartIcon}
-          name={"music-tone"}
+          name={'music-tone'}
           size={20}
           color={'white'}
         />
@@ -31,6 +31,8 @@ const Track = ({title, duration, getPlaylist, closeSheet, trackId}) => {
   );
 };
 
+const colorBlack = '#0D0D0D';
+
 export default class Sheet extends Component {
   static contextType = PlayerContext;
   _isMounted = false;
@@ -44,8 +46,8 @@ export default class Sheet extends Component {
   }
 
   playlistName = type => {
-     const {currentPlaylist} = this.context;
-    
+    const {currentPlaylist} = this.context;
+
     switch (type) {
       case 'folder':
         return currentPlaylist.playlist[0].folder;
@@ -62,9 +64,9 @@ export default class Sheet extends Component {
 
   componentDidMount() {
     this._isMounted = true;
-  
+
     if (this._isMounted) {
-       const {currentPlaylist} = this.context;
+      const {currentPlaylist} = this.context;
       this.setState({
         playlist: currentPlaylist.playlist,
         playlistName: this.playlistName(currentPlaylist.playlistType),
@@ -104,7 +106,7 @@ export default class Sheet extends Component {
   };
 
   render() {
-     const {playlistName, playlist} = this.state;
+    const {playlistName, playlist} = this.state;
     return (
       <RBSheet
         ref={ref => {
@@ -117,7 +119,7 @@ export default class Sheet extends Component {
         animationType={'slide'}
         customStyles={{
           container: {
-            backgroundColor: 'rgba(0,0,0,0.9)',
+            backgroundColor: colorBlack,
             flex: 1,
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
@@ -145,13 +147,7 @@ export default class Sheet extends Component {
     );
   }
 }
-
-const darkBlue = '#062D83';
-const colorBlack = '#0D0D0D';
-const colorLightBlack = '#131313';
-const colorDarkGrey = '#222';
-const colorBlue = '#2A56B9';
-const colorLightBlue = '#0B64D9';
+const lightBlue = '#4A6169';
 
 const styles = StyleSheet.create({
   container: {
@@ -184,23 +180,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-
   },
   trackTitle: {
     flex: 4,
     justifyContent: 'center',
-   
-    height: 50,
 
+    height: 50,
   },
   duration: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-
   },
   smallText: {
-    color: '#666',
+    color: lightBlue,
   },
 });

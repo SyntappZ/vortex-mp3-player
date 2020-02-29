@@ -21,7 +21,7 @@ export default class ProgressSlider extends TrackPlayer.ProgressComponent {
 
   render() {
     const darkBlue = '#062D83';
-  
+
     return (
       <View>
         <Slider

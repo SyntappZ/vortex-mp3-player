@@ -3,34 +3,27 @@ import {
   Text,
   StyleSheet,
   Image,
-  ImageBackground,
   StatusBar,
   TouchableOpacity,
   View,
-  Modal,
   ToastAndroid,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
-import ProgressBar from '../components/ProgressBar';
 import Gradient from '../components/Gradient';
 import TextTicker from 'react-native-text-ticker';
 import TrackPlayer from 'react-native-track-player/index';
-import Menu, {MenuItem, MenuDivider} from 'react-native-material-menu';
-import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
+import Menu, {MenuItem} from 'react-native-material-menu';
+
 import ProgressSlider from '../components/ProgressSlider';
 import TimeInterval from '../components/TimeInterval';
-import Sheet from '../components/Sheet';
+import Sheet from './Sheet';
 
-import {fetchLyrics} from '../data/Lyrics.js'
+import {fetchLyrics} from '../data/Lyrics.js';
 const darkBlue = '#062D83';
 const colorBlack = '#0D0D0D';
-const colorLightBlack = '#131313';
-const colorDarkGrey = '#222';
-const colorBlue = '#2A56B9';
-const colorLightBlue = '#0B64D9';
 const NowPlayingBig = ({
   modalHandler,
   trackTitle,
@@ -86,8 +79,8 @@ const NowPlayingBig = ({
   const getLyrics = () => {
     menu.hide();
     fetchLyrics(trackTitle, trackArtist).then(data => {
-      console.log(data)
-    })
+      console.log(data);
+    });
   };
   const repeat = () => {
     setRepeat(!isRepeat);
@@ -129,20 +122,9 @@ const NowPlayingBig = ({
                 color="#fff"
               />
             }>
-            <MenuItem
-              textStyle={{color: 'white'}}
-          
-              onPress={getLyrics}>
+            <MenuItem textStyle={{color: 'white'}} onPress={getLyrics}>
               Lyrics
             </MenuItem>
-{/* 
-            <MenuItem
-              textStyle={{color: 'white'}}
-          
-              onPress={repeat}>
-              Repeat
-              <Icon5 name={'check'} size={15} color={'white'} />
-            </MenuItem> */}
           </Menu>
         </TouchableOpacity>
         <View style={styles.nowPlaying}>
@@ -334,7 +316,6 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderWidth: 1,
     overflow: 'hidden',
-    // backgroundColor: '#CDCDCD',
   },
 
   progressSection: {

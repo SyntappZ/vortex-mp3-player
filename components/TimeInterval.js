@@ -1,5 +1,3 @@
-//  <script src="http://192.168.1.12:8097"></script>
-
 import TrackPlayer from 'react-native-track-player';
 import React, {Component} from 'react';
 import {View, Text, StyleSheet} from 'react-native';

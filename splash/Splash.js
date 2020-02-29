@@ -8,14 +8,12 @@ import {
   StyleSheet,
 } from 'react-native';
 import {PlayerContext} from '../player/PlayerFunctions';
-import {getAsyncStorage} from '../data/AsyncStorage.js';
+
 import {CommonActions} from '@react-navigation/native';
 export default class Splash extends Component {
   static contextType = PlayerContext;
   constructor(props) {
     super(props);
-
-    this.state = {};
   }
 
   componentDidMount() {}
@@ -68,7 +66,7 @@ const FirstInstallMessage = () => {
   return (
     <View style={{flex: 1}}>
       <View style={styles.textWrap}>
-      <Text style={styles.installTitle}>First Time Installation</Text>
+        <Text style={styles.installTitle}>First Time Installation</Text>
 
         <Text style={styles.installText}>
           It takes a little while longer to load on first installation.
@@ -83,9 +81,6 @@ const FirstInstallMessage = () => {
 };
 
 const colorBlack = '#0D0D0D';
-const colorLightBlack = '#131313';
-const colorBlue = '#074DD9';
-const colorLightBlue = '#0B64D9';
 
 const styles = StyleSheet.create({
   container: {

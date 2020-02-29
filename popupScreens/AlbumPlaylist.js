@@ -1,19 +1,16 @@
 import React, {Component} from 'react';
 import TextTicker from 'react-native-text-ticker';
-import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
+import {RecyclerListView, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
-import Loader from '../components/Loader'
 
 import {
   View,
-  FlatList,
   Image,
   StyleSheet,
   Text,
   TouchableOpacity,
   StatusBar,
   Dimensions,
-  ActivityIndicator,
 } from 'react-native';
 import Track from '../components/Track';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -24,14 +21,12 @@ import SimpleLineIcon from 'react-native-vector-icons/SimpleLineIcons';
 const screenWidth = Dimensions.get('window').width;
 export default class AlbumPlaylist extends Component {
   static contextType = PlayerContext;
-  _isMounted = false
+  _isMounted = false;
   constructor(props) {
     super(props);
     this.state = {
-      isShuffled: false
+      isShuffled: false,
     };
-
-   
 
     this.rowRenderer = this.rowRenderer.bind(this);
 
@@ -57,10 +52,7 @@ export default class AlbumPlaylist extends Component {
     const {albumId} = this.props.data;
     const {playFromAlbums} = this.context;
     playFromAlbums(albumId, trackId, 'album', false);
-    
   };
-
- 
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;
@@ -82,24 +74,22 @@ export default class AlbumPlaylist extends Component {
   };
 
   shuffle = () => {
-    
     const {oneTimeShuffle} = this.context;
     const {albumId} = this.props.data;
     oneTimeShuffle(albumId, 'album');
-    
   };
 
   render() {
     const {artwork, name, tracksAmount} = this.props.data;
     const {artist, closeModal, tracklist, totalTime} = this.props;
-    const { isShuffled } = this.state;
+
     const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
 
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
 
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor="#062D83" animated={true}/>
+        <StatusBar backgroundColor="#062D83" animated={true} />
 
         <View style={styles.top}>
           <View style={styles.imageContainer}>
@@ -158,9 +148,7 @@ export default class AlbumPlaylist extends Component {
               dataProvider={tracklist}
               layoutProvider={this.layoutProvider}
             />
-          ) : (
-            <Loader />
-          )}
+          ) : null}
         </View>
       </View>
     );

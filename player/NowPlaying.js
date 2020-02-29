@@ -31,24 +31,33 @@ const NowPlaying = ({
   const [trackArtist, setArtist] = useState('');
   const [duration, setDuration] = useState('');
   const [seconds, setSeconds] = useState('');
-  // const [afterFirstLoad, setIsFirstLoad] = useState(false);
-  // const [isMounted, setIsMounted] = useState(false);
+  const [afterFirstLoad, setIsFirstLoad] = useState(false);
 
   const modalHandler = () => setModalOpen(!modalOpen);
-  // const [isFirstLoad, setIsFirstLoad] = useState(true);
+
   const [trackId, setId] = useState('');
 
-  // const storeTrack = async () => {
-  //   const currentTrack = await TrackPlayer.getCurrentTrack();
-
-  //   setAsyncStorage('track', currentTrack);
-  // };
-
   useEffect(() => {
-    // if (isMounted.current) {
-    //   setIsFirstLoad(true);
-    // }
-
+    if (afterFirstLoad) {
+      setAsyncStorage('lastTrack', {
+        title: trackTitle,
+        artist: trackArtist,
+        duration: duration,
+        artwork: trackArt,
+        id: trackId,
+      });
+    } else {
+      getAsyncStorage('lastTrack').then(track => {
+        setTrackArt(track.artwork);
+        setTrackTitle(track.title);
+        setId(track.id);
+        setArtist(track.artist);
+        setDuration(track.duration);
+      });
+    }
+  }, [trackId]);
+  useEffect(() => {
+    setIsFirstLoad(true);
     let onTrackChange = TrackPlayer.addEventListener(
       'playback-track-changed',
       async data => {
@@ -73,7 +82,7 @@ const NowPlaying = ({
             }
           }
         } catch (error) {
-          console.error(error);
+          alert(error);
         }
 
         return () => {
@@ -108,7 +117,6 @@ const NowPlaying = ({
   };
 
   const image = <Image style={styles.image} source={{uri: trackArt}} />;
-  const colorBlue = '#2A56B9';
 
   const defaultImage = <IonIcon name="md-disc" size={60} color="#666" />;
 
@@ -210,11 +218,7 @@ const NowPlaying = ({
 };
 
 const colorBlack = '#0D0D0D';
-const colorLightBlack = '#131313';
 const colorDarkGrey = '#222';
-const colorBlue = '#2A56B9';
-const colorLightBlue = '#0B64D9';
-const darkBlue = '#062D83';
 
 const styles = StyleSheet.create({
   container: {

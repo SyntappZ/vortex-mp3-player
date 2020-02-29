@@ -13,7 +13,6 @@ const checkIfStorage = async callback => {
   try {
     const value = await AsyncStorage.getItem('tracks');
     if (value == null) {
-      console.log('first time loading');
       setAsyncStorage('isFirstInstall', true);
       firstTimeloadTracks(callback);
     } else {
@@ -50,16 +49,13 @@ const getPermissions = async callback => {
       granted['android.permission.READ_EXTERNAL_STORAGE'] ===
       PermissionsAndroid.RESULTS.GRANTED
     ) {
-      console.log('granted')
       checkIfStorage(callback);
     } else {
-      console.log('noooooooooooooooo');
     }
   } catch (err) {
     console.warn(err);
   }
 };
-
 
 const nameConverter = str => {
   str = str.replace('.mp3', '');
@@ -103,7 +99,7 @@ const firstTimeloadTracks = async callback => {
       });
 
       setAsyncStorage('tracks', originalTracks);
-      setAsyncStorage('lastPlayed', [originalTracks[0]]);
+
       callback(originalTracks);
     })
     .catch(error => {

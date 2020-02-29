@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-import {View, StyleSheet, FlatList, Text} from 'react-native';
+import {View, StyleSheet, FlatList} from 'react-native';
 import {SearchBar} from 'react-native-elements';
-import Track from './Track';
+import Track from '../components/Track';
 import {PlayerContext} from '../player/PlayerFunctions';
 export default class Searchbar extends Component {
   static contextType = PlayerContext;
@@ -16,7 +16,7 @@ export default class Searchbar extends Component {
   getPlaylist = trackId => {
     const {playFromAlbums} = this.context;
     playFromAlbums('none', trackId, 'none');
-   this.props.navigation.goBack()
+    this.props.navigation.goBack();
   };
 
   renderItem = ({item}) => {
@@ -27,7 +27,6 @@ export default class Searchbar extends Component {
         trackId={item.id}
         getPlaylist={this.getPlaylist}
         title={item.title}
-        
       />
     );
   };
@@ -72,9 +71,6 @@ export default class Searchbar extends Component {
 
 const colorBlack = '#0D0D0D';
 const colorLightBlack = '#131313';
-const colorBlue = '#074DD9';
-const colorLightBlue = '#0B64D9';
-const darkBlue = '#062D83';
 
 const styles = StyleSheet.create({
   container: {

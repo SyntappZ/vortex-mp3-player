@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import TextTicker from 'react-native-text-ticker';
-import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
+import {RecyclerListView, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
-import Loader from '../components/Loader'
+
 import {
   View,
   StyleSheet,
@@ -138,7 +138,7 @@ export default class FolderPlaylist extends Component {
             rowRenderer={this.rowRenderer}
             dataProvider={tracklist}
             layoutProvider={this.layoutProvider}
-          />) : <Loader />}
+          />) : null}
         </View>
       </View>
     );

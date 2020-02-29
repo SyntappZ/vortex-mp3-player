@@ -1,31 +1,26 @@
-import React, {Component, useEffect, useState} from 'react';
-import {View, Keyboard, Text} from 'react-native';
+import React, {Component} from 'react';
+import {View} from 'react-native';
 
 import {createStackNavigator} from '@react-navigation/stack';
 import ModalScreen from '../popupScreens/ModalScreen';
-import Search from '../components/Searchbar'
+import Search from '../popupScreens/Searchbar';
 import SwipeNavigator from './SwipeNavigator';
 import {NavigationContainer, DefaultTheme} from '@react-navigation/native';
 import Splash from '../splash/Splash';
-
+import Settings from '../popupScreens/Settings';
 import PlaylistConsumer from '../player/PlaylistConsumer';
 const Initial = createStackNavigator();
 const colorBlack = '#0D0D0D';
 const colorLightBlack = '#131313';
-const colorBlue = '#074DD9';
-const colorLightBlue = '#0B64D9';
-const darkBlue = '#062D83';
-
 
 class NavContainer extends Component {
   constructor(props) {
     super(props);
-    
   }
 
   render() {
     return (
-      <NavigationContainer  theme={MyTheme}>
+      <NavigationContainer theme={MyTheme}>
         <Initial.Navigator initialRouteName="Splash">
           <Initial.Screen
             name="Splash"
@@ -37,23 +32,22 @@ class NavContainer extends Component {
             component={Main}
             options={{headerShown: false}}
           />
-           <Initial.Screen
+          <Initial.Screen
             name="Search"
             component={Search}
             options={{headerShown: false}}
           />
-           <Initial.Screen
+          <Initial.Screen
             name="Settings"
-            component={Menu}
-             options={{
-            headerShown: true,
-            cardOverlayEnabled: true,
-            gestureEnabled: true,
-            gestureResponseDistance: {
-              vertical: 400,
-            },
-          }}
-        />
+            component={Settings}
+            options={{
+              headerShown: true,
+              headerTintColor: 'white',
+              headerStyle: {
+                backgroundColor: colorBlack,
+              },
+            }}
+          />
         </Initial.Navigator>
       </NavigationContainer>
     );
@@ -71,14 +65,6 @@ const MyTheme = {
   },
 };
 
-
-const Menu = () => {
-  return (
-    <View style={{flex: 1}}>
-      <Text>this is a menu</Text>
-    </View>
-  );
-};
 const Stack = createStackNavigator();
 const Main = () => {
   return (
@@ -94,7 +80,6 @@ const Main = () => {
           component={ModalScreen}
           options={{headerShown: false}}
         />
-       
       </Stack.Navigator>
       <PlaylistConsumer />
     </View>

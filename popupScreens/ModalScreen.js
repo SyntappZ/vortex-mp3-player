@@ -1,5 +1,5 @@
-import React, {Component, useState, useEffect} from 'react';
-import {View, StyleSheet} from 'react-native';
+import React from 'react';
+
 import AlbumPlaylist from './AlbumPlaylist';
 import FolderPlaylist from './FolderPlaylist';
 import {DataProvider} from 'recyclerlistview';
@@ -52,11 +52,5 @@ const ModalScreen = ({route, navigation}) => {
     />
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default ModalScreen;

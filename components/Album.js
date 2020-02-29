@@ -5,12 +5,11 @@ import {
   Image,
   TouchableOpacity,
   Text,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 
-
 import IonIcon from 'react-native-vector-icons/Ionicons';
-import Icon from 'react-native-vector-icons/FontAwesome';
+
 
 class Album extends PureComponent {
   _isMounted = false;
@@ -22,18 +21,14 @@ class Album extends PureComponent {
     openModal(albumId);
   };
 
-
   render() {
     const {albumName, artwork, tracksAmount, isFirstInstall} = this.props;
 
-    
-   
 
-    const myIcon = <Icon name="rocket" size={30} color="#900" />;
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
     const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
-   const loader = <ActivityIndicator size="large" color="#555" />
-    let chooseImage = artwork ? albumArt : defaultImage
+    const loader = <ActivityIndicator size="large" color="#555" />;
+    let chooseImage = artwork ? albumArt : defaultImage;
 
     return (
       <View style={styles.album}>
@@ -41,9 +36,7 @@ class Album extends PureComponent {
           <TouchableOpacity
             style={styles.touchable}
             onPress={this.modalHandler}>
-              {isFirstInstall && !artwork ? loader :  chooseImage }
-            
-           
+            {isFirstInstall && !artwork ? loader : chooseImage}
           </TouchableOpacity>
         </View>
         <View style={styles.albumInfo}>

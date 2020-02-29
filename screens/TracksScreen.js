@@ -1,15 +1,16 @@
-import React, {Component, useState, useEffect} from 'react';
+import React, {Component} from 'react';
 
-import {View, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
-import {getAsyncStorage} from '../data/AsyncStorage.js';
+import {View, StyleSheet, Dimensions} from 'react-native';
+
 import Track from '../components/Track';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
-import Loader from '../components/Loader';
+
 import Icon from 'react-native-vector-icons/Entypo';
 import FAB from 'react-native-fab';
 
 const screenWidth = Dimensions.get('window').width;
+const colorBlue = '#074DD9';
 
 export default class TracksScreen extends Component {
   static contextType = PlayerContext;
@@ -76,7 +77,7 @@ export default class TracksScreen extends Component {
             fabHandler={this.fabHandler}
           />
         ) : (
-          <Loader />
+          null
         )}
 
         <FAB
@@ -159,11 +160,10 @@ class List extends Component {
     );
   }
 }
-const colorBlack = '#0D0D0D';
 
-const darkBlue = '#062D83';
-const colorBlue = '#074DD9';
-const colorLightBlack = '#131313';
+
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

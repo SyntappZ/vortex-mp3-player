@@ -1,11 +1,11 @@
-import React, {Component, useState, useEffect} from 'react';
+import React, {Component} from 'react';
 
-import {View, Image, TouchableOpacity, StyleSheet, Dimensions} from 'react-native';
-import {getAsyncStorage} from '../data/AsyncStorage.js';
+import {View, StyleSheet, Dimensions} from 'react-native';
+
 import Track from '../components/Track';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
-import Loader from '../components/Loader';
+
 import Icon from 'react-native-vector-icons/Entypo';
 import FAB from 'react-native-fab';
 const screenWidth = Dimensions.get('window').width;
@@ -54,6 +54,7 @@ export default class FavoritesScreen extends Component {
 
   render() {
     const {tracks, favorites} = this.context;
+    const colorBlue = '#074DD9';
 
     const favs = tracks.filter(track => favorites.includes(track.id));
     const icon = (
@@ -64,8 +65,6 @@ export default class FavoritesScreen extends Component {
         color={colorBlue}
       />
     );
-    const darkBlue = '#062D83';
-    const colorBlue = '#074DD9';
 
     return (
       <View style={styles.container}>
@@ -129,25 +128,19 @@ class List extends Component {
 
   onScroll = event => {
     const currentOffset = event.nativeEvent.contentOffset.y;
-    const dif = currentOffset - (this.offset || 0);
+
     const {fabHandler} = this.props;
 
     if (currentOffset > 400) {
       fabHandler(false);
-    }else{
-      fabHandler(true)
+    } else {
+      fabHandler(true);
     }
-
-    // this.offset = currentOffset;
   };
 
   render() {
     const {favorites} = this.props;
     return (
-      // <View>
-     
-
-      // </View>
       <RecyclerListView
         onScroll={this.onScroll}
         style={{flex: 1}}
@@ -158,9 +151,6 @@ class List extends Component {
     );
   }
 }
-const darkBlue = '#062D83';
-const colorLightBlack = '#131313';
-const colorBlue = '#074DD9';
 
 const styles = StyleSheet.create({
   container: {

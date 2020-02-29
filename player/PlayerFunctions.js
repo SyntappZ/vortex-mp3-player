@@ -2,12 +2,8 @@ import React, {createContext, useRef, useEffect, useState} from 'react';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import {askPermissions} from '../data/MusicDataProvider.js';
 import TrackPlayer from 'react-native-track-player';
-import Track from '../components/Track.js';
-import {fetchAlbumArt} from '../data/AlbumArtApi.js';
-
-import {ToastAndroid, DeviceEventEmitter} from 'react-native';
+import {ToastAndroid} from 'react-native';
 import {getAlbums, getFolders} from '../data/CreateAlbums.js';
-import AsyncStorage from '@react-native-community/async-storage';
 import {getRefresher} from '../data/RefreshData.js';
 export const PlayerContext = createContext();
 
@@ -15,7 +11,7 @@ const PlayerFunctions = ({children}) => {
   const isMounted = useRef(true);
   const playbackState = TrackPlayer.usePlaybackState();
   const [tracks, setTracks] = useState([]);
-  
+
   const [folders, setFolders] = useState([]);
   const [albums, setAlbums] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -28,29 +24,34 @@ const PlayerFunctions = ({children}) => {
   const [isMenuOpen, setMenu] = useState(false);
   const [isSearching, setIsSearch] = useState(false);
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
-  const [playlistType, setPlaylistType] = useState('');
+
   const [currentPlaylist, setCurrentPlaylist] = useState({});
   const [isFirstInstall, setFirstInstall] = useState(false);
-
+  const [isStopWithApp, setStopWithApp] = useState(true);
   useEffect(() => {
     if (afterFirstLoad) {
       setAsyncStorage('favorites', favorites);
     }
   }, [favorites]);
 
-  
   useEffect(() => {
+    TrackPlayer.setupPlayer();
     if (isMounted.current) {
+      getAsyncStorage('stopWithApp').then(data => {
+        if (data !== null) {
+          setStopWithApp(data);
+        }
+      });
       firstInstallChecker();
       loadFavorites();
-      setIsFirstLoad(true)
+      setIsFirstLoad(true);
       askPermissions().then(tracks => {
-        // console.log(tracks)
         if (tracks) {
           setTracks(tracks);
-           refresher(tracks);
+          refresher(tracks);
           createAlbums(tracks);
           createCleanAlbums(tracks);
+          loadAlbumOnSetup(tracks);
         } else {
           loadTracksFromStorage();
         }
@@ -63,6 +64,27 @@ const PlayerFunctions = ({children}) => {
   }, []);
 
   useEffect(() => {
+    TrackPlayer.updateOptions({
+      stopWithApp: isStopWithApp,
+      alwaysPauseOnInterruption: true,
+      capabilities: [
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_STOP,
+      ],
+      compactCapabilities: [
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_STOP,
+      ],
+    });
+  }, [isStopWithApp]);
+
+  useEffect(() => {
     if (afterFirstLoad) {
       ToastAndroid.show(
         `Shuffle is ${isShuffled ? 'on' : 'off'}`,
@@ -70,7 +92,6 @@ const PlayerFunctions = ({children}) => {
       );
     }
   }, [isShuffled]);
-  
 
   const loadFavorites = () => {
     getAsyncStorage('favorites').then(data => {
@@ -88,9 +109,8 @@ const PlayerFunctions = ({children}) => {
 
   const loadTracksFromStorage = () => {
     getAsyncStorage('tracks').then(data => {
-      
       setTracks(data);
-      
+
       createAlbums(data);
       createCleanAlbums(data);
       loadAlbumOnSetup();
@@ -98,12 +118,8 @@ const PlayerFunctions = ({children}) => {
   };
 
   const refresher = () => {
-
     getRefresher().then(data => {
-      ToastAndroid.show(
-        'Scan Complete!',
-        ToastAndroid.SHORT,
-      );
+      ToastAndroid.show('Scan Complete!', ToastAndroid.SHORT);
       if (data) {
         setTracks(data);
         createAlbums(data);
@@ -132,7 +148,6 @@ const PlayerFunctions = ({children}) => {
 
     getAlbums(data, true).then(albums => {
       setCleanAlbums(albums);
-      
     });
   };
 
@@ -201,7 +216,13 @@ const PlayerFunctions = ({children}) => {
       playlistType: type,
       playlistId: id,
     };
+
+    storePlaylist(playlist);
+  };
+
+  const storePlaylist = playlist => {
     setCurrentPlaylist(playlist);
+    setAsyncStorage('lastPlayed', playlist);
   };
 
   const playFromAlbums = async (id, trackToPlay, type) => {
@@ -228,13 +249,24 @@ const PlayerFunctions = ({children}) => {
     setCurrentAlbum([id, type]);
   };
 
-  const loadAlbumOnSetup = () => {
-    getAsyncStorage('lastPlayed').then(async data => {
-      await TrackPlayer.add(data);
-      const id = data[0].id;
+  const loadAlbumOnSetup = tracks => {
+    if (tracks) {
+      loadPlaylist(tracks, tracks[0].id);
+    } else {
+      getAsyncStorage('lastPlayed').then(data => {
+        const {playlist} = data;
 
-      await TrackPlayer.skip(id);
-    });
+        getAsyncStorage('lastTrack').then(track => {
+          loadPlaylist(playlist, track.id);
+          setCurrentPlaylist(data);
+        });
+      });
+    }
+  };
+
+  const loadPlaylist = async (playlist, track) => {
+    await TrackPlayer.add(playlist);
+    await TrackPlayer.skip(track);
   };
 
   const openMenu = () => {
@@ -262,7 +294,9 @@ const PlayerFunctions = ({children}) => {
     isSearching: isSearching,
     currentPlaylist: currentPlaylist,
     isFirstInstall: isFirstInstall,
-    refresher: refresher
+    refresher: refresher,
+    setStopWithApp: setStopWithApp,
+    isStopWithApp: isStopWithApp,
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>

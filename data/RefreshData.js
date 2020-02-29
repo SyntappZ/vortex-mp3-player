@@ -1,7 +1,7 @@
 import {getTrackCoverData} from './TrackData.js';
- import {setAsyncStorage} from './AsyncStorage.js';
+import {setAsyncStorage} from './AsyncStorage.js';
 export const getRefresher = async () => {
-  setAsyncStorage('firstLoad', false)
+  setAsyncStorage('firstLoad', false);
 
   return new Promise((resolve, reject) => {
     getTrackCoverData()
@@ -51,7 +51,7 @@ export const getRefresher = async () => {
               : track.fileName.replace(/.mp3/, ''),
           };
         });
-        console.log('scan complete!!!')
+
         setAsyncStorage('tracks', originalTracks);
         setAsyncStorage('lastPlayed', [originalTracks[0]]);
         resolve(originalTracks);

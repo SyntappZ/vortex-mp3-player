@@ -1,14 +1,13 @@
-import React, {Component, useState, useEffect} from 'react';
-import {View, StyleSheet, Dimensions, FlatList} from 'react-native';
+import React, {Component} from 'react';
+import {View, StyleSheet, Dimensions} from 'react-native';
 import Folder from '../components/Folder';
-import {getAsyncStorage} from '../data/AsyncStorage.js';
+
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
 const screenWidth = Dimensions.get('window').width;
-import Loader from '../components/Loader';
+
 export default class FoldersScreen extends Component {
   static contextType = PlayerContext;
-
 
   dataConverter = tracks => {
     return new DataProvider((r1, r2) => r1 !== r2).cloneWithRows(tracks);
@@ -24,9 +23,7 @@ export default class FoldersScreen extends Component {
             folders={this.dataConverter(folders)}
             navigation={this.props.navigation}
           />
-        ) : (
-          <Loader />
-        )}
+        ) : null}
       </View>
     );
   }
@@ -56,8 +53,6 @@ class List extends Component {
     );
   }
 
-
-  
   rowRenderer = (type, data) => {
     const {name, tracksAmount, folderId} = data.item;
     return (
@@ -92,11 +87,9 @@ class List extends Component {
   }
 }
 
-const colorLightBlack = '#131313';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingBottom: 70,
-    // backgroundColor: colorLightBlack,
   },
 });

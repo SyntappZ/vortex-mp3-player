@@ -1,22 +1,18 @@
 import React, {PureComponent} from 'react';
 import {View, StyleSheet, TouchableOpacity, Text} from 'react-native';
-
-
 import IonIcon from 'react-native-vector-icons/Ionicons';
-
 import EntypoIcon from 'react-native-vector-icons/Entypo';
 
 class Folder extends PureComponent {
   constructor(props) {
     super(props);
-
   }
 
   modalHandler = () => {
     const {folderId, openModal} = this.props;
-    
-    openModal(folderId)
-  }
+
+    openModal(folderId);
+  };
 
   render() {
     const {folderName, tracksAmount} = this.props;
@@ -24,7 +20,6 @@ class Folder extends PureComponent {
     const folderIcon = (
       <EntypoIcon name={'folder-music'} size={35} color="#074DD9" />
     );
-   
 
     const test = () => {
       console.log('oh baby it works');
@@ -34,7 +29,9 @@ class Folder extends PureComponent {
       <View style={styles.container}>
         <View style={styles.iconWrap}>{folderIcon}</View>
         <View style={styles.textWrap}>
-          <TouchableOpacity style={styles.touchable} onPress={this.modalHandler}>
+          <TouchableOpacity
+            style={styles.touchable}
+            onPress={this.modalHandler}>
             <Text numberOfLines={1} style={styles.title}>
               {folderName}
             </Text>
@@ -84,7 +81,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     justifyContent: 'center',
-    paddingRight: 35
+    paddingRight: 35,
   },
   moreTouchable: {
     width: '100%',

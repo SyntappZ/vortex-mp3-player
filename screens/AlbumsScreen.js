@@ -1,26 +1,13 @@
-import React, {Component, useState, useEffect} from 'react';
-import {
-  View,
-  Modal,
-  TouchableHighlight,
-  StyleSheet,
-  Text,
-  Dimensions,
-  FlatList,
-} from 'react-native';
-import AsyncStorage from '@react-native-community/async-storage';
-import {getAsyncStorage} from '../data/AsyncStorage.js';
+import React, {Component} from 'react';
+import {View, StyleSheet, Text, Dimensions} from 'react-native';
+
 import Album from '../components/Album';
 import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
-import Loader from '../components/Loader';
+
 import {Overlay, Button} from 'react-native-elements';
 const screenWidth = Dimensions.get('window').width;
 
-const colorBlack = '#0D0D0D';
-const colorLightBlack = '#131313';
-const colorBlue = '#074DD9';
-const colorLightBlue = '#0B64D9';
 const ViewTypes = {
   FULL: 0,
   HALF_LEFT: 1,
@@ -38,7 +25,7 @@ export default class AlbumsScreen extends Component {
   };
 
   componentDidMount() {
-    const { isFirstInstall} = this.context;
+    const {isFirstInstall} = this.context;
     this.setState({isOpen: isFirstInstall});
   }
 
@@ -69,9 +56,7 @@ export default class AlbumsScreen extends Component {
             navigation={this.props.navigation}
             isFirstInstall={isFirstInstall}
           />
-        ) : (
-          <Loader />
-        )}
+        ) : null}
       </View>
     );
   }
@@ -120,7 +105,7 @@ class List extends Component {
 
   rowRenderer(type, data) {
     const {name, artwork, tracksAmount, albumId} = data.item;
-    const { isFirstInstall } = this.props
+    const {isFirstInstall} = this.props;
     switch (type) {
       case ViewTypes.HALF_LEFT:
         return (
@@ -145,7 +130,6 @@ class List extends Component {
               openModal={this.openModal}
               albumId={albumId}
               isFirstInstall={isFirstInstall}
-
             />
           </View>
         );
