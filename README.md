@@ -14,7 +14,6 @@
    it doubles the image size on the phone, this is a big problem because eventually they will become to big for the phone storage,
    i am not even sure how something like this occurs, how does an image double in size instead of being replaced? i will have to look into 
    this more, and it also seems to be only on certain android versions this is happening too.
-   
    I have tested this on a few emulators and doesnt happen on them all oreo seems to be the main 
    one and it happens on my mobile which is oreo too, luckily its not so bad because im using async storage to save the metadata
    so it doesn't have to keep pulling it from the mp3 file, but it will still happen on rescans.
