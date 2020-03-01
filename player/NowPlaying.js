@@ -22,6 +22,8 @@ const NowPlaying = ({
   shuffleUpComingPlaylist,
   favorites,
   setFavorites,
+  setRepeat,
+  isRepeat
 }) => {
   const playerState = TrackPlayer.usePlaybackState();
   const isMounted = useRef(true);
@@ -153,6 +155,8 @@ const NowPlaying = ({
           setFavorites={setFavorites}
           favorites={favorites}
           seconds={seconds}
+          setRepeat={setRepeat}
+          isRepeat={isRepeat}
         />
       </Modal>
       <View style={styles.imageWrap}>

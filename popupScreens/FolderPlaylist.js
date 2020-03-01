@@ -22,8 +22,6 @@ export default class FolderPlaylist extends Component {
   constructor(props) {
     super(props);
 
-   
-
     this.rowRenderer = this.rowRenderer.bind(this);
 
     this.layoutProvider = new LayoutProvider(
@@ -43,8 +41,6 @@ export default class FolderPlaylist extends Component {
       },
     );
   }
-
-  
 
   rowRenderer = (type, data) => {
     const {artist, duration, id, title} = data.item;
@@ -77,7 +73,7 @@ export default class FolderPlaylist extends Component {
 
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor="#062D83" animated={true}/>
+        <StatusBar backgroundColor="#062D83" animated={true} />
 
         <View style={styles.top}>
           <View style={styles.imageContainer}>
@@ -133,12 +129,14 @@ export default class FolderPlaylist extends Component {
         </View>
 
         <View style={styles.tracklist}>
-        {tracksAmount > 0 ? ( <RecyclerListView
-            style={{flex: 1}}
-            rowRenderer={this.rowRenderer}
-            dataProvider={tracklist}
-            layoutProvider={this.layoutProvider}
-          />) : null}
+          {tracksAmount > 0 ? (
+            <RecyclerListView
+              style={{flex: 1}}
+              rowRenderer={this.rowRenderer}
+              dataProvider={tracklist}
+              layoutProvider={this.layoutProvider}
+            />
+          ) : null}
         </View>
       </View>
     );
@@ -180,7 +178,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     alignItems: 'flex-start',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     flexDirection: 'column',
   },
   imageWrap: {
@@ -221,6 +219,7 @@ const styles = StyleSheet.create({
   timeWrap: {
     flexDirection: 'row',
     height: 20,
+    marginTop: 2,
     alignItems: 'center',
   },
   totalTime: {

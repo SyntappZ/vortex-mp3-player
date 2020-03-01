@@ -4,11 +4,20 @@ import RBSheet from 'react-native-raw-bottom-sheet';
 import {PlayerContext} from '../player/PlayerFunctions';
 import Icon from 'react-native-vector-icons/SimpleLineIcons';
 
-const Track = ({title, duration, getPlaylist, closeSheet, trackId}) => {
+const Track = ({
+  title,
+  duration,
+  currentTrack,
+  getPlaylist,
+  closeSheet,
+  trackId,
+}) => {
   const close = () => {
     closeSheet();
     getPlaylist(trackId);
   };
+  let trackColor =
+    currentTrack === trackId ? {color: 'white'} : {color: lightBlue};
   return (
     <View style={styles.track}>
       <TouchableOpacity style={styles.icon}>
@@ -20,12 +29,12 @@ const Track = ({title, duration, getPlaylist, closeSheet, trackId}) => {
         />
       </TouchableOpacity>
       <TouchableOpacity onPress={close} style={styles.trackTitle}>
-        <Text numberOfLines={1} style={styles.smallText}>
+        <Text numberOfLines={1} style={trackColor}>
           {title}
         </Text>
       </TouchableOpacity>
       <View style={styles.duration}>
-        <Text style={styles.smallText}>{duration}</Text>
+        <Text style={trackColor}>{duration}</Text>
       </View>
     </View>
   );
@@ -101,12 +110,14 @@ export default class Sheet extends Component {
         trackId={item.id}
         title={item.title}
         closeSheet={this.closeSheet}
+        currentTrack={this.context.currentTrack}
       />
     );
   };
 
   render() {
     const {playlistName, playlist} = this.state;
+
     return (
       <RBSheet
         ref={ref => {
@@ -192,8 +203,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 50,
-  },
-  smallText: {
-    color: lightBlue,
   },
 });

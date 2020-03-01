@@ -1,4 +1,3 @@
-
 import React, {createContext, useRef, useEffect, useState} from 'react';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import {askPermissions} from '../data/MusicDataProvider.js';
@@ -12,7 +11,7 @@ const PlayerFunctions = ({children}) => {
   const isMounted = useRef(true);
   const playbackState = TrackPlayer.usePlaybackState();
   const [tracks, setTracks] = useState([]);
-
+  const [isRepeat, setRepeat] = useState(false);
   const [folders, setFolders] = useState([]);
   const [albums, setAlbums] = useState([]);
   const [favorites, setFavorites] = useState([]);
@@ -25,7 +24,7 @@ const PlayerFunctions = ({children}) => {
   const [isMenuOpen, setMenu] = useState(false);
   const [isSearching, setIsSearch] = useState(false);
   const shuffle = arr => arr.sort(() => Math.random() - 0.5);
-
+  const [currentTrack, setCurrentTrack] = useState('');
   const [currentPlaylist, setCurrentPlaylist] = useState({});
   const [isFirstInstall, setFirstInstall] = useState(false);
   const [isStopWithApp, setStopWithApp] = useState(true);
@@ -86,6 +85,48 @@ const PlayerFunctions = ({children}) => {
   }, [isStopWithApp]);
 
   useEffect(() => {
+    let onTrackChange = TrackPlayer.addEventListener(
+      'playback-track-changed',
+      async data => {
+        const track = await TrackPlayer.getTrack(data.nextTrack);
+
+        if (track != null) {
+          setCurrentTrack(track.id);
+        }
+      },
+    );
+
+    return () => {
+      onTrackChange.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    let queueEnded = TrackPlayer.addEventListener(
+      'playback-queue-ended',
+      data => {
+        
+        if (isRepeat) {
+          backToStartQueue();
+          ToastAndroid.show('Repeat', ToastAndroid.SHORT);
+        } else {
+          ToastAndroid.show('Playlist Ended', ToastAndroid.SHORT);
+        }
+      },
+    );
+    if (afterFirstLoad) {
+      ToastAndroid.show(
+        `Repeat is ${isRepeat ? 'on' : 'off'} `,
+        ToastAndroid.SHORT,
+      );
+    }
+
+    return () => {
+      queueEnded.remove();
+    };
+  }, [isRepeat]);
+
+  useEffect(() => {
     if (afterFirstLoad) {
       ToastAndroid.show(
         `Shuffle is ${isShuffled ? 'on' : 'off'}`,
@@ -121,16 +162,14 @@ const PlayerFunctions = ({children}) => {
   const refresher = () => {
     return new Promise(resolve => {
       getRefresher().then(data => {
-       
-        resolve()
+        resolve();
         if (data) {
           setTracks(data);
           createAlbums(data);
           createCleanAlbums(data);
         }
       });
-    })
-   
+    });
   };
 
   const createAlbums = data => {
@@ -232,6 +271,14 @@ const PlayerFunctions = ({children}) => {
     setAsyncStorage('lastPlayed', playlist);
   };
 
+  const backToStartQueue = async () => {
+    const playlist = await TrackPlayer.getQueue();
+    const id = playlist[0].id;
+    await TrackPlayer.skip(id);
+  };
+
+ 
+
   const playFromAlbums = async (id, trackToPlay, type) => {
     updatePlaylist(id, type, trackToPlay);
     let nextAlbum = id + type;
@@ -305,6 +352,9 @@ const PlayerFunctions = ({children}) => {
     refresher: refresher,
     setStopWithApp: setStopWithApp,
     isStopWithApp: isStopWithApp,
+    currentTrack: currentTrack,
+    setRepeat: setRepeat,
+    isRepeat: isRepeat
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>

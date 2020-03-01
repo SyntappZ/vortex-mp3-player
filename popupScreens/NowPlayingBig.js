@@ -22,7 +22,7 @@ import ProgressSlider from '../components/ProgressSlider';
 import TimeInterval from '../components/TimeInterval';
 import Sheet from './Sheet';
 
-import {fetchLyrics} from '../data/Lyrics.js';
+
 const darkBlue = '#062D83';
 const colorBlack = '#0D0D0D';
 const NowPlayingBig = ({
@@ -38,34 +38,22 @@ const NowPlayingBig = ({
   setFavorites,
   favorites,
   seconds,
+  isRepeat,
+  setRepeat
 }) => {
   let isMounted = false;
   const playerState = TrackPlayer.usePlaybackState();
 
   const [isFavorite, setIsFavorite] = useState(false);
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-  const [isRepeat, setRepeat] = useState(false);
   const shuffleToggle = () => {
     shuffleUpComingPlaylist(!isShuffled);
   };
 
-  useEffect(() => {
-    let queueEnded = TrackPlayer.addEventListener(
-      'playback-queue-ended',
-      data => {
-        if(isRepeat) {
-
-        }else{
-        ToastAndroid.show('Playlist Ended', ToastAndroid.SHORT);
-        }
-      },
-    );
-    return () => {
-      queueEnded.remove();
-    };
-  }, []);
+  
 
   useEffect(() => {
+    
     isMounted = true;
     if (isMounted) {
       setIsFavorite(favorites.includes(trackId));
@@ -95,6 +83,7 @@ const NowPlayingBig = ({
 
   const repeat = () => {
     setRepeat(!isRepeat);
+
     menu.hide();
   };
 
@@ -134,7 +123,7 @@ const NowPlayingBig = ({
               />
             }>
             <MenuItem textStyle={{color: 'white'}} onPress={repeat}>
-              repeat
+              repeat {isRepeat ? 'off' : 'on'}
             </MenuItem>
           </Menu>
         </TouchableOpacity>

@@ -45,10 +45,9 @@ class Track extends PureComponent {
 
     const colorBlue = '#2A56B9';
 
-    let icon = <Entypo name={'note'} size={30} color={colorBlue} />;
     return (
       <PlayerContext.Consumer>
-        {({favorites, setFavorites}) => {
+        {({favorites, setFavorites, currentTrack}) => {
           const addToFavs = () => {
             if (!favorites.includes(trackId)) {
               if (this._isMounted) {
@@ -59,16 +58,32 @@ class Track extends PureComponent {
 
             this._menu.hide();
           };
+          const lightBlue = '#4A6169';
 
           return (
-            <View style={styles.container}>
-              <View style={styles.iconWrap}>{icon}</View>
+            <View
+              style={[
+                styles.container,
+                currentTrack === trackId ? {backgroundColor: '#222'} : null,
+              ]}>
+              <View style={styles.iconWrap}>
+                <Entypo
+                  name={'note'}
+                  size={30}
+                  color={currentTrack === trackId ? '#555' : colorBlue}
+                />
+              </View>
 
               <View style={styles.textWrap}>
                 <TouchableOpacity
                   style={styles.Touchable}
                   onPress={() => getPlaylist(trackId)}>
-                  <Text numberOfLines={1} style={styles.title}>
+                  <Text
+                    numberOfLines={1}
+                    style={[
+                      styles.title,
+                      currentTrack === trackId ? {color: '#666'} : null,
+                    ]}>
                     {title}
                   </Text>
                   <Text numberOfLines={1} style={styles.author}>
