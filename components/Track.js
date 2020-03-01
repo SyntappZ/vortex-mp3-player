@@ -58,19 +58,18 @@ class Track extends PureComponent {
 
             this._menu.hide();
           };
-          const lightBlue = '#4A6169';
-
+         
           return (
             <View
               style={[
                 styles.container,
-                currentTrack === trackId ? {backgroundColor: '#222'} : null,
+                currentTrack === trackId ? {backgroundColor: '#1a1a1a'} : null,
               ]}>
               <View style={styles.iconWrap}>
                 <Entypo
                   name={'note'}
                   size={30}
-                  color={currentTrack === trackId ? '#555' : colorBlue}
+                  color={currentTrack === trackId ? 'white' : colorBlue}
                 />
               </View>
 
