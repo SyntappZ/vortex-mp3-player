@@ -15,6 +15,7 @@ const ViewTypes = {
 };
 
 export default class AlbumsScreen extends Component {
+  _isMounted = false;
   state = {
     isOpen: false,
   };
@@ -25,8 +26,15 @@ export default class AlbumsScreen extends Component {
   };
 
   componentDidMount() {
+    this._isMounted = true;
     const {isFirstInstall} = this.context;
-    this.setState({isOpen: isFirstInstall});
+    if (this._isMounted) {
+      // eslint-disable-next-line react/no-did-mount-set-state
+      this.setState({isOpen: isFirstInstall});
+    }
+  }
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
@@ -45,7 +53,8 @@ export default class AlbumsScreen extends Component {
               </Text>
               <Button
                 onPress={() => this.setState({isOpen: false})}
-                title="Close"></Button>
+                title="Close"
+              />
             </View>
           </View>
         </Overlay>
@@ -95,7 +104,7 @@ class List extends Component {
   }
 
   openModal = albumId => {
-    const album = this.props.albums['_data'][albumId];
+    const album = this.props.albums._data[albumId];
 
     this.props.navigation.navigate('Modal', {
       data: album,
@@ -142,6 +151,7 @@ class List extends Component {
 
     return (
       <RecyclerListView
+        // eslint-disable-next-line react-native/no-inline-styles
         style={{flex: 1}}
         rowRenderer={this.rowRenderer}
         dataProvider={albums}

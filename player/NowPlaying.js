@@ -56,6 +56,8 @@ const NowPlaying = ({
       });
     }
   }, [trackId]);
+
+
   useEffect(() => {
     setIsFirstLoad(true);
     let onTrackChange = TrackPlayer.addEventListener(
@@ -67,7 +69,7 @@ const NowPlaying = ({
           if (isMounted.current) {
             if (track != null) {
               if (track.artwork) {
-                if (track.artwork != trackArt) {
+                if (track.artwork !== trackArt) {
                   setTrackArt(track.artwork);
                 }
               } else {
@@ -82,16 +84,21 @@ const NowPlaying = ({
             }
           }
         } catch (error) {
-          alert(error);
+          console.log(error);
         }
+
+       
+           
+    
 
         return () => {
           isMounted.current = false;
-
+          
           onTrackChange.remove();
         };
       },
     );
+    
   }, []);
 
   const playerControls = control => {

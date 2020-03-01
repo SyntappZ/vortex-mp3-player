@@ -10,7 +10,6 @@ import {
 
 import IonIcon from 'react-native-vector-icons/Ionicons';
 
-
 class Album extends PureComponent {
   _isMounted = false;
   constructor(props) {
@@ -23,7 +22,6 @@ class Album extends PureComponent {
 
   render() {
     const {albumName, artwork, tracksAmount, isFirstInstall} = this.props;
-
 
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
     const albumArt = <Image style={styles.image} source={{uri: artwork}} />;

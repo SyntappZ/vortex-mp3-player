@@ -8,6 +8,7 @@ import {
   View,
   ToastAndroid,
 } from 'react-native';
+
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon5 from 'react-native-vector-icons/FontAwesome5';
 import IonIcon from 'react-native-vector-icons/Ionicons';
@@ -49,6 +50,22 @@ const NowPlayingBig = ({
   };
 
   useEffect(() => {
+    let queueEnded = TrackPlayer.addEventListener(
+      'playback-queue-ended',
+      data => {
+        if(isRepeat) {
+
+        }else{
+        ToastAndroid.show('Playlist Ended', ToastAndroid.SHORT);
+        }
+      },
+    );
+    return () => {
+      queueEnded.remove();
+    };
+  }, []);
+
+  useEffect(() => {
     isMounted = true;
     if (isMounted) {
       setIsFavorite(favorites.includes(trackId));
@@ -76,12 +93,6 @@ const NowPlayingBig = ({
 
   const showMenu = () => menu.show();
 
-  const getLyrics = () => {
-    menu.hide();
-    fetchLyrics(trackTitle, trackArtist).then(data => {
-      console.log(data);
-    });
-  };
   const repeat = () => {
     setRepeat(!isRepeat);
     menu.hide();
@@ -122,8 +133,8 @@ const NowPlayingBig = ({
                 color="#fff"
               />
             }>
-            <MenuItem textStyle={{color: 'white'}} onPress={getLyrics}>
-              Lyrics
+            <MenuItem textStyle={{color: 'white'}} onPress={repeat}>
+              repeat
             </MenuItem>
           </Menu>
         </TouchableOpacity>

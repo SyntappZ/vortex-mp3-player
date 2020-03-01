@@ -1,3 +1,4 @@
+
 import React, {createContext, useRef, useEffect, useState} from 'react';
 import {getAsyncStorage, setAsyncStorage} from '../data/AsyncStorage.js';
 import {askPermissions} from '../data/MusicDataProvider.js';
@@ -45,13 +46,13 @@ const PlayerFunctions = ({children}) => {
       firstInstallChecker();
       loadFavorites();
       setIsFirstLoad(true);
-      askPermissions().then(tracks => {
-        if (tracks) {
-          setTracks(tracks);
-          refresher(tracks);
-          createAlbums(tracks);
-          createCleanAlbums(tracks);
-          loadAlbumOnSetup(tracks);
+      askPermissions().then(data => {
+        if (data) {
+          setTracks(data);
+          refresher(data);
+          createAlbums(data);
+          createCleanAlbums(data);
+          loadAlbumOnSetup(data);
         } else {
           loadTracksFromStorage();
         }
@@ -118,14 +119,18 @@ const PlayerFunctions = ({children}) => {
   };
 
   const refresher = () => {
-    getRefresher().then(data => {
-      ToastAndroid.show('Scan Complete!', ToastAndroid.SHORT);
-      if (data) {
-        setTracks(data);
-        createAlbums(data);
-        createCleanAlbums(data);
-      }
-    });
+    return new Promise(resolve => {
+      getRefresher().then(data => {
+       
+        resolve()
+        if (data) {
+          setTracks(data);
+          createAlbums(data);
+          createCleanAlbums(data);
+        }
+      });
+    })
+   
   };
 
   const createAlbums = data => {
@@ -164,7 +169,7 @@ const PlayerFunctions = ({children}) => {
 
   const selectPlaylist = (id, type, trackId) => {
     const favs = tracks.filter(track => favorites.includes(track.id));
-    const search = tracks.filter(track => track.id == trackId);
+    const search = tracks.filter(track => track.id === trackId);
 
     const copy = arr => [...arr];
     switch (type) {
@@ -190,7 +195,9 @@ const PlayerFunctions = ({children}) => {
 
     if (isShuffled) {
       const index = playlist.reduce((a, b, i) => {
-        if (b.id === currentTrack) a = i;
+        if (b.id === currentTrack) {
+          a = i;
+        }
         return a;
       });
       const newPlaylist = playlist.filter(
@@ -231,7 +238,7 @@ const PlayerFunctions = ({children}) => {
     let lastAlbum = currentAlbum.join('');
     let playlist = selectPlaylist(id, type, trackToPlay);
 
-    if (nextAlbum == lastAlbum && !isShuffled) {
+    if (nextAlbum === lastAlbum && !isShuffled) {
       playlist = null;
     }
 
@@ -249,15 +256,14 @@ const PlayerFunctions = ({children}) => {
     setCurrentAlbum([id, type]);
   };
 
-  const loadAlbumOnSetup = tracks => {
-    if (tracks) {
-      loadPlaylist(tracks, tracks[0].id);
+  const loadAlbumOnSetup = playlistData => {
+    if (playlistData) {
+      loadPlaylist(playlistData, playlistData[0].id);
     } else {
       getAsyncStorage('lastPlayed').then(data => {
         const {playlist} = data;
-
-        getAsyncStorage('lastTrack').then(track => {
-          loadPlaylist(playlist, track.id);
+        getAsyncStorage('lastTrack').then(lastTrack => {
+          loadPlaylist(playlist, lastTrack.id);
           setCurrentPlaylist(data);
         });
       });
@@ -265,8 +271,10 @@ const PlayerFunctions = ({children}) => {
   };
 
   const loadPlaylist = async (playlist, track) => {
-    await TrackPlayer.add(playlist);
-    await TrackPlayer.skip(track);
+    if (playlist) {
+      await TrackPlayer.add(playlist);
+      await TrackPlayer.skip(track);
+    }
   };
 
   const openMenu = () => {

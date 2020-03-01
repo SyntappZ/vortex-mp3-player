@@ -50,8 +50,6 @@ class Track extends PureComponent {
       <PlayerContext.Consumer>
         {({favorites, setFavorites}) => {
           const addToFavs = () => {
-            const {trackId} = this.props;
-
             if (!favorites.includes(trackId)) {
               if (this._isMounted) {
                 setFavorites([...favorites, trackId]);
@@ -139,11 +137,9 @@ const styles = StyleSheet.create({
   },
   timeWrap: {
     flex: 1,
-    justifyContent: 'space-around',
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    alignItems: 'center',
     paddingRight: 5,
   },
   trackTime: {
