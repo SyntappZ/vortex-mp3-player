@@ -16,7 +16,6 @@ import Icon from 'react-native-vector-icons/Ionicons';
 const Header = ({navigation}) => {
   const [isSearching, setSearching] = useState(false);
 
-
   const openMenu = () => {
     navigation.navigate('Settings');
   };
@@ -24,13 +23,6 @@ const Header = ({navigation}) => {
     navigation.navigate('Search');
   };
 
-  const clearAll = async () => {
-    try {
-      await AsyncStorage.clear();
-    } catch (e) {
-      console.error(e);
-    }
-  };
   return (
     <PlayerContext.Consumer>
       {({refresher}) => {
@@ -55,11 +47,9 @@ const Header = ({navigation}) => {
               <Icon color="white" name="md-menu" size={30} />
             </TouchableOpacity>
             <View style={styles.title}>
-              <TouchableOpacity onPress={clearAll}>
-                <Text style={styles.titleText}>
-                  vortex <Text style={styles.blueText}>player</Text>
-                </Text>
-              </TouchableOpacity>
+              <Text style={styles.titleText}>
+                vortex <Text style={styles.blueText}>player</Text>
+              </Text>
             </View>
             <TouchableOpacity onPress={search} style={styles.search}>
               <Icon color="white" name="md-search" size={30} />

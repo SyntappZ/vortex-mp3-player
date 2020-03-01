@@ -18,9 +18,9 @@ export default class Splash extends Component {
 
   componentDidMount() {}
 
-  loadMainPage = () => {
-    this._navigateTo();
-  };
+  // loadMainPage = () => {
+  //   this._navigateTo();
+  // };
 
   _navigateTo = routeName => {
     this.props.navigation.dispatch(
@@ -38,7 +38,7 @@ export default class Splash extends Component {
   render() {
     const {isLoaded, isFirstInstall} = this.context;
 
-    isLoaded ? this.loadMainPage() : null;
+    isLoaded ? this._navigateTo() : null;
 
     return (
       <View style={styles.container}>

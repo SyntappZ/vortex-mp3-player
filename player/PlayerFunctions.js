@@ -105,12 +105,9 @@ const PlayerFunctions = ({children}) => {
     let queueEnded = TrackPlayer.addEventListener(
       'playback-queue-ended',
       data => {
-        
         if (isRepeat) {
           backToStartQueue();
           ToastAndroid.show('Repeat', ToastAndroid.SHORT);
-        } else {
-          ToastAndroid.show('Playlist Ended', ToastAndroid.SHORT);
         }
       },
     );
@@ -277,8 +274,6 @@ const PlayerFunctions = ({children}) => {
     await TrackPlayer.skip(id);
   };
 
- 
-
   const playFromAlbums = async (id, trackToPlay, type) => {
     updatePlaylist(id, type, trackToPlay);
     let nextAlbum = id + type;
@@ -354,7 +349,7 @@ const PlayerFunctions = ({children}) => {
     isStopWithApp: isStopWithApp,
     currentTrack: currentTrack,
     setRepeat: setRepeat,
-    isRepeat: isRepeat
+    isRepeat: isRepeat,
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>
