@@ -21,9 +21,7 @@ class Folder extends PureComponent {
       <EntypoIcon name={'folder-music'} size={35} color="#074DD9" />
     );
 
-    const test = () => {
-      console.log('oh baby it works');
-    };
+   
 
     return (
       <View style={styles.container}>
@@ -41,7 +39,7 @@ class Folder extends PureComponent {
           </TouchableOpacity>
         </View>
         <View style={styles.moreWrap}>
-          <TouchableOpacity style={styles.moreTouchable} onPress={() => test()}>
+          <TouchableOpacity style={styles.moreTouchable}>
             <Text numberOfLines={1} style={styles.songs}>
               songs: {tracksAmount}
             </Text>
