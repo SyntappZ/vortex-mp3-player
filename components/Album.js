@@ -1,4 +1,4 @@
-import React, {PureComponent} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -7,54 +7,60 @@ import {
   Text,
   ActivityIndicator,
 } from 'react-native';
-
 import IonIcon from 'react-native-vector-icons/Ionicons';
 
-class Album extends PureComponent {
-  _isMounted = false;
-  constructor(props) {
-    super(props);
-  }
-  modalHandler = () => {
-    const {albumId, openModal} = this.props;
-    openModal(albumId);
-  };
+const Album = ({
+  albumName,
+  artwork,
+  albumId,
+  openModal,
+  tracksAmount,
+  isFirstInstall,
+}) => {
+  const [albumArt, setAlbumArt] = useState(
+    <IonIcon name="md-disc" size={130} color="#666" />,
+  );
+  const modalHandler = () => openModal(albumId);
 
-  render() {
-    const {albumName, artwork, tracksAmount, isFirstInstall} = this.props;
-
-    const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
-    const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
+  useEffect(() => {
     const loader = <ActivityIndicator size="large" color="#555" />;
-    let chooseImage = artwork ? albumArt : defaultImage;
+    const image = <Image style={styles.image} source={{uri: artwork}} />;
+    const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />
+    if (artwork) {
+      setAlbumArt(image);
+    } else if (isFirstInstall) {
+      setAlbumArt(loader);
+    } else {
+      setAlbumArt(defaultImage);
+    }
+  }, [artwork]);
 
-    return (
-      <View style={styles.album}>
-        <View style={styles.imageWrap}>
-          <TouchableOpacity
-            style={styles.touchable}
-            onPress={this.modalHandler}>
-            {isFirstInstall && !artwork ? loader : chooseImage}
-          </TouchableOpacity>
+  return (
+    <View style={styles.album}>
+      <View style={styles.imageWrap}>
+        <TouchableOpacity style={styles.touchable} onPress={modalHandler}>
+          {albumArt}
+        </TouchableOpacity>
+      </View>
+      <View style={styles.albumInfo}>
+        <View style={{flex: 3, justifyContent: 'center'}}>
+          <Text style={{color: 'white'}} numberOfLines={1}>
+            {albumName}
+          </Text>
+          <Text style={{color: '#D3D3D3'}} numberOfLines={1}>
+            songs: {tracksAmount}
+          </Text>
         </View>
-        <View style={styles.albumInfo}>
-          <View style={{flex: 3, justifyContent: 'center'}}>
-            <Text style={{color: 'white'}} numberOfLines={1}>
-              {albumName}
-            </Text>
-            <Text style={{color: '#D3D3D3'}} numberOfLines={1}>
-              songs: {tracksAmount}
-            </Text>
-          </View>
 
-          <View style={styles.more}>
-            <IonIcon name="md-more" size={30} color="#fff" />
-          </View>
+        <View style={styles.more}>
+          <IonIcon name="md-more" size={30} color="#fff" />
         </View>
       </View>
-    );
-  }
-}
+    </View>
+  );
+};
+
+
 
 const colorDarkGrey = '#222';
 const colorBlue = '#2A56B9';
@@ -63,7 +69,6 @@ const styles = StyleSheet.create({
   album: {
     width: '100%',
     height: 200,
-    
   },
   imageWrap: {
     flex: 5,

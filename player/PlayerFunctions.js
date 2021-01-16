@@ -132,10 +132,9 @@ const PlayerFunctions = ({children}) => {
     }
   }, [isShuffled]);
 
-  const loadFavorites = () => {
-    getAsyncStorage('favorites').then(data => {
+  const loadFavorites = async () => {
+   const data = await getAsyncStorage('favorites')
       setFavorites(data);
-    });
   };
 
   const firstInstallChecker = () => {
@@ -178,7 +177,7 @@ const PlayerFunctions = ({children}) => {
       setAlbums(albums);
       setTimeout(() => {
         setIsLoaded(true);
-      }, 500);
+      }, 100);
     });
   };
 
@@ -205,7 +204,7 @@ const PlayerFunctions = ({children}) => {
 
   const selectPlaylist = (id, type, trackId) => {
     const favs = tracks.filter(track => favorites.includes(track.id));
-    const search = tracks.filter(track => track.id === trackId);
+    
 
     const copy = arr => [...arr];
     switch (type) {
@@ -217,8 +216,6 @@ const PlayerFunctions = ({children}) => {
         return favs;
       case 'all':
         return copy(tracks);
-      case 'none':
-        return search;
     }
   };
 
@@ -298,6 +295,27 @@ const PlayerFunctions = ({children}) => {
     setCurrentAlbum([id, type]);
   };
 
+  const playFromSearch = async (trackId, track, tracklist) => {
+    // const playlist = selectPlaylist(null, 'all', trackId);
+   
+
+    if(track) {
+      await TrackPlayer.reset();
+      await TrackPlayer.add(tracklist);
+      await TrackPlayer.skip(trackId);
+      await TrackPlayer.play();
+    }
+    const playlist = {
+      playlist: tracklist,
+      playlistType: 'none',
+      playlistId: null,
+    };
+
+    storePlaylist(playlist);
+    setIsShuffled(false);
+   
+  };
+
   const loadAlbumOnSetup = playlistData => {
     if (playlistData) {
       loadPlaylist(playlistData, playlistData[0].id);
@@ -350,6 +368,7 @@ const PlayerFunctions = ({children}) => {
     currentTrack: currentTrack,
     setRepeat: setRepeat,
     isRepeat: isRepeat,
+    playFromSearch: playFromSearch
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>

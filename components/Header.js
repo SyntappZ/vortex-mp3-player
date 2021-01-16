@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {PlayerContext} from '../player/PlayerFunctions';
-import AsyncStorage from '@react-native-community/async-storage';
+import {clearAllStorage} from '../data/AsyncStorage.js';
 import Menu, {MenuItem} from 'react-native-material-menu';
 
 import {
@@ -22,6 +22,11 @@ const Header = ({navigation}) => {
   const search = () => {
     navigation.navigate('Search');
   };
+
+  const wipeStorage = async () => {
+    const message = await clearAllStorage()
+    console.log(message)
+  }
 
   return (
     <PlayerContext.Consumer>
@@ -46,11 +51,11 @@ const Header = ({navigation}) => {
             <TouchableOpacity onPress={openMenu} style={styles.hamburger}>
               <Icon color="white" name="md-menu" size={30} />
             </TouchableOpacity>
-            <View style={styles.title}>
+            <TouchableOpacity onPress={wipeStorage} style={styles.title}>
               <Text style={styles.titleText}>
                 vortex <Text style={styles.blueText}>player</Text>
               </Text>
-            </View>
+            </TouchableOpacity>
             <TouchableOpacity onPress={search} style={styles.search}>
               <Icon color="white" name="md-search" size={30} />
             </TouchableOpacity>

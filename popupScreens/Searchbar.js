@@ -7,16 +7,44 @@ export default class Searchbar extends Component {
   static contextType = PlayerContext;
   state = {
     search: null,
+    filteredTracks: [],
   };
 
-  updateSearch = search => {
-    this.setState({search: search.toLowerCase()});
+  updateSearch = inputText => {
+    this.setState({search: inputText});
+    this.getSearchResults(inputText);
   };
 
-  getPlaylist = trackId => {
-    const {playFromAlbums} = this.context;
-    playFromAlbums('none', trackId, 'none');
-    this.props.navigation.goBack();
+  getPlaylist = (trackId, track) => {
+    // this.props.navigation.goBack();
+    const {playFromSearch} = this.context;
+    const {filteredTracks} = this.state;
+    playFromSearch(trackId, track, filteredTracks);
+  };
+  matched = (track, searchQuery) => {
+    const artistName =
+      track.artist !== 'Unknown' ? track.artist.toLowerCase() : null;
+    let trackName = track.title.toLowerCase();
+
+    if (artistName) {
+      trackName = trackName + artistName;
+    }
+
+    return trackName.includes(searchQuery);
+  };
+
+  getSearchResults = inputText => {
+    const searchQuery = inputText.toLowerCase();
+    const {tracks} = this.context;
+
+    const filtered = tracks.filter(track => {
+      return this.matched(track, searchQuery);
+    });
+    if (inputText) {
+      this.setState({filteredTracks: filtered});
+    } else {
+      this.setState({filteredTracks: []});
+    }
   };
 
   renderItem = ({item}) => {
@@ -27,25 +55,13 @@ export default class Searchbar extends Component {
         trackId={item.id}
         getPlaylist={this.getPlaylist}
         title={item.title}
+        track={item}
       />
     );
   };
 
   render() {
-    const {search} = this.state;
-    const {tracks} = this.context;
-    const filteredTracks = [];
-    tracks.forEach(track => {
-      let query = search;
-      query === '' ? (query = null) : (query = query);
-
-      if (
-        track.title.toLowerCase().includes(query) ||
-        track.artist.toLowerCase().includes(query)
-      ) {
-        filteredTracks.push(track);
-      }
-    });
+    const {filteredTracks, search} = this.state;
     return (
       <View style={styles.container}>
         <View style={styles.searchWrap}>
@@ -59,6 +75,7 @@ export default class Searchbar extends Component {
         </View>
         <View style={styles.results}>
           <FlatList
+            keyboardShouldPersistTaps={'handled'}
             data={filteredTracks}
             renderItem={this.renderItem}
             keyExtractor={item => item.index.toString()}

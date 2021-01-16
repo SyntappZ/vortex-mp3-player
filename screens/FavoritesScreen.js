@@ -17,6 +17,7 @@ export default class FavoritesScreen extends Component {
     super(props);
     this.state = {
       isVisible: true,
+     
     };
   }
 
@@ -52,11 +53,18 @@ export default class FavoritesScreen extends Component {
     }
   };
 
+  // getFavorites = () => {
+  //   const {tracks, favorites} = this.context;
+  //   const favoritesFilter = favorites ? tracks.filter(track => favorites.includes(track.id)) : []
+  //   return favorites
+  // }
+
   render() {
     const {tracks, favorites} = this.context;
     const colorBlue = '#074DD9';
-
-    const favs = tracks.filter(track => favorites.includes(track.id));
+    
+    const favoritesFilter = tracks.filter(track => favorites.includes(track.id))
+   
     const icon = (
       <Icon
         style={styles.shuffleIcon}
@@ -68,9 +76,9 @@ export default class FavoritesScreen extends Component {
 
     return (
       <View style={styles.container}>
-        {favs.length > 0 ? (
+        {favoritesFilter.length > 0 ? (
           <List
-            favorites={this.dataConverter(favs)}
+            favorites={this.dataConverter(favoritesFilter)}
             getPlaylist={this.getPlaylist}
             fabHandler={this.fabHandler}
           />

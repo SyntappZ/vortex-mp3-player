@@ -76,7 +76,7 @@ class Track extends PureComponent {
               <View style={styles.textWrap}>
                 <TouchableOpacity
                   style={styles.Touchable}
-                  onPress={() => getPlaylist(trackId)}>
+                  onPress={() => getPlaylist(trackId, this.props.track)}>
                   <Text
                     numberOfLines={1}
                     style={[

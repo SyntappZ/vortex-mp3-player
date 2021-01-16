@@ -67,7 +67,7 @@ export default class Sheet extends Component {
       case 'all':
         return 'All Tracks';
       case 'none':
-        return currentPlaylist.playlist[0].title;
+        return 'Search Results';
     }
   };
 
