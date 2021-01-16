@@ -56,7 +56,7 @@ export default class Sheet extends Component {
 
   playlistName = type => {
     const {currentPlaylist} = this.context;
-
+    console.log(currentPlaylist);
     switch (type) {
       case 'folder':
         return currentPlaylist.playlist[0].folder;
@@ -66,7 +66,7 @@ export default class Sheet extends Component {
         return 'favorites';
       case 'all':
         return 'All Tracks';
-      case 'none':
+      case 'search':
         return 'Search Results';
     }
   };
@@ -96,10 +96,13 @@ export default class Sheet extends Component {
     this._isMounted = false;
   }
   getPlaylist = trackId => {
-    const {playFromAlbums, currentPlaylist} = this.context;
-    const {playlistType, playlistId} = currentPlaylist;
-
-    playFromAlbums(playlistId, trackId, playlistType);
+    const {playFromAlbums, playFromSearch, currentPlaylist} = this.context;
+    const {playlistType, playlistId, playlist} = currentPlaylist;
+    if (playlistType === 'search') {
+      playFromSearch(trackId, null, playlist);
+    } else {
+      playFromAlbums(playlistId, trackId, playlistType);
+    }
   };
 
   renderItem = ({item}) => {

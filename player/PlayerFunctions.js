@@ -133,8 +133,8 @@ const PlayerFunctions = ({children}) => {
   }, [isShuffled]);
 
   const loadFavorites = async () => {
-   const data = await getAsyncStorage('favorites')
-      setFavorites(data);
+    const data = await getAsyncStorage('favorites');
+    setFavorites(data);
   };
 
   const firstInstallChecker = () => {
@@ -204,7 +204,6 @@ const PlayerFunctions = ({children}) => {
 
   const selectPlaylist = (id, type, trackId) => {
     const favs = tracks.filter(track => favorites.includes(track.id));
-    
 
     const copy = arr => [...arr];
     switch (type) {
@@ -297,23 +296,26 @@ const PlayerFunctions = ({children}) => {
 
   const playFromSearch = async (trackId, track, tracklist) => {
     // const playlist = selectPlaylist(null, 'all', trackId);
-   
 
-    if(track) {
-      await TrackPlayer.reset();
-      await TrackPlayer.add(tracklist);
+    if (currentPlaylist && currentPlaylist.playlistType === 'search') {
       await TrackPlayer.skip(trackId);
+    } else {
+      if (track) {
+        await TrackPlayer.reset();
+        await TrackPlayer.add(tracklist);
+        await TrackPlayer.skip(trackId);
+      }
       await TrackPlayer.play();
     }
+
     const playlist = {
       playlist: tracklist,
-      playlistType: 'none',
+      playlistType: 'search',
       playlistId: null,
     };
 
     storePlaylist(playlist);
     setIsShuffled(false);
-   
   };
 
   const loadAlbumOnSetup = playlistData => {
@@ -368,7 +370,7 @@ const PlayerFunctions = ({children}) => {
     currentTrack: currentTrack,
     setRepeat: setRepeat,
     isRepeat: isRepeat,
-    playFromSearch: playFromSearch
+    playFromSearch: playFromSearch,
   };
   return (
     <PlayerContext.Provider value={data}>{children}</PlayerContext.Provider>
