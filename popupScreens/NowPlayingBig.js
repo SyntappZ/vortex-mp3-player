@@ -22,7 +22,6 @@ import ProgressSlider from '../components/ProgressSlider';
 import TimeInterval from '../components/TimeInterval';
 import Sheet from './Sheet';
 
-
 const darkBlue = '#062D83';
 const colorBlack = '#0D0D0D';
 const NowPlayingBig = ({
@@ -39,7 +38,7 @@ const NowPlayingBig = ({
   favorites,
   seconds,
   isRepeat,
-  setRepeat
+  setRepeat,
 }) => {
   let isMounted = false;
   const playerState = TrackPlayer.usePlaybackState();
@@ -50,10 +49,7 @@ const NowPlayingBig = ({
     shuffleUpComingPlaylist(!isShuffled);
   };
 
-  
-
   useEffect(() => {
-    
     isMounted = true;
     if (isMounted) {
       setIsFavorite(favorites.includes(trackId));
@@ -86,6 +82,7 @@ const NowPlayingBig = ({
 
     menu.hide();
   };
+
 
   const isPlaying = playerState === TrackPlayer.STATE_PLAYING;
   let image;

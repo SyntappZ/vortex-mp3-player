@@ -2,9 +2,9 @@ import React, {Component} from 'react';
 import {View, StyleSheet, Text, Dimensions} from 'react-native';
 
 import Album from '../components/Album';
-import {RecyclerListView, DataProvider, LayoutProvider} from 'recyclerlistview';
+import {RecyclerListView, DataProvider, AutoScroll} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
-
+import LayoutProvider from '../components/LayoutProvider';
 import {Overlay, Button} from 'react-native-elements';
 const screenWidth = Dimensions.get('window').width;
 
@@ -61,7 +61,7 @@ export default class AlbumsScreen extends Component {
 
         {albums.length > 0 ? (
           <List
-            albums={this.dataConverter(albums)}
+            albums={albums}
             navigation={this.props.navigation}
             isFirstInstall={isFirstInstall}
           />
@@ -71,40 +71,22 @@ export default class AlbumsScreen extends Component {
   }
 }
 
+const data = Array(100).fill({type: 'heff', value: 'hello'});
+
 class List extends Component {
   constructor(props) {
     super(props);
-
-    this.rowRenderer = this.rowRenderer.bind(this);
-
-    this.layoutProvider = new LayoutProvider(
-      index => {
-        if (index % 2 === 0) {
-          return ViewTypes.HALF_LEFT;
-        } else if (index % 2 === 1) {
-          return ViewTypes.HALF_RIGHT;
-        }
-      },
-      (type, dim) => {
-        switch (type) {
-          case ViewTypes.HALF_LEFT:
-            dim.width = screenWidth / 2;
-            dim.height = 215;
-            break;
-          case ViewTypes.HALF_RIGHT:
-            dim.width = screenWidth / 2;
-            dim.height = 215;
-            break;
-          default:
-            dim.width = 0;
-            dim.height = 0;
-        }
-      },
-    );
+    this.state = {
+      dataProvider: new DataProvider((r1, r2) => {
+        return r1 !== r2;
+      }).cloneWithRows(this.props.albums),
+    };
+    this._layoutProvider = new LayoutProvider(this.state.dataProvider);
+    this._renderRow = this._renderRow.bind(this);
   }
 
   openModal = albumId => {
-    const album = this.props.albums._data[albumId];
+     const album = this.props.albums[albumId];
 
     this.props.navigation.navigate('Modal', {
       data: album,
@@ -112,53 +94,92 @@ class List extends Component {
     });
   };
 
-  rowRenderer(type, data) {
+  _renderRow(type, data) {
     const {name, artwork, tracksAmount, albumId} = data.item;
     const {isFirstInstall} = this.props;
-    switch (type) {
-      case ViewTypes.HALF_LEFT:
-        return (
-          <View style={styles.containerGridLeft}>
-            <Album
-              albumName={name}
-              artwork={artwork}
-              tracksAmount={tracksAmount}
-              openModal={this.openModal}
-              albumId={albumId}
-              isFirstInstall={isFirstInstall}
-            />
-          </View>
-        );
-      case ViewTypes.HALF_RIGHT:
-        return (
-          <View style={styles.containerGridRight}>
-            <Album
-              albumName={name}
-              artwork={artwork}
-              tracksAmount={tracksAmount}
-              openModal={this.openModal}
-              albumId={albumId}
-              isFirstInstall={isFirstInstall}
-            />
-          </View>
-        );
-      default:
-        return null;
-    }
-  }
-  render() {
-    const {albums} = this.props;
-
     return (
-      <RecyclerListView
-        // eslint-disable-next-line react-native/no-inline-styles
-        style={{flex: 1}}
-        rowRenderer={this.rowRenderer}
-        dataProvider={albums}
-        layoutProvider={this.layoutProvider}
-      />
+      <View style={styles.containerGrid}>
+        <Album
+          albumName={name}
+          artwork={artwork}
+          tracksAmount={tracksAmount}
+          openModal={this.openModal}
+          albumId={albumId}
+          isFirstInstall={isFirstInstall}
+        />
+      </View>
     );
   }
+
+  render() {
+    return (
+      <View style={styles.listContainer}>
+        <RecyclerListView
+          rowRenderer={this._renderRow}
+          dataProvider={this.state.dataProvider}
+          layoutProvider={this._layoutProvider}
+        />
+      </View>
+    );
+  }
+
+  // openModal = albumId => {
+  //   const album = this.props.albums._data[albumId];
+
+  //   this.props.navigation.navigate('Modal', {
+  //     data: album,
+  //     isAlbumScreen: true,
+  //   });
+  // };
+
+  // rowRenderer(type, data) {
+  //   const {name, artwork, tracksAmount, albumId} = data.item;
+  //   const {isFirstInstall} = this.props;
+  //   console.log('type ' + type)
+  //   switch (type) {
+  //     case ViewTypes.HALF_LEFT:
+  //       return (
+  //         <View style={styles.containerGridLeft}>
+  //           <Album
+  //             albumName={name}
+  //             artwork={artwork}
+  //             tracksAmount={tracksAmount}
+  //             openModal={this.openModal}
+  //             albumId={albumId}
+  //             isFirstInstall={isFirstInstall}
+  //           />
+  //         </View>
+  //       );
+  //     case ViewTypes.HALF_RIGHT:
+  //       return (
+  //         <View style={styles.containerGridRight}>
+  //           <Album
+  //             albumName={name}
+  //             artwork={artwork}
+  //             tracksAmount={tracksAmount}
+  //             openModal={this.openModal}
+  //             albumId={albumId}
+  //             isFirstInstall={isFirstInstall}
+  //           />
+  //         </View>
+  //       );
+  //     default:
+  //       return null;
+  //   }
+  // }
+  // render() {
+  //   const {albums} = this.props;
+
+  //   return (
+  //     <RecyclerListView
+  //       // eslint-disable-next-line react-native/no-inline-styles
+  //       style={{flex: 1}}
+  //       rowRenderer={this.rowRenderer}
+  //       dataProvider={albums}
+  //       layoutProvider={this.layoutProvider}
+  //     />
+  //   );
+  // }
 }
 
 const styles = StyleSheet.create({
@@ -166,20 +187,19 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingBottom: 70,
   },
-  containerGridLeft: {
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    flex: 1,
-    height: 215,
-    paddingHorizontal: 7,
+
+  listContainer: {
+    paddingVertical: 15,
+    flex: 1
   },
-  containerGridRight: {
-    justifyContent: 'space-around',
-    alignItems: 'center',
+
+  containerGrid: {
     flex: 1,
-    height: 215,
-    paddingHorizontal: 7,
+    height: 'auto',
+    paddingHorizontal: 10,
+    // margin: 5,
   },
+
   text: {
     color: 'white',
   },

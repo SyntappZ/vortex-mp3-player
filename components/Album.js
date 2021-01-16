@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   album: {
     width: '100%',
     height: 200,
+    
   },
   imageWrap: {
     flex: 5,

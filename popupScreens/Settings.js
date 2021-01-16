@@ -59,7 +59,7 @@ const Settings = () => {
                 ]}>
                 <View style={styles.textWrap}>
                   <Text style={styles.boldText}>Version</Text>
-                  <Text style={styles.text}>Vortex Player 1.0.0</Text>
+                  <Text style={styles.text}>Vortex Player 1.0.1</Text>
                 </View>
                 <View style={styles.textWrap}>
                   <Text style={styles.boldText}>Made with</Text>
