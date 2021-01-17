@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import {PlayerContext} from '../player/PlayerFunctions';
 import {clearAllStorage} from '../data/AsyncStorage.js';
 import Menu, {MenuItem} from 'react-native-material-menu';
-
+import RNFS from 'react-native-fs';
 import {
   StyleSheet,
   View,
@@ -23,10 +23,43 @@ const Header = ({navigation}) => {
     navigation.navigate('Search');
   };
 
+  
+  // const makeDir = async () => {
+  //   try {const AppFolder = 'albumArt/';
+  //     const target = '/storage/emulated/0/' + AppFolder;
+  //     const noMedia = target + '.nomedia'
+  //     await RNFS.mkdir(target);
+  //     await RNFS.writeFile(noMedia, '')
+  //     return 'created';
+  //   } catch (error) {
+  //     console.log(error);
+  //     return null;
+  //   }
+  // };
+
+  // const moveImageToFolder = async (cover) => {
+  //   try {
+  //     if(cover) {
+  //       const target = '/storage/emulated/0/albumArt/3733.jpg';
+  //       await RNFS.moveFile(cover, target);
+  //     }
+  //     console.log('moved')
+  //     return 'moved';
+  //   } catch (error) {
+  //     console.log(error);
+  //     return null;
+  //   }
+  // };
+  
+
   const wipeStorage = async () => {
-    const message = await clearAllStorage()
-    console.log(message)
-  }
+    // moveImageToFolder('/storage/emulated/0/3733.jpg')
+    const checkFolder = await RNFS.readDir('/storage/emulated/0/albumArt')
+ const folderImageList = checkFolder.map(item => item.path)
+ console.log(dat)
+    // const message = await clearAllStorage()
+    // console.log(message)
+  };
 
   return (
     <PlayerContext.Consumer>

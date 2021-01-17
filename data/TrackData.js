@@ -27,9 +27,9 @@ export const getTrackData = () => {
   });
 };
 
-export const getTrackCoverData = () => {
-  return new Promise((resolve, reject) => {
-    MusicFiles.getAll({
+export const getTrackCoverData = async () => {
+  try {
+    const tracks = await MusicFiles.getAll({
       id: true,
       blured: false,
       artist: true,
@@ -39,16 +39,16 @@ export const getTrackCoverData = () => {
       genre: true,
       album: true,
       minimumSongDuration: 10000,
-    })
-      .then(tracks => {
-        tracks.forEach(track => {
-          const folder = track.path.split('/').reverse()[1];
-          track.folder = folder;
-        });
-        resolve(tracks);
-      })
-      .catch(error => {
-        reject(error);
-      });
-  });
+    });
+
+    tracks.forEach(track => {
+      const folder = track.path.split('/').reverse()[1];
+
+      track.folder = folder;
+    });
+
+    return tracks;
+  } catch (err) {
+    return err;
+  }
 };

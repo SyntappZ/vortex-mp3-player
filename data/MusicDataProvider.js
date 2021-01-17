@@ -2,11 +2,23 @@ import {getTrackData} from './TrackData.js';
 import {PermissionsAndroid} from 'react-native';
 import {setAsyncStorage} from './AsyncStorage.js';
 import AsyncStorage from '@react-native-community/async-storage';
-
+import RNFS from 'react-native-fs';
 export const askPermissions = () => {
   return new Promise(resolve => {
     getPermissions(resolve);
   });
+};
+const makeDir = async () => {
+  try {
+    const target = '/storage/emulated/0/albumArt/';
+    const noMedia = target + '.nomedia';
+    await RNFS.mkdir(target);
+    await RNFS.writeFile(noMedia, '');
+    return 'created';
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
 };
 
 const checkIfStorage = async callback => {
@@ -14,6 +26,8 @@ const checkIfStorage = async callback => {
     const value = await AsyncStorage.getItem('tracks');
     if (value == null) {
       setAsyncStorage('isFirstInstall', true);
+      await makeDir();
+      console.log('made dirctory');
       firstTimeloadTracks(callback);
     } else {
       callback(false);
@@ -64,45 +78,41 @@ const nameConverter = str => {
 };
 
 const firstTimeloadTracks = async callback => {
-  getTrackData()
-    .then(tracks => {
-      const originalTracks = tracks.map((track, index) => {
-        let title = '';
-        let artist = '';
+  const tracks = await getTrackData();
 
-        if (!track.author) {
-          if (nameConverter(track.fileName)) {
-            title = nameConverter(track.fileName)[1].trim();
-            artist = nameConverter(track.fileName)[0].trim();
-          }
-        }
+  const originalTracks = tracks.map((track, index) => {
+    let title = '';
+    let artist = '';
+   
+    if (!track.author) {
+      if (nameConverter(track.fileName)) {
+        title = nameConverter(track.fileName)[1].trim();
+        artist = nameConverter(track.fileName)[0].trim();
+      }
+    }
 
-        return {
-          index: index,
-          album: track.album,
-          artist: artist ? artist : track.author ? track.author : 'Unknown',
-          artwork: track.cover,
-          duration: durationConverter(track.duration),
-          seconds: secondsConverter(track.duration),
-          millis: track.duration,
-          fileName: track.fileName,
-          folder: track.folder,
-          id: track.id,
-          url: track.path,
-          favorite: false,
-          title: title
-            ? title
-            : track.title
-            ? track.title
-            : track.fileName.replace(/.mp3/, ''),
-        };
-      });
+    return {
+      index: index,
+      album: track.album,
+      artist: artist ? artist : track.author ? track.author : 'Unknown',
+      artwork: track.artwork,
+      duration: durationConverter(track.duration),
+      seconds: secondsConverter(track.duration),
+      millis: track.duration,
+      fileName: track.fileName,
+      folder: track.folder,
+      id: track.id,
+      url: track.path,
+      favorite: false,
+      title: title
+        ? title
+        : track.title
+        ? track.title
+        : track.fileName.replace(/.mp3/, ''),
+    };
+  });
 
-      setAsyncStorage('tracks', originalTracks);
+  setAsyncStorage('tracks', originalTracks);
 
-      callback(originalTracks);
-    })
-    .catch(error => {
-      console.log(error);
-    });
+  callback(originalTracks);
 };

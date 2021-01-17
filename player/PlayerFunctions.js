@@ -5,6 +5,7 @@ import TrackPlayer from 'react-native-track-player';
 import {ToastAndroid} from 'react-native';
 import {getAlbums, getFolders} from '../data/CreateAlbums.js';
 import {getRefresher} from '../data/RefreshData.js';
+import ImgToBase64 from 'react-native-image-base64';
 export const PlayerContext = createContext();
 
 const PlayerFunctions = ({children}) => {
@@ -48,7 +49,7 @@ const PlayerFunctions = ({children}) => {
       askPermissions().then(data => {
         if (data) {
           setTracks(data);
-          
+          refresher();
           createAlbums(data);
           createCleanAlbums(data);
           loadAlbumOnSetup(data);
@@ -137,35 +138,73 @@ const PlayerFunctions = ({children}) => {
     setFavorites(data);
   };
 
-  const firstInstallChecker = () => {
-    setTimeout(() => {
-      getAsyncStorage('firstLoad').then(data => {
-        setFirstInstall(data);
-      });
+  const firstInstallChecker =  () => {
+    setTimeout(async() => {
+      const data = await getAsyncStorage('firstLoad');
+      setFirstInstall(data);
     }, 800);
   };
 
-  const loadTracksFromStorage = () => {
-    getAsyncStorage('tracks').then(data => {
+  const loadTracksFromStorage = async () => {
+    const data = await getAsyncStorage('tracks');
+  
+      // console.log(data);
       setTracks(data);
 
       createAlbums(data);
       createCleanAlbums(data);
       loadAlbumOnSetup();
-    });
+  
   };
 
-  const refresher = () => {
-    return new Promise(resolve => {
-      getRefresher().then(data => {
-        resolve();
-        if (data) {
-          setTracks(data);
-          createAlbums(data);
-          createCleanAlbums(data);
-        }
-      });
-    });
+  // const removeImageFromDevice = async () => {
+  //   try {
+  //     const file = '/storage/emulated/0/2659.jpg';
+  //     const target = '/storage/emulated/0';
+  //     const results = await RNFS.unlink(file);
+  //     return 'deleted';
+  //   } catch (error) {
+  //     console.log(error);
+  //     return null;
+  //   }
+  // };
+
+  // const recursionImages = async (data, results = []) => {
+  //   if (data.length < 1) return results;
+  //   const file = data[0];
+  //   console.log(file);
+  //   const base64Image = await convertImage(file);
+  //   if (base64Image) {
+  //     results.push(base64Image);
+  //   }
+  //   const uri = file.replace('file://', '');
+
+  //   const remove = await removeImageFromDevice(uri);
+  // };
+
+  // const convertImage = async file => {
+  //   try {
+  //     if (file) {
+  //       const base64String = await ImgToBase64.getBase64String(file);
+  //       return base64String;
+  //     } else {
+  //       return '';
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
+
+  const refresher = async () => {
+    
+    const data = await getRefresher();
+    console.log('refresher data');
+    
+    if (data) {
+      setTracks(data);
+      createAlbums(data);
+      createCleanAlbums(data);
+    }
   };
 
   const createAlbums = data => {

@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import TextTicker from 'react-native-text-ticker';
 import {RecyclerListView, LayoutProvider} from 'recyclerlistview';
 import {PlayerContext} from '../player/PlayerFunctions';
+import ImgToBase64 from 'react-native-image-base64';
 
 import {
   View,
@@ -26,6 +27,7 @@ export default class AlbumPlaylist extends Component {
     super(props);
     this.state = {
       isShuffled: false,
+      image: ''
     };
 
     this.rowRenderer = this.rowRenderer.bind(this);
@@ -67,6 +69,34 @@ export default class AlbumPlaylist extends Component {
     );
   };
 
+  // getArt = async () => {
+  //   console.log('fetching art')
+  //   const {name} = this.props.data;
+  //   const {artist} = this.props;
+
+  //   const response = await fetchAlbumArt(artist, name);
+  //   // console.log(response);
+  // };
+  componentDidMount() {
+    const {artwork} = this.props.data;
+    this.convertImage(artwork)
+  }
+
+  // recursionImages = data => {
+  //   console.log(data[0]);
+  // };
+
+  convertImage = async file => {
+    try {
+      if (file) {
+        const base64String = await ImgToBase64.getBase64String(file);
+        this.setState({image: "data:image/png;base64," + base64String})
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   durationConverter = millis => {
     var minutes = Math.floor(millis / 60000);
     var seconds = ((millis % 60000) / 1000).toFixed(0);
@@ -82,8 +112,8 @@ export default class AlbumPlaylist extends Component {
   render() {
     const {artwork, name, tracksAmount} = this.props.data;
     const {artist, closeModal, tracklist, totalTime} = this.props;
-
-    const albumArt = <Image style={styles.image} source={{uri: artwork}} />;
+const {image} = this.state
+    const albumArt = <Image style={styles.image} source={{uri:image}} />;
 
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />;
 
@@ -94,7 +124,7 @@ export default class AlbumPlaylist extends Component {
         <View style={styles.top}>
           <View style={styles.imageContainer}>
             <View style={styles.imageWrap}>
-              {artwork ? albumArt : defaultImage}
+              {image ? albumArt : defaultImage}
             </View>
           </View>
           <View style={styles.information}>
