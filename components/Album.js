@@ -23,13 +23,12 @@ const Album = ({
   const modalHandler = () => openModal(albumId);
 
   useEffect(() => {
-    const loader = <ActivityIndicator size="large" color="#555" />;
+    // const loader = <ActivityIndicator size="large" color="#555" />;
     const image = <Image style={styles.image} source={{uri: artwork}} />;
     const defaultImage = <IonIcon name="md-disc" size={130} color="#666" />
     if (artwork) {
       setAlbumArt(image);
-    } else if (isFirstInstall) {
-      setAlbumArt(loader);
+    
     } else {
       setAlbumArt(defaultImage);
     }

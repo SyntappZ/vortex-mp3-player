@@ -1,18 +1,28 @@
 import React from 'react';
-import {View, Switch, ScrollView, StyleSheet, Text} from 'react-native';
+import {View, Switch, ScrollView, StyleSheet,ToastAndroid, Text} from 'react-native';
 import {PlayerContext} from '../player/PlayerFunctions';
-import {setAsyncStorage} from '../data/AsyncStorage.js';
+import {setAsyncStorage, removeStorageItem} from '../data/AsyncStorage.js';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const colorBlue = '#074DD9';
 const colorLightBlue = '#0B64D9';
+
 const Settings = () => {
   return (
     <PlayerContext.Consumer>
-      {({isStopWithApp, setStopWithApp}) => {
+      {({isStopWithApp, setStopWithApp, setFavorites}) => {
         const changeStopWithApp = () => {
           setStopWithApp(!isStopWithApp);
           setAsyncStorage('stopWithApp', !isStopWithApp);
         };
+
+        const deleteFavorites = async () => {
+          setFavorites([])
+          const message = await removeStorageItem('favorites')
+          ToastAndroid.show(message, ToastAndroid.SHORT);
+        };
+
+       
 
         return (
           <ScrollView style={styles.container}>
@@ -51,6 +61,15 @@ const Settings = () => {
                   </Text>
                 </View>
               </View>
+              <View style={styles.sectionWrap}>
+                <View style={styles.textWrap}>
+                  <Text style={styles.title}>Storage</Text>
+                  <Text style={styles.boldText}>Delete Favorites</Text>
+                </View>
+              </View>
+              <TouchableOpacity onPress={deleteFavorites} style={styles.button}>
+                <Text style={styles.buttonText}>Delete</Text>
+              </TouchableOpacity>
               <Text style={[styles.title, {paddingTop: 40}]}>About</Text>
               <View
                 style={[
@@ -117,5 +136,18 @@ const styles = StyleSheet.create({
     height: 150,
 
     backgroundColor: 'red',
+  },
+  button: {
+    padding: 20,
+    backgroundColor: colorLightBlue,
+    borderRadius: 10,
+  },
+  buttonText: {
+    color: 'white',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    fontSize: 16,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
 });

@@ -27,7 +27,7 @@ const setAsyncStorage = async (storageName, data) => {
 const removeStorageItem = async storageName => {
   try {
     await AsyncStorage.removeItem(storageName);
-    return `${storageName} removed`;
+    return `${storageName} removed from storage`;
   } catch (e) {
     return e;
   }

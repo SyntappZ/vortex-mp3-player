@@ -48,7 +48,7 @@ const PlayerFunctions = ({children}) => {
       askPermissions().then(data => {
         if (data) {
           setTracks(data);
-          refresher(data);
+          
           createAlbums(data);
           createCleanAlbums(data);
           loadAlbumOnSetup(data);
